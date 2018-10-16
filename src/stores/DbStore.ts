@@ -220,8 +220,8 @@ export class DbStore {
       this.error = err.message
     }
     this.sqlValue = ""
-    const newdb: ITable[] = Object.keys(alasql.tables).map(name => {
-      const columns = alasql.tables[name].columns.map(
+    const newdb: ITable[] = Object.keys((alasql as any).tables).map(name => {
+      const columns = (alasql as any).tables[name].columns.map(
         (column: IAlaColumnType) => {
           return {
             name: `${column.columnid}`,
@@ -229,7 +229,7 @@ export class DbStore {
           }
         }
       )
-      const data = alasql.tables[name].data
+      const data = (alasql as any).tables[name].data
       return { name, columns, data }
     })
     this.db = newdb
