@@ -45,7 +45,7 @@ export class DbStore {
         { name: "ENAME", type: "string" },
         { name: "JOB", type: "string" },
         { name: "MGR", type: "int" },
-        { name: "HIREDATE", type: "date2" },
+        { name: "HIREDATE", type: "date" },
         { name: "SAL", type: "int" },
         { name: "COMM", type: "int" },
         { name: "DEPTNO", type: "int" },
@@ -205,7 +205,7 @@ export class DbStore {
           .map(column => `${column.name} ${column.type}`)
           .join(",")})`
       )
-      alasql.tables[table.name].data = table.data
+      ;(alasql as any).tables[table.name].data = table.data
     })
   }
 
