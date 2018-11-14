@@ -12,37 +12,37 @@ interface IProps {
 @observer
 export class ResultsPanel extends React.Component<IProps> {
   @observable
-  tab = "data"
+  tab = "results"
   render() {
     return (
       <div
         style={{
           padding: 8,
           height: "100%",
-          border: "1px solid black",
-          borderTop: "0px solid grey",
           display: "flex",
           flexDirection: "column",
+          // background: "Blue",
+          overflow: "auto",
         }}
       >
         <div
           style={{
             height: 30,
             width: "100%",
-            backgroundColor: "grey",
+            backgroundColor: "#263638",
             marginBottom: 1,
             display: "flex",
-            justifyContent: "flex-end",
+            justifyContent: "flex-start",
           }}
         >
-          <button style={{ margin: 1 }} onClick={() => (this.tab = "data")}>
-            Data
-          </button>
           <button style={{ margin: 1 }} onClick={() => (this.tab = "results")}>
             Results
           </button>
+          <button style={{ margin: 1 }} onClick={() => (this.tab = "tables")}>
+            Tables
+          </button>
         </div>
-        <div style={{ overflow: "auto", flex: 1 }}>
+        <div style={{ paddingTop: 8, overflow: "auto", flex: 1 }}>
           {this.tab === "results" ? (
             <Results />
           ) : (

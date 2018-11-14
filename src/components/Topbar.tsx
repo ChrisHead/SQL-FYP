@@ -4,8 +4,8 @@ export const Topbar = () => {
     <div
       style={{
         padding: 8,
-        borderBottom: "1px solid grey",
-        backgroundColor: "grey",
+        borderBottom: "1px solid black",
+        backgroundColor: "black",
         display: "flex",
         alignItems: "center",
       }}

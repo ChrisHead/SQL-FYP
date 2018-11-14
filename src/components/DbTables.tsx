@@ -25,7 +25,7 @@ export class DbTables extends React.Component<IProps> {
           style={{
             height: 30,
             width: "100%",
-            backgroundColor: "grey",
+            backgroundColor: "#263638",
             marginBottom: 1,
           }}
         >
@@ -39,7 +39,12 @@ export class DbTables extends React.Component<IProps> {
             </button>
           ))}
         </div>
-        <table style={{ width: "100%", border: "1px solid black" }}>
+        <table
+          style={{
+            width: "100%",
+            overflow: "auto",
+          }}
+        >
           <thead>
             <tr>
               {this.currentTable.columns.map(column => (

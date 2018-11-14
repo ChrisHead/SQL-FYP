@@ -14,7 +14,7 @@ interface IAlaColumnType {
 
 export class DbStore {
   @observable
-  sqlValue = ""
+  sqlValue = "TEST"
   @observable
   history = [
     "SELECT * FROM EMP WHERE SAL = 950",

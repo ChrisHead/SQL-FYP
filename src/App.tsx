@@ -17,7 +17,7 @@ class App extends React.Component {
           open
           docked
           styles={{
-            sidebar: { background: "white", width: "300px" },
+            sidebar: { background: "black", width: "300px" },
             root: { top: `${theme.topbarHeight}px` },
           }}
         >

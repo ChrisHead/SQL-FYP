@@ -11,9 +11,12 @@ export const HistoryPanel = inject("db")(
       <div
         style={{
           padding: 8,
-          borderBottom: "1px solid grey",
+          display: "flex",
+          flex: 1,
           height: 300,
+          flexDirection: "column",
           overflow: "auto",
+          // background: "red",
         }}
       >
         {db!.history.map((line, i) => (
