@@ -9,7 +9,7 @@ const ResultsComp = ({ db }: IProps) => (
   // const res = JSON.stringify(db!.results, null, "  ")
   <div>
     {db!.results.length > 0 && (
-      <table style={{ width: "100%", border: "1px solid #30434d" }}>
+      <table style={{ width: "100%", border: "1px solid black" }}>
         <thead>
           <tr>
             {Object.keys(db!.results[0]).map((col, i) => (
