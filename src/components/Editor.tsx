@@ -1,6 +1,7 @@
 import * as React from "react"
 import { ResultsPanel } from "./ResultsPanel"
 import { SqlPanel } from "./SqlPanel"
+// import { theme } from "src/constants/theme"
 import SplitPane from "react-split-pane"
 import { QuestionsPanel } from "./QuestionsPanel"
 import { DbTables } from "./DbTables"

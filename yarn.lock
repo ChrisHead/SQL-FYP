@@ -242,9 +242,10 @@ ajv@^6.1.0, ajv@^6.5.5:
     json-schema-traverse "^0.4.1"
     uri-js "^4.2.2"
 
-"alasql@https://github.com/ChrisHead/alasql":
+alasql@^0.4.11:
   version "0.4.11"
-  resolved "https://github.com/ChrisHead/alasql#6b6637ed7d3f25592f0853dd2bd7b56763d63c4f"
+  resolved "https://registry.yarnpkg.com/alasql/-/alasql-0.4.11.tgz#4e076b102effb6caaf6d66474d467ddf8bedc9ee"
+  integrity sha512-U1x1+NjIiG24crW34OwB3I8mpl0s0gS8xUcZ6unddLkRWaIWV/R/dqc/zTKwoE0YDwss0yI05WOYg5Psb62VRA==
   dependencies:
     dom-storage "^2.0.1"
     es6-promise "^4.2.2"

@@ -1,55 +1,55 @@
-// declare module "react-split-pane" {
-//   import * as React from "react"
+declare module "react-split-pane" {
+  import * as React from "react"
 
-//   export type Size = string | number
+  export type Size = string | number
 
-//   type Partial<T> = { [P in keyof T]?: T[P] }
+  type Partial<T> = { [P in keyof T]?: T[P] }
 
-//   export interface Props {
-//     allowResize?: boolean
-//     className?: string
-//     primary?: "first" | "second"
-//     minSize?: Size
-//     maxSize?: Size
-//     defaultSize?: Size
-//     size?: Size
-//     split?: "vertical" | "horizontal"
-//     onDragStarted?: () => void
-//     onDragFinished?: (newSize: number) => void
-//     onChange?: (newSize: number) => void
-//     onResizerClick?: (event: MouseEvent) => void
-//     onResizerDoubleClick?: (event: MouseEvent) => void
-//     style?: React.CSSProperties
-//     resizerStyle?: React.CSSProperties
-//     paneStyle?: React.CSSProperties
-//     pane1Style?: React.CSSProperties
-//     pane2Style?: React.CSSProperties
-//     resizerClassName?: string
-//     step?: number
-//   }
+  export interface Props {
+    allowResize?: boolean
+    className?: string
+    primary?: "first" | "second"
+    minSize?: Size
+    maxSize?: Size
+    defaultSize?: Size
+    size?: Size
+    split?: "vertical" | "horizontal"
+    onDragStarted?: () => void
+    onDragFinished?: (newSize: number) => void
+    onChange?: (newSize: number) => void
+    onResizerClick?: (event: MouseEvent) => void
+    onResizerDoubleClick?: (event: MouseEvent) => void
+    style?: React.CSSProperties
+    resizerStyle?: React.CSSProperties
+    paneStyle?: React.CSSProperties
+    pane1Style?: React.CSSProperties
+    pane2Style?: React.CSSProperties
+    resizerClassName?: string
+    step?: number
+  }
 
-//   export interface State {
-//     active: boolean
-//     resized: boolean
-//   }
+  export interface State {
+    active: boolean
+    resized: boolean
+  }
 
-//   class SplitPane extends React.Component<Props, State> {
-//     constructor()
+  class SplitPane extends React.Component<Props, State> {
+    constructor()
 
-//     onMouseDown(event: MouseEvent): void
+    onMouseDown(event: MouseEvent): void
 
-//     onTouchStart(event: TouchEvent): void
+    onTouchStart(event: TouchEvent): void
 
-//     onMouseMove(event: MouseEvent): void
+    onMouseMove(event: MouseEvent): void
 
-//     onTouchMove(event: TouchEvent): void
+    onTouchMove(event: TouchEvent): void
 
-//     onMouseUp(): void
+    onMouseUp(): void
 
-//     static getSizeUpdate(props: Props, state: State): Partial<State>
+    static getSizeUpdate(props: Props, state: State): Partial<State>
 
-//     static defaultProps: Props
-//   }
+    static defaultProps: Props
+  }
 
-//   export default SplitPane
-// }
+  export default SplitPane
+}
