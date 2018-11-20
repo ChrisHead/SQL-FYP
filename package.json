@@ -11,7 +11,7 @@
     "@types/react-router-dom": "^4.3.1",
     "@types/react-sidebar": "^3.0.0",
     "@types/react-split-pane": "^0.1.67",
-    "alasql": "^0.4.11",
+    "alasql": "https://github.com/ChrisHead/alasql",
     "codemirror": "^5.41.0",
     "mobx": "^4",
     "mobx-react": "^5.2.8",
