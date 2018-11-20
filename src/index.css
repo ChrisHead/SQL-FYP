@@ -6,7 +6,6 @@ body {
   padding: 0;
   font-family: sans-serif;
   background: #354f5d;
-  /* color: rgb(83, 127, 126); */
   color: white;
 }
 
@@ -17,19 +16,39 @@ table {
 table,
 th {
   text-align: center;
-  border: 1px solid #263638;
+  border: 1px solid #30434d;
 }
 
 td {
-  text-align: left;
-  border: 1px solid #263638;
+  text-align: center;
+  border: 1px solid #30434d;
+  font-family: monospace;
+}
+tr:hover {
+  background: rgba(211, 211, 211, 0.13);
 }
 
-/* button { */
-/* background: #e9dd3d;
-  color: #e9dd3d; */
-/* border-radius: 8px; */
-/* } */
+button,
+.button {
+  background: #dacc12;
+  border: none;
+  cursor: pointer;
+  border-radius: 28px;
+  padding: 5px;
+  margin: 4px 0px 4px 0px;
+  text-decoration: none;
+  text-align: center;
+  font-size: 0.9rem;
+  color: rgba(0, 0, 0, 0.781);
+}
+
+button::-moz-focus-inner {
+  border: 0;
+}
+
+a:visited {
+  color: initial;
+}
 
 .Resizer {
   background: #000;
@@ -83,4 +102,23 @@ td {
 
 .Collapsible {
   background: #2a3c46;
+  cursor: pointer;
+}
+
+.Collapsible__trigger {
+  cursor: pointer;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.history-div:hover {
+  background: rgba(211, 211, 211, 0.13);
+}
+
+.question-div:hover {
+  background: rgba(211, 211, 211, 0.13) !important;
 }

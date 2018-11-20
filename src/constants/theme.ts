@@ -1,3 +1,3 @@
 export const theme = {
-  topbarHeight: 46,
+  topbarHeight: 36,
 }

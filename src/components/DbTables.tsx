@@ -20,48 +20,64 @@ export class DbTables extends React.Component<IProps> {
   render() {
     const { db } = this.props
     return (
-      <div>
+      <div
+        style={{
+          padding: 8,
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          overflow: "auto",
+        }}
+      >
         <div
           style={{
-            height: 30,
             width: "100%",
-            backgroundColor: "#263638",
-            marginBottom: 1,
+            background: "#30434d",
+            // padding: 8,
           }}
         >
           {db.map((table, i) => (
             <button
               key={table.name}
-              style={{ margin: 1 }}
+              style={{ marginLeft: 8 }}
               onClick={() => this.handleTableButton(i)}
             >
-              {table.name}
+              {table.name + " Table"}
             </button>
           ))}
         </div>
-        <table
+        <div
           style={{
-            width: "100%",
+            padding: 8,
             overflow: "auto",
+            flex: 1,
+            background: "#263638",
           }}
         >
-          <thead>
-            <tr>
-              {this.currentTable.columns.map(column => (
-                <th key={column.name}>{column.name}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {this.currentTable.data.map((datum, i) => (
-              <tr key={i}>
+          <table
+            style={{
+              width: "100%",
+              overflow: "auto",
+            }}
+          >
+            <thead>
+              <tr>
                 {this.currentTable.columns.map(column => (
-                  <td key={column.name}>{datum[column.name]}</td>
+                  <th key={column.name}>{column.name}</th>
                 ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {this.currentTable.data.map((datum, i) => (
+                <tr key={i}>
+                  {this.currentTable.columns.map(column => (
+                    <td key={column.name}>{datum[column.name]}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     )
   }
