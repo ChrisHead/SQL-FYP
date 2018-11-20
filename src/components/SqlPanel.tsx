@@ -3,7 +3,14 @@ import { inject, observer } from "mobx-react"
 import { DbStore } from "src/stores/DbStore"
 import { Controlled as CodeMirror } from "react-codemirror2"
 import "../../node_modules/codemirror/mode/sql/sql"
-import { HistoryPanel } from "./HistoryPanel"
+import Collapsible from "react-collapsible"
+import { library } from "@fortawesome/fontawesome-svg-core"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faAngleDoubleDown } from "@fortawesome/free-solid-svg-icons"
+import { faAngleDoubleUp } from "@fortawesome/free-solid-svg-icons"
+
+library.add(faAngleDoubleDown)
+library.add(faAngleDoubleUp)
 
 interface IProps {
   db?: DbStore
@@ -19,35 +26,24 @@ export const SqlPanel = inject("db")(
           display: "flex",
           flexDirection: "column",
           overflow: "auto",
+          // background: "Green",
         }}
       >
         <div
           style={{
+            height: 30,
             width: "100%",
-            backgroundColor: "#30434d",
+            backgroundColor: "grey",
             display: "flex",
-            justifyContent: "flex-start",
+            justifyContent: "flex-end",
           }}
         >
-          <button
-            style={{ width: 100, marginLeft: 8 }}
-            onClick={db!.executeSql}
-          >
+          <button style={{ margin: 1, width: 100 }} onClick={db!.executeSql}>
             Run
           </button>
         </div>
-        <style>{`
-          .code-editor {
-            flex: 1;
-            overflow: auto;
-          }
-          .code-editor > div {
-            height: 100%;
-          }
-        `}</style>
         <CodeMirror
           value={db!.sqlValue}
-          className="code-editor"
           options={{
             mode: "text/x-mysql",
             theme: "material",
@@ -63,7 +59,38 @@ export const SqlPanel = inject("db")(
             }
           }}
         />
-        <HistoryPanel />
+        <div
+          style={{
+            overflow: "auto",
+            display: "flex",
+            flex: 1,
+            height: 300,
+            flexDirection: "column",
+          }}
+        >
+          <Collapsible
+            trigger={<FontAwesomeIcon icon="angle-double-down" />}
+            triggerWhenOpen={<FontAwesomeIcon icon="angle-double-up" />}
+            transitionTime={100}
+            overflowWhenOpen="auto"
+            triggerStyle={{
+              backgroundColor: "#30434d",
+              display: "flex",
+              justifyContent: "center",
+              textAlign: "center",
+            }}
+          >
+            {db!.history.map((line, i) => (
+              <div
+                style={{ fontSize: 14 }}
+                key={i}
+                onClick={() => (db!.sqlValue = line)}
+              >
+                {line}
+              </div>
+            ))}
+          </Collapsible>
+        </div>
       </div>
     )
   })

@@ -20,64 +20,48 @@ export class DbTables extends React.Component<IProps> {
   render() {
     const { db } = this.props
     return (
-      <div
-        style={{
-          padding: 8,
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-          overflow: "auto",
-        }}
-      >
+      <div>
         <div
           style={{
+            height: 30,
             width: "100%",
-            background: "#30434d",
-            // padding: 8,
+            backgroundColor: "#263638",
+            marginBottom: 1,
           }}
         >
           {db.map((table, i) => (
             <button
               key={table.name}
-              style={{ marginLeft: 8 }}
+              style={{ margin: 1 }}
               onClick={() => this.handleTableButton(i)}
             >
-              {table.name + " Table"}
+              {table.name}
             </button>
           ))}
         </div>
-        <div
+        <table
           style={{
-            padding: 8,
+            width: "100%",
             overflow: "auto",
-            flex: 1,
-            background: "#263638",
           }}
         >
-          <table
-            style={{
-              width: "100%",
-              overflow: "auto",
-            }}
-          >
-            <thead>
-              <tr>
+          <thead>
+            <tr>
+              {this.currentTable.columns.map(column => (
+                <th key={column.name}>{column.name}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {this.currentTable.data.map((datum, i) => (
+              <tr key={i}>
                 {this.currentTable.columns.map(column => (
-                  <th key={column.name}>{column.name}</th>
+                  <td key={column.name}>{datum[column.name]}</td>
                 ))}
               </tr>
-            </thead>
-            <tbody>
-              {this.currentTable.data.map((datum, i) => (
-                <tr key={i}>
-                  {this.currentTable.columns.map(column => (
-                    <td key={column.name}>{datum[column.name]}</td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </table>
       </div>
     )
   }
