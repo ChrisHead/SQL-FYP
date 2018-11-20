@@ -1,31 +1,19 @@
-import * as React from "react"
-import { Topbar } from "./components/Topbar"
-import { Sidebar } from "./components/Sidebar"
-import ReactSidebar from "react-sidebar"
-import { Editor } from "./components/Editor"
-import { theme } from "./constants/theme"
+import { inject, observer } from "mobx-react"
+import React from "react"
+import { AppStore } from "."
+import { LoginPage } from "./LoginPage"
+import { Routes } from "./Routes"
+import { withRouter } from "react-router-dom"
 
-class App extends React.Component {
-  public render() {
-    return (
-      <div>
-        <style>{`
-        *{box-sizing: border-box;}`}</style>
-        <Topbar />
-        <ReactSidebar
-          sidebar={<Sidebar />}
-          open
-          docked
-          styles={{
-            sidebar: { background: "black", width: "300px" },
-            root: { top: `${theme.topbarHeight}px` },
-          }}
-        >
-          <Editor />
-        </ReactSidebar>
-      </div>
-    )
+interface IProps {
+  app?: AppStore
+}
+const AppBase = ({ app }: IProps) => {
+  if (app!.sessionId) {
+    return <Routes />
+  } else {
+    return <LoginPage />
   }
 }
 
-export default App
+export const App = (withRouter as any)(inject("app")(observer(AppBase)))
