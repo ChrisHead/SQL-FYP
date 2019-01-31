@@ -13,7 +13,6 @@ import {
 
 library.add(faAngleDoubleDown)
 library.add(faAngleDoubleUp)
-
 library.add(faCheckCircle)
 
 interface IProps {
@@ -36,7 +35,7 @@ export class QuestionsPanel extends React.Component<IProps> {
     const div = document.getElementById(this.props.db!.currentQuestion)
     div!.style.backgroundColor = "rgba(211, 211, 211, 0.13)"
 
-    const { questions } = this.props.db!
+    const { studentQuestions: questions } = this.props.db!
 
     questions.map((tutorial, i) => {
       tutorial.questions.map((question, k) => {
@@ -56,7 +55,7 @@ export class QuestionsPanel extends React.Component<IProps> {
 
   @observable
   render() {
-    const { questions } = this.props.db!
+    const { studentQuestions: questions } = this.props.db!
     return (
       <div
         style={{

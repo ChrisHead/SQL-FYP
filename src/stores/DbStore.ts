@@ -12,14 +12,42 @@ interface IAlaColumnType {
   dbtypeid: any
 }
 
-export interface IQuestions {
+export interface IStudentQuestions {
   tutorial: string
   questions: { number: number; question: string; completed: boolean }[]
+}
+
+export interface IUsers {
+  userId: string
+}
+
+export interface ILab {
+  labNumber: number
+  dateTime: string
+  questions: number[]
 }
 
 interface ICompletedQuestions {
   tutorial: string
   question: number
+}
+
+interface IAdminQuestions {
+  id: number
+  question: string
+  answer: string
+  database: number
+  startingText: string
+  response: string
+  respondAfter: number
+  autoResponse: boolean
+}
+
+interface IConditions {
+  conditionOne: boolean
+  conditionTwo: boolean
+  conditionThree: boolean
+  conditionFour: boolean
 }
 
 export class DbStore {
@@ -34,6 +62,8 @@ export class DbStore {
   tab = "results"
   @observable
   currentQuestion = ""
+  @observable
+  currentControl = ""
   @observable
   completedQuestions: ICompletedQuestions[] = [
     {
@@ -224,7 +254,7 @@ export class DbStore {
     },
   ]
   @observable
-  questions: IQuestions[] = [
+  studentQuestions: IStudentQuestions[] = [
     {
       tutorial: "Lab 1",
       questions: [
@@ -422,6 +452,32 @@ export class DbStore {
   ]
   @observable
   error: any
+  @observable
+  students: IUsers[] = [
+    { userId: "B512678" },
+    { userId: "B234567" },
+    { userId: "B678456" },
+  ]
+  adminQuestions: IAdminQuestions[] = [
+    {
+      id: 1,
+      question: "This is a question",
+      answer: "This is the answer",
+      database: 2,
+      startingText: "None",
+      response: "This has been a response",
+      respondAfter: 3,
+      autoResponse: false,
+    },
+  ]
+  conditions: IConditions[] = [
+    {
+      conditionOne: true,
+      conditionTwo: false,
+      conditionThree: true,
+      conditionFour: false,
+    },
+  ]
 
   ala = alasql
   constructor() {

@@ -1,8 +1,8 @@
 import * as React from "react"
 import { Topbar } from "./components/Topbar"
-import { Editor } from "./components/Editor"
+import { AdminEditor } from "./components/AdminEditor"
 
-export class MainPage extends React.Component {
+export class AdminMainPage extends React.Component {
   public render() {
     return (
       <div
@@ -14,7 +14,7 @@ export class MainPage extends React.Component {
           `}
         </style>
         <Topbar />
-        <Editor />
+        <AdminEditor />
       </div>
     )
   }

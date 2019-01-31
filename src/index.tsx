@@ -20,6 +20,7 @@ export class AppStore {
   }
 
   login(id) {
+    // id = "admin"
     // DO REQUEST
     if (!id) {
       return "An error occured"
