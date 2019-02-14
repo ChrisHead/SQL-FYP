@@ -1,7 +1,4 @@
 import * as React from "react"
-import { observable } from "mobx"
-import { observer, inject } from "mobx-react"
-import { DbStore } from "src/stores/DbStore"
 import Collapsible from "react-collapsible"
 import { library } from "@fortawesome/fontawesome-svg-core"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
@@ -10,19 +7,18 @@ import {
   faAngleDoubleUp,
   faCheckCircle,
 } from "@fortawesome/free-solid-svg-icons"
+import { DbContext } from "src/DbContext"
+import { useLabs } from "../hooks/useLabs"
 
 library.add(faAngleDoubleDown)
 library.add(faAngleDoubleUp)
 library.add(faCheckCircle)
 
-interface IProps {
-  db?: DbStore
-}
+export function QuestionsPanel() {
+  const db = React.useContext(DbContext)
+  const labs = useLabs()
 
-@inject("db")
-@observer
-export class QuestionsPanel extends React.Component<IProps> {
-  getTickColour(comp: boolean) {
+  function getTickColour(comp: boolean) {
     if (comp) {
       return <FontAwesomeIcon icon="check-circle" size={"2x"} color={"Green"} />
     } else {
@@ -30,112 +26,104 @@ export class QuestionsPanel extends React.Component<IProps> {
     }
   }
 
-  currentQuestion(t: string, q: number) {
-    this.props.db!.currentQuestion = t + "." + q
-    const div = document.getElementById(this.props.db!.currentQuestion)
+  function currentQuestion(q: number) {
+    db.currentQuestion = q
+
+    const div = document.getElementById(q.toString())
     div!.style.backgroundColor = "rgba(211, 211, 211, 0.13)"
 
-    const { studentQuestions: questions } = this.props.db!
-
-    questions.map((tutorial, i) => {
-      tutorial.questions.map((question, k) => {
-        if (
-          tutorial.tutorial + "." + question.number !==
-          this.props.db!.currentQuestion
-        ) {
-          const tempDiv = document.getElementById(
-            tutorial.tutorial + "." + question.number
-          )
+    labs.map((lab, i) => {
+      lab.questions.map((q, l) => {
+        if (q.id !== db.currentQuestion) {
+          const tempDiv = document.getElementById(q.id.toString())
           tempDiv!.style.background = "none"
         }
       })
     })
-    console.log("Current Question: " + this.props.db!.currentQuestion)
+    console.log("Current Question: " + db.currentQuestion)
   }
 
-  @observable
-  render() {
-    const { studentQuestions: questions } = this.props.db!
-    return (
+  return (
+    <div
+      style={{
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        overflow: "auto",
+      }}
+    >
       <div
         style={{
-          height: "100%",
+          padding: 8,
+          margin: 10,
           display: "flex",
-          flexDirection: "column",
-          overflow: "auto",
+          justifyContent: "center",
+          backgroundColor: "#30434d",
         }}
       >
-        <div
-          style={{
-            padding: 8,
-            margin: 10,
-            display: "flex",
-            justifyContent: "center",
-            backgroundColor: "#30434d",
-          }}
-        >
-          Questions
-        </div>
-        {questions.map((tutorial, i) => (
-          <div key={i} style={{ padding: 8 }}>
-            <Collapsible
-              trigger={
-                <>
-                  <FontAwesomeIcon icon="angle-double-down" />
-                  <span style={{ margin: "0 16px" }}>{tutorial.tutorial}</span>
-                  <FontAwesomeIcon icon="angle-double-down" />
-                </>
-              }
-              triggerWhenOpen={
-                <>
-                  <FontAwesomeIcon icon="angle-double-up" />
-                  <span style={{ margin: "0 16px" }}>{tutorial.tutorial}</span>
-                  <FontAwesomeIcon icon="angle-double-up" />
-                </>
-              }
-              transitionTime={100}
-              overflowWhenOpen="auto"
-              triggerStyle={{
-                backgroundColor: "#30434d",
-                display: "flex",
-                justifyContent: "center",
-                textAlign: "center",
-                padding: 8,
-              }}
-            >
-              {tutorial.questions.map((question, q) => (
+        Questions
+      </div>
+      {labs.map((lab, i) => (
+        <div key={i} style={{ padding: 8 }}>
+          <Collapsible
+            trigger={
+              <>
+                <FontAwesomeIcon icon="angle-double-down" />
+                <span style={{ margin: "0 16px" }}>
+                  {"Week " + lab.labNumber}
+                </span>
+                <FontAwesomeIcon icon="angle-double-down" />
+              </>
+            }
+            triggerWhenOpen={
+              <>
+                <FontAwesomeIcon icon="angle-double-up" />
+                <span style={{ margin: "0 16px" }}>
+                  {"Week " + lab.labNumber}
+                </span>
+                <FontAwesomeIcon icon="angle-double-up" />
+              </>
+            }
+            transitionTime={100}
+            overflowWhenOpen="auto"
+            triggerStyle={{
+              backgroundColor: "#30434d",
+              display: "flex",
+              justifyContent: "center",
+              textAlign: "center",
+              padding: 8,
+            }}
+          >
+            {lab.questions.map((question, i) => (
+              <div
+                key={i}
+                id={question.id.toString()}
+                className="question-div"
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                }}
+              >
                 <div
-                  key={q}
-                  id={tutorial.tutorial + "." + question.number}
-                  className="question-div"
                   style={{
                     display: "flex",
-                    flexDirection: "row",
+                    alignItems: "center",
                   }}
                 >
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                    }}
-                  >
-                    {this.getTickColour(question.completed)}
-                  </div>
-
-                  <div
-                    style={{ fontSize: 14, padding: 8 }}
-                    onClick={() =>
-                      this.currentQuestion(tutorial.tutorial, question.number)
-                    }
-                  >
-                    {question.question}
-                  </div>
+                  {getTickColour(question.completed)}
                 </div>
-              ))}
-            </Collapsible>
-          </div>
-        ))}
-      </div>
-    )
-  }
+
+                <div
+                  style={{ fontSize: 14, padding: 8 }}
+                  onClick={() => currentQuestion(question.id)}
+                >
+                  {question.question}
+                </div>
+              </div>
+            ))}
+          </Collapsible>
+        </div>
+      ))}
+    </div>
+  )
 }

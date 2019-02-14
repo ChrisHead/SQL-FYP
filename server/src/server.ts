@@ -53,20 +53,60 @@ addApiEndpoint("users", { permission: "admin" }, async () => {
   return results
 })
 
+addApiEndpoint("studentLabs", { permission: "authenticated" }, async () => {
+  const sql = `SELECT "labs".*, json_agg(questions.*) questions
+  FROM   "labs"
+      join "labsQuestions" on "labs"."id" = "labsQuestions"."labId"
+      join "questions" on "labsQuestions"."questionId" = "questions"."id"
+      group by "labs"."id"`
+  const results = await conn.any<IUser>(sql)
+  return results
+})
+
+addApiEndpoint("questions", { permission: "admin" }, async () => {
+  const sql = `SELECT * FROM questions`
+  const results = await conn.any<IUser>(sql)
+  return results
+})
+
+addApiEndpoint(
+  "feedback",
+  { permission: "authenticated" },
+  async ({ currentUser, req }) => {
+    const data = req.body
+    const feedback = `INSERT INTO "feedbacks" ("feedback", "dateTime") VALUES ('${pgp.as.value(
+      data.data
+    )}', now()) RETURNING "id"`
+    const feedbackSql = await conn.any<IUser>(feedback)
+    const userFeedback = `INSERT INTO "usersFeedbacks" ("userId", "feedbackId") VALUES ('${pgp.as.value(
+      currentUser.id
+    )}', '${feedbackSql[0].id}')`
+    const userFeedbackSql = await conn.any<IUser>(userFeedback)
+    return userFeedbackSql
+  }
+)
+
 // default response is 404
 app.use((req, res, next) => next(404))
 
 // handle errors by returning them as json
-app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
-  console.error(err)
-  if (err instanceof Error) {
-    return { error: err.message }
-  } else {
-    return { error: err }
+app.use(
+  (
+    err: any,
+    _req: express.Request,
+    res: express.Response,
+    _next: express.NextFunction
+  ) => {
+    console.error(err)
+    if (err instanceof Error) {
+      res.send({ error: err.message })
+    } else {
+      res.send({ error: err })
+    }
   }
-})
+)
 
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 3001
 app.listen(port, () => {
   console.log(`the server is listening at http://localhost:${port}`)
 })

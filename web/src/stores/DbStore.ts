@@ -12,11 +12,6 @@ interface IAlaColumnType {
   dbtypeid: any
 }
 
-export interface IStudentQuestions {
-  tutorial: string
-  questions: { number: number; question: string; completed: boolean }[]
-}
-
 export interface IUsers {
   userId: string
 }
@@ -24,16 +19,21 @@ export interface IUsers {
 export interface ILab {
   labNumber: number
   dateTime: string
-  questions: number[]
+  questions: {
+    id: number
+    question: string
+    answer: string
+    database: number
+    startingText: string
+    response: string
+    respondAfter: number
+    autoResponse: boolean
+    completed: boolean
+  }[]
 }
 
-interface ICompletedQuestions {
-  tutorial: string
-  question: number
-}
-
-interface IAdminQuestions {
-  id: number
+export interface IQuestion {
+  id: string
   question: string
   answer: string
   database: number
@@ -53,34 +53,25 @@ interface IConditions {
 export class DbStore {
   @observable
   sqlValue = ""
+
   @observable
   history = [
     "SELECT * FROM EMP WHERE SAL = 950",
     "SELECT DEPT.DNAME, EMP.ENAME FROM DEPT INNER JOIN EMP ON DEPT.DEPTNO=EMP.DEPTNO;",
   ]
+
   @observable
   tab = "results"
+
   @observable
-  currentQuestion = ""
+  currentQuestion: number
+
   @observable
   currentControl = ""
-  @observable
-  completedQuestions: ICompletedQuestions[] = [
-    {
-      tutorial: "Lab 1",
-      question: 1,
-    },
-    {
-      tutorial: "Lab 1",
-      question: 2,
-    },
-    {
-      tutorial: "Lab 1",
-      question: 3,
-    },
-  ]
+
   @observable
   results = []
+
   @observable
   db: ITable[] = [
     {
@@ -253,223 +244,17 @@ export class DbStore {
       ],
     },
   ]
-  @observable
-  studentQuestions: IStudentQuestions[] = [
-    {
-      tutorial: "Lab 1",
-      questions: [
-        {
-          number: 1,
-          question: "Display all information in the tables EMP and DEPT.",
-          completed: true,
-        },
-        {
-          number: 2,
-          question:
-            "Display only the hire date and employee name for each employee.",
-          completed: true,
-        },
-        {
-          number: 3,
-          question:
-            "Display the hire date, name and department number for all clerks.",
-          completed: true,
-        },
-        {
-          number: 4,
-          question:
-            "Display the names and salaries of all employees with a salary greater than 2000.",
-          completed: true,
-        },
-        {
-          number: 5,
-          question:
-            'Display the names of all employees with an "A" in their name.',
-          completed: true,
-        },
-        {
-          number: 6,
-          question:
-            'Display the names of all employees with an "A" as the third letter of their name.',
-          completed: true,
-        },
-        {
-          number: 7,
-          question:
-            "Display the names of all employees with exactly 5 letters in their name.",
-          completed: true,
-        },
-        {
-          number: 8,
-          question:
-            "Display the names and hire dates of all employees hired in 1981 or 1982. (Note in VBA SQL you need to refer to dates in a WHERE clause between #s, eg. #1 Jan 2000#)",
-          completed: true,
-        },
-        {
-          number: 9,
-          question:
-            'Display the names and dates of employees with the column headers "Name" and "Start Date".',
-          completed: true,
-        },
-        {
-          number: 10,
-          question:
-            "Display the names and hire dates of all employees in the order they were hired.",
-          completed: true,
-        },
-        {
-          number: 11,
-          question:
-            "Display the names and salaries of all employees in reverse salary order.",
-          completed: true,
-        },
-        {
-          number: 12,
-          question:
-            'Display "ename of department deptno earned commission comm" foreach salesman in reverse commission order. Only employees who actually earned a commission should be listed.',
-          completed: true,
-        },
-        {
-          number: 13,
-          question:
-            "Display the department numbers of all departments employing a clerk.",
-          completed: true,
-        },
-      ],
-    },
-    {
-      tutorial: "Lab 2",
-      questions: [
-        {
-          number: 1,
-          question:
-            "If you haven’t done so yet, finish the exercises from the previous lab.",
-          completed: false,
-        },
-        {
-          number: 2,
-          question:
-            "Display the maximum, minimum and average salary and the maximum, minimum and average commission earned.",
-          completed: true,
-        },
-        {
-          number: 3,
-          question:
-            "Display the average salary in the company without using AVG().",
-          completed: false,
-        },
-        {
-          number: 4,
-          question:
-            "Display the department number, total salary payout and total commission payout for each department.",
-          completed: true,
-        },
-        {
-          number: 5,
-          question:
-            "Display the department number, total salary payout and total commission payout for each department that pays at least one employee commission.",
-          completed: true,
-        },
-        {
-          number: 6,
-          question:
-            "Display the department number and number of clerks in each department.",
-          completed: false,
-        },
-        {
-          number: 7,
-          question:
-            "Display the department number and total salary of employees in each department that employs four or more people.",
-          completed: true,
-        },
-        {
-          number: 8,
-          question:
-            "Display the employee number of each employee who manages other employees with the number of people he or she manages.",
-          completed: false,
-        },
-        {
-          number: 9,
-          question:
-            "Display the average salary for each job group in each department in descending order.",
-          completed: true,
-        },
-      ],
-    },
-    {
-      tutorial: "Lab 3",
-      questions: [
-        {
-          number: 1,
-          question:
-            "If you haven’t done so yet, finish the exercises from the previous lab.",
-          completed: true,
-        },
-        {
-          number: 2,
-          question:
-            "Display the name of each employee with his department name.",
-          completed: true,
-        },
-        {
-          number: 3,
-          question:
-            "Display a list of ALL departments with their employees (i.e. list a department even if it hasn’t got any employees).",
-          completed: true,
-        },
-        {
-          number: 4,
-          question:
-            "Display the department names with the names of their managers.",
-          completed: false,
-        },
-        {
-          number: 5,
-          question:
-            "Display the names of each employee with the name of his/her boss.",
-          completed: false,
-        },
-        {
-          number: 6,
-          question:
-            "Display the names of each employee with the name of his/her boss with a blank for the boss of the president.",
-          completed: false,
-        },
-        {
-          number: 7,
-          question:
-            "Display the employee number and name of each employee who manages other employees with the number of people he or she manages.",
-          completed: false,
-        },
-        {
-          number: 8,
-          question:
-            "Repeat the display for the last question, but this time display the rows in descending order of the number of employees managed.",
-          completed: false,
-        },
-      ],
-    },
-  ]
+
   @observable
   error: any
+
   @observable
   students: IUsers[] = [
     { userId: "B512678" },
     { userId: "B234567" },
     { userId: "B678456" },
   ]
-  adminQuestions: IAdminQuestions[] = [
-    {
-      id: 1,
-      question: "This is a question",
-      answer: "This is the answer",
-      database: 2,
-      startingText: "None",
-      response: "This has been a response",
-      respondAfter: 3,
-      autoResponse: false,
-    },
-  ]
+
   conditions: IConditions[] = [
     {
       conditionOne: true,

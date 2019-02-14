@@ -4,10 +4,15 @@ import * as jwt from "jsonwebtoken"
 import { IDatabase } from "pg-promise"
 import { pgp } from "./config"
 
-export function createAddApiEndpoint(app: express.Application, conn: IDatabase<{}>) {
+export function createAddApiEndpoint(
+  app: express.Application,
+  conn: IDatabase<{}>
+) {
   return addApiEndpoint
 
-  function addApiEndpoint<T extends "none" | "authenticated" | "admin" = "none">(
+  function addApiEndpoint<
+    T extends "none" | "authenticated" | "admin" = "none"
+  >(
     path: string,
     options: { permission?: T },
     callback: (data: {

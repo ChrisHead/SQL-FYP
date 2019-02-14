@@ -14,7 +14,11 @@ export function AdminPanel() {
       <Route exact path="/students" component={AdminStudent} />
       <Route exact path="/labs" component={AdminLab} />
       <Route exact path="/questions" component={AdminQuestion} />
-      <Route exact path="/questions/:id/edit" component={AdminQuestionEditPage} />
+      <Route
+        exact
+        path="/questions/:id/edit"
+        component={AdminQuestionEditPage}
+      />
       <Route exact path="/database" component={AdminDatabase} />
       <Route exact path="/stats" component={AdminStats} />
     </Switch>

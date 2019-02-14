@@ -1,18 +1,19 @@
-import React, { useContext } from "react"
+import React from "react"
 import { TextInput } from "../components/inputs/TextInput"
-import { DbContext } from "../DbContext"
 import { SelectInput } from "../components/inputs/SelectInput"
 import { CheckboxInput } from "../components/inputs/CheckboxInput"
 import { Spacer } from "../components/Spacer"
 import { RouteComponentProps } from "react-router-dom"
+import { useQuestions } from "../hooks/useQuestions"
 
 type IPageProps<T extends Record<string, string>> = RouteComponentProps<T>
 
-export function AdminQuestionEditPage({ match, history }: IPageProps<{ id: string }>) {
-  const id = Number(match.params.id)
-  const db = useContext(DbContext)
-  const question = db.adminQuestions.find(question => question.id === id)
-  debugger
+export function AdminQuestionEditPage({
+  match,
+  history,
+}: IPageProps<{ id: string }>) {
+  const id = String(match.params.id)
+  const question = useQuestions().find(l => l.id === id)
 
   if (!question) {
     return <p>404 Question Not Found</p>
@@ -45,7 +46,10 @@ export function AdminQuestionEditPage({ match, history }: IPageProps<{ id: strin
           label="Starting Text (Custom, None or 'previous')"
           value={question.startingText}
         />
-        <TextInput label="Response After" value={String(question.respondAfter)} />
+        <TextInput
+          label="Response After"
+          value={String(question.respondAfter)}
+        />
         <Spacer height="small" />
         <fieldset>
           <legend>Restrictions</legend>
