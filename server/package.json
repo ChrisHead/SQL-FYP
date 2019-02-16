@@ -5,6 +5,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
+    "reset": "ts-node scripts/setupDB",
     "start": "ts-node src/server.ts",
     "watch": "nodemon"
   },
@@ -12,12 +13,14 @@
     "@types/cors": "^2.8.4",
     "@types/express": "^4.16.1",
     "@types/jsonwebtoken": "^8.3.0",
+    "@types/moment": "^2.13.0",
     "@types/morgan": "^1.7.35",
     "chalk": "^2.4.2",
     "cors": "^2.8.5",
     "dotenv": "^6.2.0",
     "express": "^4.16.4",
     "jsonwebtoken": "^8.4.0",
+    "moment": "^2.24.0",
     "morgan": "^1.9.1",
     "pg-promise": "^8.5.5"
   },

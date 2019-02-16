@@ -1,3 +1,5 @@
+import { IHistory } from "./stores/DbStore"
+
 async function apiRequest(path: string, data: any, authToken?: string) {
   const headers = new Headers()
   headers.set("Content-Type", "application/json")
@@ -40,7 +42,7 @@ export const api = {
     return apiRequest("bugReport", { data }, authToken)
   },
 
-  async updateHistory(data: string, authToken: string) {
+  async updateHistory(data: { questionId: string; history: IHistory }, authToken: string) {
     return apiRequest("updateHistory", { data }, authToken)
   },
 

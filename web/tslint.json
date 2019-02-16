@@ -12,6 +12,8 @@
     "jsx-no-lambda": false,
     "array-type": [true, "array"],
     "no-shadowed-variable": false,
-    "no-debugger": false
+    "no-debugger": false,
+    "comment-format": false,
+    "member-ordering": false
   }
 }

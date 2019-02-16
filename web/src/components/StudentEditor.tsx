@@ -1,80 +1,112 @@
 import * as React from "react"
+import SplitPane from "react-split-pane"
+
+import { AppContext } from "../AppContext"
+import { DbContext } from "../DbContext"
+import { useStudentEditor } from "../hooks/useStudentEditor"
+import { QuestionsPanel } from "./QuestionsPanel"
 import { ResultsPanel } from "./ResultsPanel"
 import { SqlPanel } from "./SqlPanel"
-// import { theme } from "src/constants/theme"
-import SplitPane from "react-split-pane"
-import { QuestionsPanel } from "./QuestionsPanel"
+import { Observer } from "mobx-react"
+import { api } from "../api"
 import { DbTables } from "./DbTables"
-import { DbStore } from "src/stores/DbStore"
-import { observer, inject } from "mobx-react"
-import { observable } from "mobx"
-import { AppStore } from "../stores/AppStore"
 
-interface IProps {
-  db?: DbStore
-  app?: AppStore
-}
+// import { theme } from "src/constants/theme"
+export function StudentEditor() {
+  const resultsSection = React.useRef<HTMLDivElement>(null)
+  const [contentWidth, setContentWidth] = React.useState(1000)
 
-@inject("db", "app")
-@observer
-export class StudentEditor extends React.Component<IProps> {
-  resultsSection = React.createRef<HTMLDivElement>()
-  @observable
-  contentWidth = 1000
-  handleChange = () => {
-    this.updateContentWidth()
-  }
-  componentDidMount() {
-    this.updateContentWidth()
-  }
-  updateContentWidth() {
-    if (!this.resultsSection.current) {
-      return
+  React.useEffect(updateContentWidth, [])
+
+  function updateContentWidth() {
+    if (resultsSection.current) {
+      const width = resultsSection.current.getBoundingClientRect().width
+      setContentWidth(width)
     }
-    this.contentWidth = this.resultsSection.current.getBoundingClientRect().width
   }
 
-  render() {
-    const { app } = this.props
-    return (
-      <div
-        style={{
-          display: "flex",
-          flex: 1,
-          position: "relative",
-        }}
-      >
-        <SplitPane
-          split="vertical"
-          minSize={0.1 * app!.windowWidth}
-          defaultSize={0.2 * app!.windowWidth}
-          maxSize={0.5 * app!.windowWidth}
-          onChange={this.handleChange}
-        >
-          <QuestionsPanel />
-          <SplitPane
-            split="horizontal"
-            pane2Style={{ flex: 1, overflow: "auto" }}
-            minSize={0.2 * app!.windowHeight}
-            defaultSize={0.5 * app!.windowHeight}
-            maxSize={0.8 * app!.windowHeight}
-          >
-            <SqlPanel />
-            <div ref={this.resultsSection}>
-              <SplitPane
-                split="vertical"
-                minSize={0.3 * this.contentWidth}
-                defaultSize={0.5 * this.contentWidth}
-                maxSize={0.7 * this.contentWidth}
-                pane2Style={{ overflow: "auto" }}
-              >
-                <ResultsPanel />
-                <DbTables db={this.props.db!.db} />
-              </SplitPane>
-            </div>
-          </SplitPane>
-        </SplitPane>
-      </div>
-    )
+  function handleChange() {
+    updateContentWidth()
   }
+
+  const app = React.useContext(AppContext)
+  const db = React.useContext(DbContext)
+  // const db = React.useContext(DbContext)
+  const {
+    labs,
+    loaded,
+    handleSetCurrentQuestion,
+    handleExecuteQuery,
+    history,
+    handleSelectHistory,
+    currentQuestion,
+    currentLab,
+    sqlValue,
+    setSqlValue,
+    clearResults,
+    error,
+    results,
+  } = useStudentEditor()
+
+  if (!loaded) {
+    return <>"Loading"</>
+  }
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        flex: 1,
+        position: "relative",
+      }}
+    >
+      <SplitPane
+        split="vertical"
+        minSize={0.1 * app.windowWidth}
+        defaultSize={0.2 * app.windowWidth}
+        maxSize={0.5 * app.windowWidth}
+        onChange={handleChange}
+      >
+        <QuestionsPanel
+          labs={labs}
+          setCurrentQuestion={handleSetCurrentQuestion}
+          currentLab={currentLab}
+          currentQuestion={currentQuestion}
+        />
+        {currentQuestion ? (
+          <>
+            <SplitPane
+              split="horizontal"
+              pane2Style={{ flex: 1, overflow: "auto" }}
+              minSize={0.2 * app.windowHeight}
+              defaultSize={0.5 * app.windowHeight}
+              maxSize={0.8 * app.windowHeight}
+            >
+              <SqlPanel
+                history={history}
+                onSelectHistory={handleSelectHistory}
+                onExecute={handleExecuteQuery}
+                sqlValue={sqlValue}
+                onSqlValueChange={setSqlValue}
+              />
+              <div ref={resultsSection}>
+                <SplitPane
+                  split="vertical"
+                  minSize={0.3 * contentWidth}
+                  defaultSize={0.5 * contentWidth}
+                  maxSize={0.7 * contentWidth}
+                  pane2Style={{ overflow: "auto" }}
+                >
+                  <ResultsPanel onClearResults={clearResults} error={error} results={results} />
+                  <Observer>{() => <DbTables db={db.db} />}</Observer>
+                </SplitPane>
+              </div>
+            </SplitPane>
+          </>
+        ) : (
+          "Select Question :)"
+        )}
+      </SplitPane>
+    </div>
+  )
 }

@@ -6,22 +6,24 @@ import { DbContext } from "src/DbContext"
 import { Observer } from "mobx-react"
 import { api } from "../api"
 import { AppContext } from "../AppContext"
+import { IHistory } from "../stores/DbStore"
 
-export function SqlPanel() {
-  const db = React.useContext(DbContext)
-  const app = React.useContext(AppContext)
+interface IProps {
+  history: IHistory[]
+  onSelectHistory(history: IHistory): void
+  onExecute(): void
+  sqlValue: string
+  onSqlValueChange(val: string): void
+}
 
-  async function execute() {
-    if (db.currentLab !== undefined && db.currentQuestion !== undefined) {
-      db.executeSql()
-      await api.updateHistory(
-        JSON.stringify(db.mostRecentHistory),
-        app.authToken!
-      )
-    } else {
-      db.error = "Select Lab and Question"
-    }
-  }
+export function SqlPanel({
+  history,
+  onSelectHistory,
+  onExecute,
+  sqlValue,
+  onSqlValueChange,
+}: IProps) {
+  const [autoRun, setAutoRun] = React.useState(true)
 
   return (
     <div
@@ -41,19 +43,11 @@ export function SqlPanel() {
           justifyContent: "flex-start",
         }}
       >
-        <button
-          style={{ width: 100, marginLeft: 8 }}
-          onClick={() => {
-            execute()
-          }}
-        >
+        <button style={{ width: 100, marginLeft: 8 }} onClick={onExecute}>
           Run
         </button>
-        <label
-          className="Collapsible__trigger button"
-          style={{ marginLeft: 8 }}
-        >
-          <input type="checkbox" id="semiRun" value="semiRun" />
+        <label className="Collapsible__trigger button" style={{ marginLeft: 8 }}>
+          <input type="checkbox" checked={autoRun} onChange={e => setAutoRun(e.target.checked)} />
           Run on ";"
         </label>
       </div>
@@ -69,7 +63,7 @@ export function SqlPanel() {
       <Observer>
         {() => (
           <CodeMirror
-            value={db.sqlValue}
+            value={sqlValue}
             className="code-editor"
             options={{
               mode: "text/x-mysql",
@@ -78,22 +72,17 @@ export function SqlPanel() {
               lineWrapping: true,
             }}
             onBeforeChange={(editor, data, value) => {
-              db.sqlValue = value
+              onSqlValueChange(value)
             }}
             onKeyUp={(editor, event) => {
-              const check = document.getElementById(
-                "semiRun"
-              )! as HTMLInputElement
-              if (check.checked === true) {
-                if ((event as any).key === ";") {
-                  execute()
-                }
+              if (autoRun && (event as any).key === ";") {
+                onExecute()
               }
             }}
           />
         )}
       </Observer>
-      <HistoryPanel />
+      <HistoryPanel history={history} onSelectHistory={onSelectHistory} />
     </div>
   )
 }

@@ -19,8 +19,14 @@ export interface ILab {
   questions: {
     id: string
     question: string
-    answer: string
-    database: number
+    answer?: {
+      id: string
+      questionId: string
+      history: IHistory[]
+      activity: {}[]
+      completed: false
+    }
+    databaseId: string
     startingText: string
     response: string
     respondAfter: number
@@ -47,8 +53,6 @@ interface IConditions {
 }
 
 export interface IHistory {
-  labNum: string
-  questionNum: string
   dateTime: string
   value: string
   error: string
@@ -314,33 +318,31 @@ export class DbStore {
     } catch (err) {
       this.error = err.message
     }
-    this.history.unshift({
-      labNum: this.currentLab,
-      questionNum: this.currentQuestion,
-      dateTime: new Date().toLocaleString(),
-      value: this.sqlValue,
-      error: this.error,
-      completed: false,
-    })
-    this.mostRecentHistory = []
-    this.mostRecentHistory.push({
-      labNum: this.currentLab,
-      questionNum: this.currentQuestion,
-      dateTime: new Date().toLocaleString(),
-      value: this.sqlValue,
-      error: this.error,
-      completed: false,
-    })
+    // this.history.unshift({
+    //   labNum: this.currentLab,
+    //   questionNum: this.currentQuestion,
+    //   dateTime: new Date().toLocaleString(),
+    //   value: this.sqlValue,
+    //   error: this.error,
+    //   completed: false,
+    // } as any)
+    // this.mostRecentHistory = []
+    // this.mostRecentHistory.push({
+    //   labNum: this.currentLab,
+    //   questionNum: this.currentQuestion,
+    //   dateTime: new Date().toLocaleString(),
+    //   value: this.sqlValue,
+    //   error: this.error,
+    //   completed: false,
+    // } as any)
     this.sqlValue = ""
     const newdb: ITable[] = Object.keys((alasql as any).tables).map(name => {
-      const columns = (alasql as any).tables[name].columns.map(
-        (column: IAlaColumnType) => {
-          return {
-            name: `${column.columnid}`,
-            type: `${column.dbtypeid || "undefinedTest"}`,
-          }
+      const columns = (alasql as any).tables[name].columns.map((column: IAlaColumnType) => {
+        return {
+          name: `${column.columnid}`,
+          type: `${column.dbtypeid || "undefinedTest"}`,
         }
-      )
+      })
       const data = (alasql as any).tables[name].data
       return { name, columns, data }
     })
