@@ -15,12 +15,12 @@ export class AdminStudent extends React.Component<IProps> {
 
   handleNewUserSubmit = async e => {
     e.preventDefault()
-    console.log(this.value)
-    this.props.db!.students.push({ userId: this.value })
-    this.value = ""
-    this.props.db!.students.forEach(element => {
-      console.log(element.userId)
-    })
+    // console.log(this.value)
+    // this.props.db!.students.push({ userId: this.value })
+    // this.value = ""
+    // this.props.db!.students.forEach(element => {
+    //   console.log(element.userId)
+    // })
   }
 
   render() {

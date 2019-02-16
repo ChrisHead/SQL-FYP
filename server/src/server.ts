@@ -74,15 +74,113 @@ addApiEndpoint(
   { permission: "authenticated" },
   async ({ currentUser, req }) => {
     const data = req.body
-    const feedback = `INSERT INTO "feedbacks" ("feedback", "dateTime") VALUES ('${pgp.as.value(
+    const feedbackSql = `INSERT INTO "feedbacks" ("feedback", "dateTime") VALUES ('${pgp.as.value(
       data.data
     )}', now()) RETURNING "id"`
-    const feedbackSql = await conn.any<IUser>(feedback)
-    const userFeedback = `INSERT INTO "usersFeedbacks" ("userId", "feedbackId") VALUES ('${pgp.as.value(
+    const feedback = await conn.any<IUser>(feedbackSql)
+    const userFeedbackSql = `INSERT INTO "usersFeedbacks" ("userId", "feedbackId") VALUES ('${pgp.as.value(
       currentUser.id
-    )}', '${feedbackSql[0].id}')`
-    const userFeedbackSql = await conn.any<IUser>(userFeedback)
-    return userFeedbackSql
+    )}', '${feedback[0].id}')`
+    const userFeedback = await conn.any<IUser>(userFeedbackSql)
+    return userFeedback
+  }
+)
+
+addApiEndpoint(
+  "bugReport",
+  { permission: "authenticated" },
+  async ({ currentUser, req }) => {
+    const data = req.body
+    const bugReportSql = `INSERT INTO "bugReports" ("bugReport", "dateTime") VALUES ('${pgp.as.value(
+      data.data
+    )}', now()) RETURNING "id"`
+    const bugReport = await conn.any<IUser>(bugReportSql)
+    const userBugReportSql = `INSERT INTO "usersBugReports" ("userId", "bugReportId") VALUES ('${pgp.as.value(
+      currentUser.id
+    )}', '${bugReport[0].id}')`
+    const userBugReport = await conn.any<IUser>(userBugReportSql)
+    return userBugReport
+  }
+)
+
+addApiEndpoint(
+  "updateHistory",
+  { permission: "authenticated" },
+  async ({ currentUser, req, res, next }) => {
+    const data = JSON.parse(req.body.data)
+
+    const labsQuestionsIdSql = `SELECT id from "labsQuestions" WHERE "labId" = ('${pgp.as.value(
+      data[0].labNum
+    )}') AND "questionId" = ('${pgp.as.value(data[0].questionNum)}')`
+    const labsQuestionsId = await conn.any<IUser>(labsQuestionsIdSql)
+
+    const usersLabsQuestionsIdSql = `SELECT id FROM "usersLabsQuestions" WHERE "userId" = '${pgp.as.value(
+      currentUser.id
+    )}' AND "labQuestionId" = '${pgp.as.value(labsQuestionsId[0].id)}'`
+    const usersLabsQuestionsId = await conn.any<IUser>(usersLabsQuestionsIdSql)
+
+    const answerIdSql = `SELECT id FROM "answers" WHERE "usersLabsQuestionsId" = '${pgp.as.value(
+      usersLabsQuestionsId[0].id
+    )}'`
+    const answerId = await conn.any<IUser>(answerIdSql)
+
+    delete data[0].labNum
+    delete data[0].questionNum
+
+    const updateHistorySql = `UPDATE answers SET "history" = "history" || ${pgp.as.json(
+      [data[0]]
+    )} WHERE "id" = '${pgp.as.value(answerId[0].id)}'`
+    const updateHistory = await conn.any<IUser>(updateHistorySql)
+    return updateHistory
+  }
+)
+
+addApiEndpoint(
+  "getHistory",
+  { permission: "authenticated" },
+  async ({ currentUser, req }) => {
+    const data = req.body.data
+    console.log(data)
+    const labsQuestionsIdSql = `SELECT id from "labsQuestions" WHERE "labId" = '${pgp.as.value(
+      data.labNum
+    )}' AND "questionId" = '${pgp.as.value(data.questionNum)}'`
+    const labsQuestionsId = await conn.any<IUser>(labsQuestionsIdSql)
+
+    const uLQIdSql = `SELECT id from "usersLabsQuestions" WHERE "labQuestionId" = '${pgp.as.value(
+      labsQuestionsId[0].id
+    )}' AND "userId" = '${currentUser.id}'`
+    const uLQId = await conn.any<IUser>(uLQIdSql)
+
+    const answersSql = `SELECT history from "answers" WHERE "usersLabsQuestionsId" = '${pgp.as.value(
+      uLQId[0].id
+    )}'`
+    const answers = await conn.any<IUser>(answersSql)
+    return answers
+  }
+)
+
+addApiEndpoint(
+  "getCompleted",
+  { permission: "authenticated" },
+  async ({ currentUser, req }) => {
+    const data = req.body.data
+    console.log(data)
+    const labsQuestionsIdSql = `SELECT id from "labsQuestions" WHERE "labId" = '${pgp.as.value(
+      data.labNum
+    )}' AND "questionId" = '${pgp.as.value(data.questionNum)}'`
+    const labsQuestionsId = await conn.any<IUser>(labsQuestionsIdSql)
+
+    const uLQIdSql = `SELECT id from "usersLabsQuestions" WHERE "labQuestionId" = '${pgp.as.value(
+      labsQuestionsId[0].id
+    )}' AND "userId" = '${currentUser.id}'`
+    const uLQId = await conn.any<IUser>(uLQIdSql)
+
+    const answersSql = `SELECT completed from "answers" WHERE "usersLabsQuestionsId" = '${pgp.as.value(
+      uLQId[0].id
+    )}'`
+    const answers = await conn.any<IUser>(answersSql)
+    console.log(answers)
+    return answers
   }
 )
 

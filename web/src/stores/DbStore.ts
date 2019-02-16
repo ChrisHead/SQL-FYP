@@ -12,15 +12,12 @@ interface IAlaColumnType {
   dbtypeid: any
 }
 
-export interface IUsers {
-  userId: string
-}
-
 export interface ILab {
+  id: string
   labNumber: number
   dateTime: string
   questions: {
-    id: number
+    id: string
     question: string
     answer: string
     database: number
@@ -28,7 +25,6 @@ export interface ILab {
     response: string
     respondAfter: number
     autoResponse: boolean
-    completed: boolean
   }[]
 }
 
@@ -50,21 +46,60 @@ interface IConditions {
   conditionFour: boolean
 }
 
+export interface IHistory {
+  labNum: string
+  questionNum: string
+  dateTime: string
+  value: string
+  error: string
+  completed: boolean
+}
+
+export interface ICompleted {
+  labNum: string
+  questionNum: string
+  completed: boolean
+}
+
+interface IQuestionActivity {
+  dateTime: string
+  question: string
+  activity: string
+}
+
 export class DbStore {
   @observable
   sqlValue = ""
 
   @observable
-  history = [
-    "SELECT * FROM EMP WHERE SAL = 950",
-    "SELECT DEPT.DNAME, EMP.ENAME FROM DEPT INNER JOIN EMP ON DEPT.DEPTNO=EMP.DEPTNO;",
+  history: IHistory[] = []
+
+  mostRecentHistory: IHistory[] = []
+
+  completedStore: ICompleted[] = []
+
+  @observable
+  activity: IQuestionActivity[] = [
+    {
+      dateTime: new Date().toLocaleString(),
+      question: "example question id",
+      activity: "opened",
+    },
+    {
+      dateTime: new Date().toLocaleString(),
+      question: "example question id",
+      activity: "closed",
+    },
   ]
 
   @observable
   tab = "results"
 
   @observable
-  currentQuestion: number
+  currentQuestion: string
+
+  @observable
+  currentLab: string
 
   @observable
   currentControl = ""
@@ -248,13 +283,6 @@ export class DbStore {
   @observable
   error: any
 
-  @observable
-  students: IUsers[] = [
-    { userId: "B512678" },
-    { userId: "B234567" },
-    { userId: "B678456" },
-  ]
-
   conditions: IConditions[] = [
     {
       conditionOne: true,
@@ -265,6 +293,7 @@ export class DbStore {
   ]
 
   ala = alasql
+
   constructor() {
     this.db.forEach(table => {
       alasql(
@@ -280,12 +309,28 @@ export class DbStore {
   executeSql() {
     this.results = []
     this.error = ""
-    this.history.unshift(this.sqlValue)
     try {
       this.results = alasql(this.sqlValue)
     } catch (err) {
       this.error = err.message
     }
+    this.history.unshift({
+      labNum: this.currentLab,
+      questionNum: this.currentQuestion,
+      dateTime: new Date().toLocaleString(),
+      value: this.sqlValue,
+      error: this.error,
+      completed: false,
+    })
+    this.mostRecentHistory = []
+    this.mostRecentHistory.push({
+      labNum: this.currentLab,
+      questionNum: this.currentQuestion,
+      dateTime: new Date().toLocaleString(),
+      value: this.sqlValue,
+      error: this.error,
+      completed: false,
+    })
     this.sqlValue = ""
     const newdb: ITable[] = Object.keys((alasql as any).tables).map(name => {
       const columns = (alasql as any).tables[name].columns.map(
@@ -306,5 +351,13 @@ export class DbStore {
   clearResults() {
     this.results = []
     this.error = ""
+  }
+
+  clearHistory() {
+    this.history = []
+  }
+
+  clearCompleted() {
+    this.completedStore = []
   }
 }

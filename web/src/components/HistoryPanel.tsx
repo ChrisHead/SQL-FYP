@@ -3,7 +3,7 @@ import { DbStore } from "src/stores/DbStore"
 import { inject, observer } from "mobx-react"
 import Collapsible from "react-collapsible"
 import { library } from "@fortawesome/fontawesome-svg-core"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import {
   faAngleDoubleDown,
   faAngleDoubleUp,
@@ -28,16 +28,16 @@ export const HistoryPanel = inject("db")(
           className="history"
           trigger={
             <>
-              <FontAwesomeIcon icon="angle-double-up" />
+              {/* <FontAwesomeIcon icon="angle-double-up" /> */}
               <span style={{ margin: "0 16px" }}>History</span>
-              <FontAwesomeIcon icon="angle-double-up" />
+              {/* <FontAwesomeIcon icon="angle-double-up" /> */}
             </>
           }
           triggerWhenOpen={
             <>
-              <FontAwesomeIcon icon="angle-double-down" />
+              {/* <FontAwesomeIcon icon="angle-double-down" /> */}
               <span style={{ margin: "0 16px" }}>History</span>
-              <FontAwesomeIcon icon="angle-double-down" />
+              {/* <FontAwesomeIcon icon="angle-double-down" /> */}
             </>
           }
           transitionTime={100}
@@ -55,9 +55,16 @@ export const HistoryPanel = inject("db")(
               className="history-div"
               style={{ fontSize: 14, fontFamily: "monospace" }}
               key={i}
-              onClick={() => (db!.sqlValue = line)}
+              onClick={() => (db!.sqlValue = line.value)}
             >
-              {line}
+              {/* {line.dateTime +
+                " : " +
+                line.value +
+                " : " +
+                line.error +
+                " : " +
+                line.completed} */}
+              {line.value}
             </div>
           ))}
         </Collapsible>

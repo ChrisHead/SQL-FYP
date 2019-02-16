@@ -13,7 +13,6 @@ export function LoginPage() {
     setError("")
 
     const validationError = await app.login(username, password)
-    console.log(validationError)
     if (validationError) {
       setError(validationError)
     }

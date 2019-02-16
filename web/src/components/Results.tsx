@@ -18,10 +18,10 @@ const ResultsComp = ({ db }: IProps) => (
           </tr>
         </thead>
         <tbody>
-          {db!.results.map(row => (
-            <tr>
-              {Object.keys(row).map(key => (
-                <td>{row[key]}</td>
+          {db!.results.map((row, i) => (
+            <tr key={i}>
+              {Object.keys(row).map((key, i) => (
+                <td key={i}>{row[key]}</td>
               ))}
             </tr>
           ))}

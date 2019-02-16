@@ -31,7 +31,7 @@ async function run() {
 
   await conn.any(`CREATE TABLE IF NOT EXISTS "labs" (
     "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    "labNumber" INTEGER,
+    "labNumber" INTEGER UNIQUE,
     "dateTime" TIMESTAMP NOT NULL
   )`)
 
@@ -63,6 +63,32 @@ async function run() {
     "userId" UUID REFERENCES "users"("id"),
     "feedbackId" UUID REFERENCES "feedbacks"("id")
   )`)
+
+  await conn.any(`CREATE TABLE IF NOT EXISTS "bugReports" (
+    "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    "bugReport" TEXT,
+    "dateTime" TIMESTAMP NOT NULL
+  )`)
+
+  await conn.any(`CREATE TABLE IF NOT EXISTS "usersBugReports" (
+    "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    "userId" UUID REFERENCES "users"("id"),
+    "bugReportId" UUID REFERENCES "bugReports"("id")
+  )`)
+
+  await conn.any(`CREATE TABLE IF NOT EXISTS "usersLabsQuestions" (
+    "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    "userId" UUID REFERENCES "users"("id"),
+    "labQuestionId" UUID REFERENCES "labsQuestions"("id")
+  )`)
+
+  await conn.any(`CREATE TABLE IF NOT EXISTS "answers" (
+    "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    "usersLabsQuestionsId" UUID REFERENCES "usersLabsQuestions"("id"),
+    "history" JSONB DEFAULT '[]',
+    "activity" JSONB DEFAULT '[]',
+    "completed" BOOLEAN DEFAULT false
+  )`)
   //////////////////////////////////
   //////////////////////////////////
   //////////////////////////////////
@@ -79,6 +105,10 @@ async function run() {
   await conn.any(`TRUNCATE TABLE "databaseTemplates" CASCADE`)
   await conn.any(`TRUNCATE TABLE "usersFeedbacks" CASCADE`)
   await conn.any(`TRUNCATE TABLE "feedbacks" CASCADE`)
+  await conn.any(`TRUNCATE TABLE "usersBugReports" CASCADE`)
+  await conn.any(`TRUNCATE TABLE "bugReports" CASCADE`)
+  await conn.any(`TRUNCATE TABLE "usersLabsQuestions" CASCADE`)
+  await conn.any(`TRUNCATE TABLE "answers" CASCADE`)
 
   await conn.any(`
     INSERT INTO "users" ("username", "password", "admin")
@@ -145,6 +175,58 @@ async function run() {
     INSERT INTO "usersFeedbacks" ("userId", "feedbackId")
     VALUES ('${getFeedbackUserIds[0].id}', '${getFeedbackFeedbackIds[0].id}')
 `)
+
+  const bugReportIds = await conn.any(`
+    INSERT INTO "bugReports" ("bugReport", "dateTime")
+    VALUES ('This is the bug report', now())
+    RETURNING "id"
+  `)
+
+  const getBugReportUserIds = await conn.any(
+    `SELECT id FROM "users" WHERE "username" = 'asd'`
+  )
+  const getBugReportBugReportIds = await conn.any(
+    `SELECT id FROM "bugReports" WHERE "bugReport" = 'This is the bug report'`
+  )
+
+  const usersBugReportsValues = await conn.any(`
+    INSERT INTO "usersBugReports" ("userId", "bugReportId")
+    VALUES ('${getBugReportUserIds[0].id}', '${getBugReportBugReportIds[0].id}')
+`)
+
+  const getUsersIds = await conn.any(`SELECT "id" FROM "users"`)
+
+  const getLabsQuestionsIds = await conn.any(`SELECT id FROM "labsQuestions"`)
+
+  const temp1 = getLabsQuestionsIds
+    .map((value, x) => {
+      return `('${getUsersIds[0].id}', '${value.id}')`
+    })
+    .join()
+  const temp2 = getLabsQuestionsIds
+    .map((value, x) => {
+      return `('${getUsersIds[1].id}', '${value.id}')`
+    })
+    .join()
+  const usersLabsQuestionsValues = temp1 + "," + temp2
+  await conn.any(`
+    INSERT INTO "usersLabsQuestions" ("userId", "labQuestionId")
+    VALUES ${usersLabsQuestionsValues}
+  `)
+
+  const getUsersLabsQuestionsIds = await conn.any(
+    `SELECT id FROM "usersLabsQuestions"`
+  )
+
+  const addULQIds = getUsersLabsQuestionsIds
+    .map(values => {
+      return `('${values.id}')`
+    })
+    .join()
+  await conn.any(`
+      INSERT INTO "answers" ("usersLabsQuestionsId")
+      VALUES ${addULQIds}
+    `)
 }
 
 run()

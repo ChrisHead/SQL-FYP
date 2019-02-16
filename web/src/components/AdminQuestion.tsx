@@ -86,7 +86,7 @@ export function AdminQuestion() {
         flexDirection: "column",
         alignItems: "left",
         overflow: "auto",
-        height: 0.94 * app!.windowHeight,
+        height: 0.94 * app.windowHeight,
       }}
     >
       <ReactTable
@@ -96,7 +96,7 @@ export function AdminQuestion() {
         className="-striped -highlight"
         style={{
           height: 400,
-          width: 0.78 * app!.windowWidth,
+          width: 0.78 * app.windowWidth,
           backgroundColor: "#30434d",
         }}
         SubComponent={row => {

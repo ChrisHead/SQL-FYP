@@ -35,4 +35,20 @@ export const api = {
   async feedback(data: string, authToken: string) {
     return apiRequest("feedback", { data }, authToken)
   },
+
+  async bugReport(data: string, authToken: string) {
+    return apiRequest("bugReport", { data }, authToken)
+  },
+
+  async updateHistory(data: string, authToken: string) {
+    return apiRequest("updateHistory", { data }, authToken)
+  },
+
+  async getHistory(data: object, authToken: string) {
+    return apiRequest("getHistory", { data }, authToken)
+  },
+
+  async getCompleted(data: object, authToken: string) {
+    return apiRequest("getCompleted", { data }, authToken)
+  },
 }
