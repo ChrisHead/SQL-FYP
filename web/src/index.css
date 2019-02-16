@@ -120,7 +120,13 @@ a:visited {
 }
 
 .question-div:hover {
-  background: rgba(211, 211, 211, 0.13) !important;
+  background: rgba(211, 211, 211, 0.13);
+}
+
+.question-div.active,
+.question-div:hover.active {
+  background: rgba(240, 237, 237, 0.493);
+  color: rgba(0, 0, 0, 0.781);
 }
 
 .control-div {
