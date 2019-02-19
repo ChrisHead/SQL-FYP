@@ -62,6 +62,11 @@
   version "10.12.24"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-10.12.24.tgz#b13564af612a22a20b5d95ca40f1bffb3af315cf"
 
+"@types/node@^11.9.4":
+  version "11.9.4"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-11.9.4.tgz#ceb0048a546db453f6248f2d1d95e937a6f00a14"
+  integrity sha512-Zl8dGvAcEmadgs1tmSPcvwzO1YRsz38bVJQvH1RvRqSR9/5n61Q1ktcDL0ht3FXWR+ZpVmXVwN1LuH4Ax23NsA==
+
 "@types/range-parser@*":
   version "1.2.3"
   resolved "https://registry.yarnpkg.com/@types/range-parser/-/range-parser-1.2.3.tgz#7ee330ba7caafb98090bece86a5ee44115904c2c"
@@ -377,7 +382,7 @@ mime@1.4.1:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/mime/-/mime-1.4.1.tgz#121f9ebc49e3766f311a76e1fa1c8003c4b03aa6"
 
-moment@*, moment@^2.24.0:
+moment@*:
   version "2.24.0"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.24.0.tgz#0d055d53f5052aa653c9f6eb68bb5d12bf5c2b5b"
 
@@ -402,6 +407,18 @@ ms@^2.1.1:
 negotiator@0.6.1:
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/negotiator/-/negotiator-0.6.1.tgz#2b327184e8992101177b28563fb5e7102acd0ca9"
+
+node-bin-setup@^1.0.0:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/node-bin-setup/-/node-bin-setup-1.0.6.tgz#4b5c9bb937ece702d7069b36ca78af4684677528"
+  integrity sha512-uPIxXNis1CRbv1DwqAxkgBk5NFV3s7cMN/Gf556jSw6jBvV7ca4F9lRL/8cALcZecRibeqU+5dFYqFFmzv5a0Q==
+
+node@^11.10.0:
+  version "11.10.0"
+  resolved "https://registry.yarnpkg.com/node/-/node-11.10.0.tgz#f6ed6667d9e0f6bace726579a227a14cc7b02b15"
+  integrity sha512-UTNYa/0oUWaXSXU6S7VtTxY7pY8KQgbNeRzGyHowxsDISd0SHkMFqxzuoFMMHyrH5inBDBHJ7AwXKqBlx48jCA==
+  dependencies:
+    node-bin-setup "^1.0.0"
 
 object-assign@^4:
   version "4.1.1"
@@ -448,6 +465,7 @@ pg-pool@^2.0.4:
 pg-promise@^8.5.5:
   version "8.5.5"
   resolved "https://registry.yarnpkg.com/pg-promise/-/pg-promise-8.5.5.tgz#29b288b012ca9a9391c3db3749b65ea4ee71f947"
+  integrity sha512-TaIXqoIPEUJNxm3cYWUr2fm50qfOY3ahFAuUoS3GJiozeWmhNYj9vsfBAsiCzaCV6IE9EdDK6255yuZkAxLJ2g==
   dependencies:
     manakin "0.5.2"
     pg "7.8.0"

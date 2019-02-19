@@ -10,7 +10,9 @@ export function useStudentEditor() {
 
   const [labs, setLabs] = React.useState<ILab[]>([])
   const [currentLabId, setCurrentLabId] = React.useState<string | null>(null)
-  const [currentQuestionId, setCurrentQuestionId] = React.useState<string | null>(null)
+  const [currentQuestionId, setCurrentQuestionId] = React.useState<
+    string | null
+  >(null)
   const [sqlValue, setSqlValue] = React.useState("")
 
   React.useEffect(() => {
@@ -28,25 +30,34 @@ export function useStudentEditor() {
     db.currentQuestion = questionId
     setCurrentLabId(labId)
     setCurrentQuestionId(questionId)
+    //function to handle activity update
   }
 
-  async function handleExecuteQuery() {
-    //////////?
-    //////////?
-    //////////?
-    //////////?
+  // function activityUpdate() {
+  //    if question is not completed:
+  //    send update to server
+  // }
 
-    // if (!currentLab || !currentQuestion) {
-    //   return
-    // }
+  async function handleExecuteQuery() {
+    console.log("db sql value ", db.sqlValue)
     const sql = sqlValue
+    console.log("sql value ", sql)
     db.executeSql()
-    const historyItem = { value: sql, dateTime: Date(), completed: false, error: db.error }
+    const historyItem = {
+      value: sql,
+      dateTime: Date(),
+      //function to set completed correctly
+      completed: false,
+      error: db.error,
+    }
+    console.log(historyItem)
 
     const currentLabIdx = labs.findIndex(lab => lab.id === currentLabId)
     const currentQuestionIdx =
       currentLabIdx > -1
-        ? labs[currentLabIdx].questions.findIndex(question => question.id === currentQuestionId)
+        ? labs[currentLabIdx].questions.findIndex(
+            question => question.id === currentQuestionId
+          )
         : -1
 
     if (currentQuestionIdx === -1) {
@@ -57,11 +68,16 @@ export function useStudentEditor() {
     const currentQuestion = currentLab.questions[currentQuestionIdx]
 
     if (currentQuestion.answer) {
-      currentQuestion.answer.history = [...currentQuestion.answer.history, historyItem]
+      currentQuestion.answer.history = [
+        ...currentQuestion.answer.history,
+        historyItem,
+      ]
+      // if historyItem.completed === true, currentQuestion.answer = true
     } else {
       currentQuestion.answer = {
         id: "TEMP_ID",
         activity: [],
+        // if historyItem.completed === true, currentQuestion.answer = true
         completed: false,
         questionId: currentQuestion.id,
         history: [historyItem],
@@ -69,13 +85,12 @@ export function useStudentEditor() {
     }
     setLabs(labs)
 
-    //////////?
-    //////////?
-    //////////?
     await api.updateHistory(
       { questionId: currentQuestion.id, history: historyItem },
       app.authToken!
     )
+
+    //update completed value if currentQuestion.answer.completed === true
   }
 
   function handleSelectHistory(history) {
@@ -84,13 +99,18 @@ export function useStudentEditor() {
 
   const loaded = labs && labs.length > 0
 
-  const currentLab = currentLabId ? labs.find(lab => lab.id === currentLabId) : undefined
+  const currentLab = currentLabId
+    ? labs.find(lab => lab.id === currentLabId)
+    : undefined
   const currentQuestion =
     currentLab && currentQuestionId
       ? currentLab.questions.find(question => question.id === currentQuestionId)
       : undefined
 
-  const history = currentQuestion && currentQuestion.answer ? currentQuestion.answer.history : []
+  const history =
+    currentQuestion && currentQuestion.answer
+      ? currentQuestion.answer.history
+      : []
 
   const [results, setResults] = React.useState([])
   const [error, setError] = React.useState("")
@@ -105,6 +125,7 @@ export function useStudentEditor() {
       setResults(change.newValue)
     })
     observe(db, "sqlValue", change => {
+      console.log("newvalue", change.newValue)
       setSqlValue(change.newValue)
     })
     observe(db, "error", change => {

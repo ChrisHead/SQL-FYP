@@ -1,13 +1,6 @@
-import { library } from "@fortawesome/fontawesome-svg-core"
-import { faAngleDoubleDown, faAngleDoubleUp } from "@fortawesome/free-solid-svg-icons"
 import * as React from "react"
 import Collapsible from "react-collapsible"
-
 import { IHistory } from "../stores/DbStore"
-
-// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-library.add(faAngleDoubleDown)
-library.add(faAngleDoubleUp)
 
 interface IProps {
   history: IHistory[]
@@ -21,16 +14,12 @@ export function HistoryPanel({ history, onSelectHistory }: IProps) {
         className="history"
         trigger={
           <>
-            {/* <FontAwesomeIcon icon="angle-double-up" /> */}
             <span style={{ margin: "0 16px" }}>History</span>
-            {/* <FontAwesomeIcon icon="angle-double-up" /> */}
           </>
         }
         triggerWhenOpen={
           <>
-            {/* <FontAwesomeIcon icon="angle-double-down" /> */}
             <span style={{ margin: "0 16px" }}>History</span>
-            {/* <FontAwesomeIcon icon="angle-double-down" /> */}
           </>
         }
         transitionTime={100}
@@ -50,15 +39,8 @@ export function HistoryPanel({ history, onSelectHistory }: IProps) {
             style={{ fontSize: 14, fontFamily: "monospace" }}
             onClick={() => onSelectHistory(line)}
           >
-            {/* {line.dateTime +
-                " : " +
-                line.value +
-                " : " +
-                line.error +
-                " : " +
-                line.completed} */}
             {line.value}
-            {JSON.stringify(line)}
+            {/* {JSON.stringify(line)} */}
           </div>
         ))}
       </Collapsible>

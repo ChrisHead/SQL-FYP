@@ -53,8 +53,11 @@ addApiEndpoint("users", { permission: "admin" }, async () => {
   return results
 })
 
-addApiEndpoint("studentLabs", { permission: "authenticated" }, async ({ currentUser }) => {
-  const sql = `
+addApiEndpoint(
+  "studentLabs",
+  { permission: "authenticated" },
+  async ({ currentUser }) => {
+    const sql = `
   SELECT
     "labs".*,
     ((
@@ -73,18 +76,10 @@ addApiEndpoint("studentLabs", { permission: "authenticated" }, async ({ currentU
     )) questions
   FROM "labs"
   `
-  const results = await conn.any<IUser>(sql)
-  return results
-})
-// addApiEndpoint("studentLabs", { permission: "authenticated" }, async () => {
-//   const sql = `SELECT "labs".*, json_agg(questions.*) questions
-//   FROM   "labs"
-//       join "labsQuestions" on "labs"."id" = "labsQuestions"."labId"
-//       join "questions" on "labsQuestions"."questionId" = "questions"."id"
-//       group by "labs"."id"`
-//   const results = await conn.any<IUser>(sql)
-//   return results
-// })
+    const results = await conn.any<IUser>(sql)
+    return results
+  }
+)
 
 addApiEndpoint("questions", { permission: "admin" }, async () => {
   const sql = `SELECT * FROM questions`
@@ -92,31 +87,39 @@ addApiEndpoint("questions", { permission: "admin" }, async () => {
   return results
 })
 
-addApiEndpoint("feedback", { permission: "authenticated" }, async ({ currentUser, req }) => {
-  const data = req.body
-  const feedbackSql = `INSERT INTO "feedbacks" ("feedback", "dateTime") VALUES ('${pgp.as.value(
-    data.data
-  )}', now()) RETURNING "id"`
-  const feedback = await conn.any<IUser>(feedbackSql)
-  const userFeedbackSql = `INSERT INTO "usersFeedbacks" ("userId", "feedbackId") VALUES ('${pgp.as.value(
-    currentUser.id
-  )}', '${feedback[0].id}')`
-  const userFeedback = await conn.any<IUser>(userFeedbackSql)
-  return userFeedback
-})
+addApiEndpoint(
+  "feedback",
+  { permission: "authenticated" },
+  async ({ currentUser, req }) => {
+    const data = req.body
+    const feedbackSql = `INSERT INTO "feedbacks" ("feedback", "dateTime") VALUES ('${pgp.as.value(
+      data.data
+    )}', now()) RETURNING "id"`
+    const feedback = await conn.any<IUser>(feedbackSql)
+    const userFeedbackSql = `INSERT INTO "usersFeedbacks" ("userId", "feedbackId") VALUES ('${pgp.as.value(
+      currentUser.id
+    )}', '${feedback[0].id}')`
+    const userFeedback = await conn.any<IUser>(userFeedbackSql)
+    return userFeedback
+  }
+)
 
-addApiEndpoint("bugReport", { permission: "authenticated" }, async ({ currentUser, req }) => {
-  const data = req.body
-  const bugReportSql = `INSERT INTO "bugReports" ("bugReport", "dateTime") VALUES ('${pgp.as.value(
-    data.data
-  )}', now()) RETURNING "id"`
-  const bugReport = await conn.any<IUser>(bugReportSql)
-  const userBugReportSql = `INSERT INTO "usersBugReports" ("userId", "bugReportId") VALUES ('${pgp.as.value(
-    currentUser.id
-  )}', '${bugReport[0].id}')`
-  const userBugReport = await conn.any<IUser>(userBugReportSql)
-  return userBugReport
-})
+addApiEndpoint(
+  "bugReport",
+  { permission: "authenticated" },
+  async ({ currentUser, req }) => {
+    const data = req.body
+    const bugReportSql = `INSERT INTO "bugReports" ("bugReport", "dateTime") VALUES ('${pgp.as.value(
+      data.data
+    )}', now()) RETURNING "id"`
+    const bugReport = await conn.any<IUser>(bugReportSql)
+    const userBugReportSql = `INSERT INTO "usersBugReports" ("userId", "bugReportId") VALUES ('${pgp.as.value(
+      currentUser.id
+    )}', '${bugReport[0].id}')`
+    const userBugReport = await conn.any<IUser>(userBugReportSql)
+    return userBugReport
+  }
+)
 
 addApiEndpoint(
   "updateHistory",
@@ -148,6 +151,12 @@ addApiEndpoint(
     `
 
     const updatedAnswerRecord = await conn.one(updateHistorySql)
+    //
+    // Add opened record to activity array as above
+    // Search all other non-completed answers for currentUser
+    // Get last entry of activity array -> if status === opened add new record
+    // to close
+    //
     return updatedAnswerRecord.history
   }
 )
@@ -156,14 +165,21 @@ addApiEndpoint(
 app.use((req, res, next) => next(404))
 
 // handle errors by returning them as json
-app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
-  console.error(err)
-  if (err instanceof Error) {
-    res.send({ error: err.message })
-  } else {
-    res.send({ error: err })
+app.use(
+  (
+    err: any,
+    _req: express.Request,
+    res: express.Response,
+    _next: express.NextFunction
+  ) => {
+    console.error(err)
+    if (err instanceof Error) {
+      res.send({ error: err.message })
+    } else {
+      res.send({ error: err })
+    }
   }
-})
+)
 
 const port = process.env.PORT || 3001
 app.listen(port, () => {

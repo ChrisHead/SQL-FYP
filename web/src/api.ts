@@ -42,15 +42,10 @@ export const api = {
     return apiRequest("bugReport", { data }, authToken)
   },
 
-  async updateHistory(data: { questionId: string; history: IHistory }, authToken: string) {
+  async updateHistory(
+    data: { questionId: string; history: IHistory },
+    authToken: string
+  ) {
     return apiRequest("updateHistory", { data }, authToken)
-  },
-
-  async getHistory(data: object, authToken: string) {
-    return apiRequest("getHistory", { data }, authToken)
-  },
-
-  async getCompleted(data: object, authToken: string) {
-    return apiRequest("getCompleted", { data }, authToken)
   },
 }

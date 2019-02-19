@@ -8,10 +8,8 @@ import { QuestionsPanel } from "./QuestionsPanel"
 import { ResultsPanel } from "./ResultsPanel"
 import { SqlPanel } from "./SqlPanel"
 import { Observer } from "mobx-react"
-import { api } from "../api"
 import { DbTables } from "./DbTables"
 
-// import { theme } from "src/constants/theme"
 export function StudentEditor() {
   const resultsSection = React.useRef<HTMLDivElement>(null)
   const [contentWidth, setContentWidth] = React.useState(1000)
@@ -31,7 +29,7 @@ export function StudentEditor() {
 
   const app = React.useContext(AppContext)
   const db = React.useContext(DbContext)
-  // const db = React.useContext(DbContext)
+
   const {
     labs,
     loaded,
@@ -97,7 +95,11 @@ export function StudentEditor() {
                   maxSize={0.7 * contentWidth}
                   pane2Style={{ overflow: "auto" }}
                 >
-                  <ResultsPanel onClearResults={clearResults} error={error} results={results} />
+                  <ResultsPanel
+                    onClearResults={clearResults}
+                    error={error}
+                    results={results}
+                  />
                   <Observer>{() => <DbTables db={db.db} />}</Observer>
                 </SplitPane>
               </div>

@@ -39,7 +39,7 @@ async function run() {
   await conn.any(`CREATE TABLE IF NOT EXISTS "questions" (
     "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     "question" TEXT,
-    "answer" TEXT,
+    "modelAnswer" TEXT,
     "databaseId" UUID REFERENCES "databaseTemplates"("id"),
     "startingText" TEXT,
     "response" TEXT,
@@ -107,7 +107,14 @@ async function run() {
       `)
 
     for (const questionData of lab.questions) {
-      const { question, answer, startingText, response, respondAfter, autoResponse } = questionData
+      const {
+        question,
+        answer,
+        startingText,
+        response,
+        respondAfter,
+        autoResponse,
+      } = questionData
 
       const values = [
         question,
@@ -122,7 +129,7 @@ async function run() {
         .join()
 
       const questionRecord = await conn.one(`
-        INSERT INTO "questions" ("question","answer","databaseId","startingText","response","respondAfter","autoResponse")
+        INSERT INTO "questions" ("question","modelAnswer","databaseId","startingText","response","respondAfter","autoResponse")
         VALUES (${values})
         RETURNING "id"
       `)

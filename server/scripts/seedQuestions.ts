@@ -7,7 +7,8 @@ export const labs = [
       .toString(),
     questions: [
       {
-        question: "If you haven’t done so yet, finish the exercises from the previous lab.",
+        question:
+          "If you haven’t done so yet, finish the exercises from the previous lab.",
         answer: "SELECT * FROM table",
         databaseId: "2",
         startingText: "None",
@@ -16,7 +17,8 @@ export const labs = [
         autoResponse: false,
       },
       {
-        question: "Display the name of each employee with his department name.",
+        question:
+          "Display the name of each employee with their department name.",
         answer: "SELECT * FROM table",
         databaseId: "2",
         startingText: "None",
@@ -35,7 +37,8 @@ export const labs = [
         autoResponse: false,
       },
       {
-        question: "Display the department names with the names of their managers.",
+        question:
+          "Display the department names with the names of their managers.",
         answer: "SELECT * FROM table",
         databaseId: "2",
         startingText: "None",
@@ -44,7 +47,8 @@ export const labs = [
         autoResponse: false,
       },
       {
-        question: "Display the names of each employee with the name of his/her boss.",
+        question:
+          "Display the names of each employee with the name of their boss.",
         answer: "SELECT * FROM table",
         databaseId: "2",
         startingText: "None",
@@ -64,7 +68,7 @@ export const labs = [
       },
       {
         question:
-          "Display the employee number and name of each employee who manages other employees with the number of people he or she manages.",
+          "Display the employee number and name of each employee who manages other employees with the number of people they manages.",
         answer: "SELECT * FROM table",
         databaseId: "2",
         startingText: "None",

@@ -20,12 +20,18 @@ interface IProps {
   currentLab?: ILab
   currentQuestion?: ILab["questions"][number]
 }
-export function QuestionsPanel({ labs, setCurrentQuestion, currentLab, currentQuestion }: IProps) {
+export function QuestionsPanel({
+  labs,
+  setCurrentQuestion,
+  currentLab,
+  currentQuestion,
+}: IProps) {
   function handleQuestionClick(lab, question) {
     setCurrentQuestion(lab.id, question.id)
+    //add activity entry
   }
 
-  console.log(labs)
+  // console.log(labs)
 
   function isSelected(lab, question) {
     return (
@@ -62,14 +68,18 @@ export function QuestionsPanel({ labs, setCurrentQuestion, currentLab, currentQu
             trigger={
               <>
                 <FontAwesomeIcon icon="angle-double-down" />
-                <span style={{ margin: "0 16px" }}>{"Week " + lab.labNumber}</span>
+                <span style={{ margin: "0 16px" }}>
+                  {"Week " + lab.labNumber}
+                </span>
                 <FontAwesomeIcon icon="angle-double-down" />
               </>
             }
             triggerWhenOpen={
               <>
                 <FontAwesomeIcon icon="angle-double-up" />
-                <span style={{ margin: "0 16px" }}>{"Week " + lab.labNumber}</span>
+                <span style={{ margin: "0 16px" }}>
+                  {"Week " + lab.labNumber}
+                </span>
                 <FontAwesomeIcon icon="angle-double-up" />
               </>
             }
@@ -87,7 +97,9 @@ export function QuestionsPanel({ labs, setCurrentQuestion, currentLab, currentQu
               <div
                 key={i}
                 id={question.id.toString()}
-                className={`question-div ${isSelected(lab, question) ? "active" : ""}`}
+                className={`question-div ${
+                  isSelected(lab, question) ? "active" : ""
+                }`}
                 style={{
                   display: "flex",
                   flexDirection: "row",
@@ -103,11 +115,17 @@ export function QuestionsPanel({ labs, setCurrentQuestion, currentLab, currentQu
                   <FontAwesomeIcon
                     icon="check-circle"
                     size={"2x"}
-                    color={question.answer && question.answer.completed ? "Green" : "White"}
+                    color={
+                      question.answer && question.answer.completed
+                        ? "Green"
+                        : "White"
+                    }
                   />
                 </div>
 
-                <div style={{ fontSize: 14, padding: 8 }}>{question.question}</div>
+                <div style={{ fontSize: 14, padding: 8 }}>
+                  {question.question}
+                </div>
               </div>
             ))}
           </Collapsible>

@@ -7,6 +7,7 @@ import { Observer } from "mobx-react"
 import { api } from "../api"
 import { AppContext } from "../AppContext"
 import { IHistory } from "../stores/DbStore"
+import { getNextId } from "mobx/lib/internal"
 
 interface IProps {
   history: IHistory[]
@@ -46,8 +47,15 @@ export function SqlPanel({
         <button style={{ width: 100, marginLeft: 8 }} onClick={onExecute}>
           Run
         </button>
-        <label className="Collapsible__trigger button" style={{ marginLeft: 8 }}>
-          <input type="checkbox" checked={autoRun} onChange={e => setAutoRun(e.target.checked)} />
+        <label
+          className="Collapsible__trigger button"
+          style={{ marginLeft: 8 }}
+        >
+          <input
+            type="checkbox"
+            checked={autoRun}
+            onChange={e => setAutoRun(e.target.checked)}
+          />
           Run on ";"
         </label>
       </div>
