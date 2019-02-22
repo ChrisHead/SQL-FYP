@@ -7,8 +7,7 @@
   "scripts": {
     "reset": "ts-node scripts/setupDB",
     "start": "ts-node src/server.ts",
-    "watch": "nodemon",
-    "heroku-postbuild": "ts-node scripts/setupDB"
+    "watch": "nodemon"
   },
   "dependencies": {
     "@types/cors": "^2.8.4",
