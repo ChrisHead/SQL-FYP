@@ -1,1 +1,1 @@
-release: setupDB:run
+release: setupDB:run()
