@@ -8,7 +8,7 @@ async function apiRequest(path: string, data: any, authToken?: string) {
   }
   const body = typeof data === "string" ? data : JSON.stringify(data)
 
-  const response = await fetch(`http://localhost:3001/api/${path}`, {
+  const response = await fetch(`https://sql-fyp-server.herokuapp.com/${path}`, {
     method: "POST",
     body,
     headers,
