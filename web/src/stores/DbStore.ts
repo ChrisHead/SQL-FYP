@@ -60,12 +60,6 @@ export interface IHistory {
   completed: boolean
 }
 
-export interface ICompleted {
-  labNum: string
-  questionNum: string
-  completed: boolean
-}
-
 interface IQuestionActivity {
   dateTime: string
   question: string
@@ -78,10 +72,6 @@ export class DbStore {
 
   @observable
   history: IHistory[] = []
-
-  mostRecentHistory: IHistory[] = []
-
-  completedStore: ICompleted[] = []
 
   @observable
   activity: IQuestionActivity[] = [
@@ -98,16 +88,10 @@ export class DbStore {
   ]
 
   @observable
-  tab = "results"
-
-  @observable
   currentQuestion: string
 
   @observable
   currentLab: string
-
-  @observable
-  currentControl = ""
 
   @observable
   results = []
@@ -308,6 +292,7 @@ export class DbStore {
       )
       ;(alasql as any).tables[table.name].data = table.data
     })
+    alasql.options.casesensitive = false
   }
 
   @action.bound
@@ -329,11 +314,11 @@ export class DbStore {
           }
         }
       )
+      alasql.options.casesensitive = false
       const data = (alasql as any).tables[name].data
       return { name, columns, data }
     })
     this.db = newdb
-    this.tab = "results"
   }
 
   clearResults() {
@@ -343,9 +328,5 @@ export class DbStore {
 
   clearHistory() {
     this.history = []
-  }
-
-  clearCompleted() {
-    this.completedStore = []
   }
 }

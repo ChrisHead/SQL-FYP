@@ -30,7 +30,9 @@ export function Results({ results, error }: IProps) {
       )}
 
       {/* {res.length > 2 && res} */}
-      {error && <div style={{ color: "red" }}>{JSON.stringify(error, null, "  ")}</div>}
+      {error && (
+        <div style={{ color: "red" }}>{JSON.stringify(error, null, "  ")}</div>
+      )}
     </div>
   )
 }

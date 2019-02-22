@@ -9,9 +9,8 @@ interface IProps {
 
 export function HistoryPanel({ history, onSelectHistory }: IProps) {
   return (
-    <div>
+    <div id="historyDiv">
       <Collapsible
-        className="history"
         trigger={
           <>
             <span style={{ margin: "0 16px" }}>History</span>
@@ -32,17 +31,20 @@ export function HistoryPanel({ history, onSelectHistory }: IProps) {
           textAlign: "center",
         }}
       >
-        {history.map((line, i) => (
-          <div
-            key={i}
-            className="history-div"
-            style={{ fontSize: 14, fontFamily: "monospace" }}
-            onClick={() => onSelectHistory(line)}
-          >
-            {line.value}
-            {/* {JSON.stringify(line)} */}
-          </div>
-        ))}
+        {history
+          .slice(0)
+          .reverse()
+          .map((line, i) => (
+            <div
+              key={i}
+              className="history-div"
+              style={{ fontSize: 14, fontFamily: "monospace" }}
+              onClick={() => onSelectHistory(line)}
+            >
+              {line.value}
+              {/* {JSON.stringify(line)} */}
+            </div>
+          ))}
       </Collapsible>
     </div>
   )

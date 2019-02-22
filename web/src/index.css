@@ -115,6 +115,10 @@ a:visited {
   user-select: none;
 }
 
+#historyDiv .Collapsible__contentOuter {
+  max-height: 200px;
+}
+
 .history-div:hover {
   background: rgba(211, 211, 211, 0.13);
 }

@@ -33,7 +33,7 @@ export class DbTables extends React.Component<IProps> {
           style={{
             width: "100%",
             background: "#30434d",
-            // padding: 8,
+            minHeight: 35,
           }}
         >
           {db.map((table, i) => (
@@ -62,19 +62,23 @@ export class DbTables extends React.Component<IProps> {
           >
             <thead>
               <tr>
-                {this.currentTable.columns.map(column => (
-                  <th key={column.name}>{column.name}</th>
-                ))}
+                {this.currentTable !== undefined
+                  ? this.currentTable.columns.map(column => (
+                      <th key={column.name}>{column.name}</th>
+                    ))
+                  : null}
               </tr>
             </thead>
             <tbody>
-              {this.currentTable.data.map((datum, i) => (
-                <tr key={i}>
-                  {this.currentTable.columns.map(column => (
-                    <td key={column.name}>{datum[column.name]}</td>
-                  ))}
-                </tr>
-              ))}
+              {this.currentTable !== undefined
+                ? this.currentTable.data.map((datum, i) => (
+                    <tr key={i}>
+                      {this.currentTable.columns.map(column => (
+                        <td key={column.name}>{datum[column.name]}</td>
+                      ))}
+                    </tr>
+                  ))
+                : null}
             </tbody>
           </table>
         </div>

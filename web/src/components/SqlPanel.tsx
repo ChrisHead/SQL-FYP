@@ -47,7 +47,7 @@ export function SqlPanel({
         <button style={{ width: 100, marginLeft: 8 }} onClick={onExecute}>
           Run
         </button>
-        <label
+        {/* <label
           className="Collapsible__trigger button"
           style={{ marginLeft: 8 }}
         >
@@ -57,7 +57,7 @@ export function SqlPanel({
             onChange={e => setAutoRun(e.target.checked)}
           />
           Run on ";"
-        </label>
+        </label> */}
       </div>
       <style>{`
           .code-editor {

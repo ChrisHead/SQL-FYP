@@ -26,6 +26,10 @@ export function useStudentEditor() {
   }, [sqlValue])
 
   function handleSetCurrentQuestion(labId: string, questionId: string) {
+    if (db.currentQuestion !== questionId) {
+      db.clearResults()
+      setSqlValue("")
+    }
     db.currentLab = labId
     db.currentQuestion = questionId
     setCurrentLabId(labId)
