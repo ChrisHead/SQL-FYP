@@ -8,7 +8,7 @@
     "reset": "ts-node scripts/setupDB",
     "start": "ts-node src/server.ts",
     "watch": "nodemon",
-    "postinsall": "npm run reset"
+    "postinstall": "npm run reset"
   },
   "dependencies": {
     "@types/cors": "^2.8.4",
