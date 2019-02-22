@@ -18,9 +18,9 @@ export function LoginPage() {
     }
   }
   // TODO REMOVE THIS BEFORE PUSHING TO PRODUCTION
-  React.useEffect(() => {
-    app.login("asd", password)
-  })
+  // React.useEffect(() => {
+  //   app.login("asd", password)
+  // })
 
   return (
     <div
@@ -36,10 +36,18 @@ export function LoginPage() {
       {error}
       <div>
         <form onSubmit={handleSubmit}>
-          <TextInput label="User" value={username} onChange={value => setUsername(value)} />
+          <TextInput
+            label="User"
+            value={username}
+            onChange={value => setUsername(value)}
+          />
           <label className="input">
             Password <br />
-            <input type="text" value={password} onChange={e => setPassword(e.target.value)} />
+            <input
+              type="text"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+            />
           </label>
           <input type="submit" value="Login" />
         </form>
