@@ -5,6 +5,7 @@ import { ITable } from "src/stores/DbStore"
 
 interface IProps {
   db: ITable[]
+  dbKey
 }
 @observer
 export class DbTables extends React.Component<IProps> {

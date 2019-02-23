@@ -44,6 +44,7 @@ export function StudentEditor() {
     clearResults,
     error,
     results,
+    dbKey,
   } = useStudentEditor()
 
   if (!loaded) {
@@ -100,7 +101,9 @@ export function StudentEditor() {
                     error={error}
                     results={results}
                   />
-                  <Observer>{() => <DbTables db={db.db} />}</Observer>
+                  <Observer>
+                    {() => <DbTables db={db.db} dbKey={dbKey} />}
+                  </Observer>
                 </SplitPane>
               </div>
             </SplitPane>

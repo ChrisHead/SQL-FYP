@@ -109,7 +109,7 @@ async function run() {
     for (const questionData of lab.questions) {
       const {
         question,
-        answer,
+        modelAnswer,
         startingText,
         response,
         respondAfter,
@@ -118,7 +118,7 @@ async function run() {
 
       const values = [
         question,
-        answer,
+        modelAnswer,
         databases[0].id,
         startingText,
         response,

@@ -1,4 +1,4 @@
-import { observable, action } from "mobx"
+import { observable, action, toJS } from "mobx"
 import alasql from "alasql"
 
 export interface ITable {
@@ -97,7 +97,12 @@ export class DbStore {
   results = []
 
   @observable
-  db: ITable[] = [
+  answerResults = []
+
+  @observable
+  db: ITable[] = []
+
+  resetToFactoryDb: ITable[] = [
     {
       name: "dept",
       columns: [
@@ -269,8 +274,16 @@ export class DbStore {
     },
   ]
 
+  answerdb: ITable[] = []
+
   @observable
   error: any
+
+  @observable
+  answerError: any
+
+  @observable
+  dbKey = 0
 
   conditions: IConditions[] = [
     {
@@ -284,6 +297,13 @@ export class DbStore {
   ala = alasql
 
   constructor() {
+    this.generateDb()
+  }
+
+  generateDb() {
+    // console.log("generate start")
+    this.db = this.resetToFactoryDb.slice(0)
+    // console.log(this.db)
     this.db.forEach(table => {
       alasql(
         `CREATE TABLE ${table.name} (${table.columns
@@ -293,18 +313,12 @@ export class DbStore {
       ;(alasql as any).tables[table.name].data = table.data
     })
     alasql.options.casesensitive = false
+    // console.log("generate end")
+    this.refreshDb()
   }
 
-  @action.bound
-  executeSql() {
-    this.results = []
-    this.error = ""
-    try {
-      this.results = alasql(this.sqlValue)
-    } catch (err) {
-      this.error = err.message
-    }
-    this.sqlValue = ""
+  refreshDb() {
+    // console.log("refresh start")
     const newdb: ITable[] = Object.keys((alasql as any).tables).map(name => {
       const columns = (alasql as any).tables[name].columns.map(
         (column: IAlaColumnType) => {
@@ -319,6 +333,102 @@ export class DbStore {
       return { name, columns, data }
     })
     this.db = newdb
+    this.dbKey++
+    // console.log("refresh end")
+  }
+
+  @action.bound
+  executeSql() {
+    this.results = []
+    this.error = ""
+    try {
+      this.results = alasql(this.sqlValue)
+    } catch (err) {
+      this.error = err.message
+    }
+    this.sqlValue = ""
+    this.refreshDb()
+  }
+
+  checkAnswer(query) {
+    const alasql = require("alasql")
+    alasql("CREATE DATABASE tempDb")
+    alasql("USE tempDb")
+    // console.log("Current database:", alasql.useid)
+    this.resetToFactoryDb.forEach(table => {
+      alasql(
+        `CREATE TABLE ${table.name} (${table.columns
+          .map(column => `${column.name} ${column.type}`)
+          .join(",")})`
+      )
+      ;(alasql as any).tables[table.name].data = table.data
+    })
+    alasql.options.casesensitive = false
+    let tempResult
+    this.answerError = ""
+    try {
+      tempResult = alasql(query)
+    } catch (err) {
+      this.answerError = err.message
+    }
+    alasql("DROP DATABASE tempDb")
+    alasql("USE alasql")
+    // console.log("Current database:", alasql.useid)
+    // console.log(alasql.databases)
+    return this.compareAnswer(tempResult)
+  }
+
+  compareAnswer(answer) {
+    // console.log(answer)
+    const results: any = toJS(this.results)
+    if (this.answerError !== undefined) {
+      console.log(this.answerError)
+    }
+    if (typeof this.results === "object" && this.results !== null) {
+      if (results.length !== answer.length) {
+        console.log("different array lengths")
+        return false
+      }
+
+      const resultsProps = Object.getOwnPropertyNames(results[0])
+      const answerProps = Object.getOwnPropertyNames(answer[0])
+      console.log("results props: ", resultsProps)
+      console.log("answer props: ", answerProps)
+      if (resultsProps.length !== answerProps.length) {
+        console.log("different props lengths")
+        return false
+      }
+
+      // console.log("res :", results)
+      for (let i = 0; i < answer.length; i++) {
+        // console.log("i: ", results[i].loc)
+        for (const k of answerProps) {
+          // console.log("k: ", k)
+          const resTemp: any = results[i][k]
+          // console.log("resT: ", resTemp)
+          const ansTemp: any = answer[i][k]
+          // console.log("ans: ", ansTemp)
+          if (results[i][k] !== answer[i][k]) {
+            console.log("different key values")
+            return false
+          }
+        }
+      }
+      console.log("answer correct")
+      return true
+    } else {
+      console.log("answer incorrect")
+      return false
+    }
+  }
+
+  clear() {
+    this.results = []
+    this.error = ""
+    Object.keys((alasql as any).tables).forEach(name => {
+      alasql(`DROP TABLE ${name}`)
+    })
+    this.generateDb()
   }
 
   clearResults() {

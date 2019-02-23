@@ -14,6 +14,7 @@ export function useStudentEditor() {
     string | null
   >(null)
   const [sqlValue, setSqlValue] = React.useState("")
+  const [dbKey, setDbKey] = React.useState(0)
 
   React.useEffect(() => {
     if (app.authToken) {
@@ -26,8 +27,8 @@ export function useStudentEditor() {
   }, [sqlValue])
 
   function handleSetCurrentQuestion(labId: string, questionId: string) {
-    if (db.currentQuestion !== questionId) {
-      db.clearResults()
+    if (db.currentQuestion !== questionId && db.currentQuestion) {
+      db.clear()
       setSqlValue("")
     }
     db.currentLab = labId
@@ -43,9 +44,9 @@ export function useStudentEditor() {
   // }
 
   async function handleExecuteQuery() {
-    console.log("db sql value ", db.sqlValue)
+    // console.log("db sql value ", db.sqlValue)
     const sql = sqlValue
-    console.log("sql value ", sql)
+    // console.log("sql value ", sql)
     db.executeSql()
     const historyItem = {
       value: sql,
@@ -54,7 +55,7 @@ export function useStudentEditor() {
       completed: false,
       error: db.error,
     }
-    console.log(historyItem)
+    // console.log(historyItem)
 
     const currentLabIdx = labs.findIndex(lab => lab.id === currentLabId)
     const currentQuestionIdx =
@@ -70,6 +71,10 @@ export function useStudentEditor() {
 
     const currentLab = labs[currentLabIdx]
     const currentQuestion = currentLab.questions[currentQuestionIdx]
+
+    console.log(db.checkAnswer(currentQuestion.modelAnswer))
+    //display incorrect/correct message
+    //if correct update in db and histtory item below
 
     if (currentQuestion.answer) {
       currentQuestion.answer.history = [
@@ -129,11 +134,14 @@ export function useStudentEditor() {
       setResults(change.newValue)
     })
     observe(db, "sqlValue", change => {
-      console.log("newvalue", change.newValue)
+      // console.log("newvalue", change.newValue)
       setSqlValue(change.newValue)
     })
     observe(db, "error", change => {
       setError(change.newValue)
+    })
+    observe(db, "dbKey", change => {
+      setDbKey(change.newValue)
     })
   }, [])
 
@@ -151,5 +159,7 @@ export function useStudentEditor() {
     clearResults,
     error,
     results,
+    dbKey,
+    // results: results.concat(`${dbKey} asd` as any),
   }
 }

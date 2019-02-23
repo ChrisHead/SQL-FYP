@@ -9,7 +9,7 @@ export const labs = [
       {
         question:
           "If you haven’t done so yet, finish the exercises from the previous lab.",
-        answer: "SELECT * FROM table",
+        modelAnswer: "SELECT * FROM table",
         databaseId: "2",
         startingText: "None",
         response: "This has been a response",
@@ -19,7 +19,7 @@ export const labs = [
       {
         question:
           "Display the name of each employee with their department name.",
-        answer: "SELECT * FROM table",
+        modelAnswer: "SELECT * FROM table",
         databaseId: "2",
         startingText: "None",
         response: "This has been a response",
@@ -29,7 +29,7 @@ export const labs = [
       {
         question:
           "Display a list of ALL departments with their employees (i.e. list a department even if it hasn’t got any employees).",
-        answer: "SELECT * FROM table",
+        modelAnswer: "SELECT * FROM table",
         databaseId: "2",
         startingText: "None",
         response: "This has been a response",
@@ -39,7 +39,7 @@ export const labs = [
       {
         question:
           "Display the department names with the names of their managers.",
-        answer: "SELECT * FROM table",
+        modelAnswer: "SELECT * FROM table",
         databaseId: "2",
         startingText: "None",
         response: "This has been a response",
@@ -49,7 +49,7 @@ export const labs = [
       {
         question:
           "Display the names of each employee with the name of their boss.",
-        answer: "SELECT * FROM table",
+        modelAnswer: "SELECT * FROM table",
         databaseId: "2",
         startingText: "None",
         response: "This has been a response",
@@ -59,7 +59,7 @@ export const labs = [
       {
         question:
           "Display the names of each employee with the name of their boss with a blank for the boss of the president.",
-        answer: "SELECT * FROM table",
+        modelAnswer: "SELECT * FROM table",
         databaseId: "2",
         startingText: "None",
         response: "This has been a response",
@@ -69,7 +69,7 @@ export const labs = [
       {
         question:
           "Display the employee number and name of each employee who manages other employees with the number of people they manages.",
-        answer: "SELECT * FROM table",
+        modelAnswer: "SELECT * FROM table",
         databaseId: "2",
         startingText: "None",
         response: "This has been a response",
@@ -80,7 +80,7 @@ export const labs = [
         id: "8",
         question:
           "Repeat the display for the last question, but this time display the rows in descending order of the number of employees managed.",
-        answer: "SELECT * FROM table",
+        modelAnswer: "SELECT * FROM table",
         databaseId: "1",
         startingText: "None",
         response: "This has been a response",
@@ -97,7 +97,7 @@ export const labs = [
     questions: [
       {
         question: "lab 4 question 1",
-        answer: "SELECT * FROM table",
+        modelAnswer: "SELECT * FROM table",
         databaseId: "2",
         startingText: "None",
         response: "This has been a response",
@@ -107,7 +107,7 @@ export const labs = [
 
       {
         question: "lab 4 question 2",
-        answer: "SELECT * FROM table",
+        modelAnswer: "SELECT * FROM table",
         databaseId: "2",
         startingText: "None",
         response: "This has been a response",
@@ -117,7 +117,7 @@ export const labs = [
 
       {
         question: "lab 4 question 3",
-        answer: "SELECT * FROM table",
+        modelAnswer: "SELECT * FROM table",
         databaseId: "2",
         startingText: "None",
         response: "This has been a response",
@@ -134,7 +134,7 @@ export const labs = [
     questions: [
       {
         question: "lab 5 question 1",
-        answer: "SELECT * FROM table",
+        modelAnswer: "SELECT * FROM table",
         databaseId: "2",
         startingText: "None",
         response: "This has been a response",
@@ -151,7 +151,7 @@ export const labs = [
     questions: [
       {
         question: "lab 6 question 1",
-        answer: "SELECT * FROM table",
+        modelAnswer: "SELECT * FROM table",
         databaseId: "2",
         startingText: "None",
         response: "This has been a response",
