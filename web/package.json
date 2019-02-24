@@ -13,6 +13,7 @@
     "@types/react-split-pane": "^0.1.67",
     "alasql": "^0.4.11",
     "codemirror": "^5.41.0",
+    "immer": "^2.0.0",
     "mobx": "^4",
     "mobx-react": "^5.2.8",
     "react": "^16.8.0",

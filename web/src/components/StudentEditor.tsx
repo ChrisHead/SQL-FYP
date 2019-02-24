@@ -45,6 +45,8 @@ export function StudentEditor() {
     error,
     results,
     dbKey,
+    answerError,
+    answerAcknowledgement,
   } = useStudentEditor()
 
   if (!loaded) {
@@ -100,6 +102,8 @@ export function StudentEditor() {
                     onClearResults={clearResults}
                     error={error}
                     results={results}
+                    answerError={answerError}
+                    answerAcknowledgement={answerAcknowledgement}
                   />
                   <Observer>
                     {() => <DbTables db={db.db} dbKey={dbKey} />}
@@ -109,7 +113,7 @@ export function StudentEditor() {
             </SplitPane>
           </>
         ) : (
-          "Select Question :)"
+          "Select a week and a question to begin"
         )}
       </SplitPane>
     </div>

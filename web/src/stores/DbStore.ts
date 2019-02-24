@@ -22,9 +22,7 @@ export interface ILab {
     modelAnswer: string
     answer?: {
       id: string
-      questionId: string
       history: IHistory[]
-      activity: {}[]
       completed: boolean
     }
     databaseId: string
@@ -57,6 +55,7 @@ export interface IHistory {
   dateTime: string
   value: string
   error: string
+  answerError: string
   completed: boolean
 }
 
@@ -67,9 +66,6 @@ interface IQuestionActivity {
 }
 
 export class DbStore {
-  @observable
-  sqlValue = ""
-
   @observable
   history: IHistory[] = []
 
@@ -86,12 +82,6 @@ export class DbStore {
       activity: "closed",
     },
   ]
-
-  @observable
-  currentQuestion: string
-
-  @observable
-  currentLab: string
 
   @observable
   results = []
@@ -280,7 +270,7 @@ export class DbStore {
   error: any
 
   @observable
-  answerError: any
+  answerAcknowledgement = "Answer Correct"
 
   @observable
   dbKey = 0
@@ -310,7 +300,7 @@ export class DbStore {
           .map(column => `${column.name} ${column.type}`)
           .join(",")})`
       )
-      ;(alasql as any).tables[table.name].data = table.data
+      ;(alasql as any).tables[table.name].data = toJS(table.data)
     })
     alasql.options.casesensitive = false
     // console.log("generate end")
@@ -338,19 +328,28 @@ export class DbStore {
   }
 
   @action.bound
-  executeSql() {
+  executeSql(sql) {
     this.results = []
     this.error = ""
     try {
-      this.results = alasql(this.sqlValue)
+      this.results = alasql(sql)
     } catch (err) {
       this.error = err.message
     }
-    this.sqlValue = ""
     this.refreshDb()
   }
 
-  checkAnswer(query) {
+  checkAnswer(query): { error?: string; correct?: boolean } {
+    this.createAnswerDb()
+    const { result, error } = this.executeModelAnswer(query)
+    this.cleanUpAnswerDb()
+    if (error) {
+      return { error }
+    }
+    return this.compareAnswer(result, error)
+  }
+
+  createAnswerDb() {
     const alasql = require("alasql")
     alasql("CREATE DATABASE tempDb")
     alasql("USE tempDb")
@@ -364,61 +363,59 @@ export class DbStore {
       ;(alasql as any).tables[table.name].data = table.data
     })
     alasql.options.casesensitive = false
-    let tempResult
-    this.answerError = ""
-    try {
-      tempResult = alasql(query)
-    } catch (err) {
-      this.answerError = err.message
-    }
-    alasql("DROP DATABASE tempDb")
-    alasql("USE alasql")
     // console.log("Current database:", alasql.useid)
     // console.log(alasql.databases)
-    return this.compareAnswer(tempResult)
   }
 
-  compareAnswer(answer) {
-    // console.log(answer)
-    const results: any = toJS(this.results)
-    if (this.answerError !== undefined) {
-      console.log(this.answerError)
+  executeModelAnswer(query) {
+    let result
+    let error = ""
+    try {
+      result = alasql(query)
+    } catch (err) {
+      error = err.message
     }
-    if (typeof this.results === "object" && this.results !== null) {
-      if (results.length !== answer.length) {
-        console.log("different array lengths")
-        return false
-      }
+    return { result, error }
+  }
 
-      const resultsProps = Object.getOwnPropertyNames(results[0])
-      const answerProps = Object.getOwnPropertyNames(answer[0])
-      console.log("results props: ", resultsProps)
-      console.log("answer props: ", answerProps)
-      if (resultsProps.length !== answerProps.length) {
-        console.log("different props lengths")
-        return false
-      }
+  cleanUpAnswerDb() {
+    alasql("DROP DATABASE tempDb")
+    alasql("USE alasql")
+  }
 
-      // console.log("res :", results)
-      for (let i = 0; i < answer.length; i++) {
-        // console.log("i: ", results[i].loc)
-        for (const k of answerProps) {
-          // console.log("k: ", k)
-          const resTemp: any = results[i][k]
-          // console.log("resT: ", resTemp)
-          const ansTemp: any = answer[i][k]
-          // console.log("ans: ", ansTemp)
-          if (results[i][k] !== answer[i][k]) {
-            console.log("different key values")
-            return false
+  compareAnswer(answer, error) {
+    try {
+      const results: any = toJS(this.results)
+      if (error !== "") {
+        return { correct: false, error }
+      } else if (Array.isArray(results)) {
+        if (results.length !== answer.length) {
+          return { correct: false, error: "Number of rows does not match" }
+        } else {
+          const resultsProps = Object.keys(results[0])
+          const answerProps = Object.keys(answer[0])
+          if (resultsProps.length !== answerProps.length) {
+            return { correct: false, error: "Number of columns does not match" }
+          } else {
+            for (const i in answer) {
+              for (const k in answer[0]) {
+                if (results[i][k] !== answer[i][k]) {
+                  return {
+                    correct: false,
+                    error: "Values of rows do not match",
+                  }
+                }
+              }
+            }
+            return { correct: true, error: this.answerAcknowledgement }
           }
         }
+      } else {
+        return { correct: false, error: "Answer incorrect" }
       }
-      console.log("answer correct")
-      return true
-    } else {
-      console.log("answer incorrect")
-      return false
+    } catch (err) {
+      console.error(err)
+      return { correct: false, error: "Answer incorrect" }
     }
   }
 

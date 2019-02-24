@@ -25,9 +25,12 @@ const addApiEndpoint = createAddApiEndpoint(app, conn)
 addApiEndpoint("login", {}, async ({ req }) => {
   const { username, password } = req.body
 
-  const sql = `SELECT * FROM "users" WHERE "username"='${pgp.as.value(
-    username
-  )}' AND "password"=crypt('${pgp.as.value(password)}', "password")`
+  const sql = `
+  SELECT *
+  FROM "users"
+  WHERE "username"='${pgp.as.value(username)}'
+  AND "password"=crypt('${pgp.as.value(password)}', "password")
+  `
   const results = await conn.any(sql)
 
   if (results.length !== 1) {
@@ -48,7 +51,10 @@ addApiEndpoint(
 )
 
 addApiEndpoint("users", { permission: "admin" }, async () => {
-  const sql = `SELECT * FROM "users"`
+  const sql = `
+  SELECT *
+  FROM "users"
+  `
   const results = await conn.any<IUser>(sql)
   return results
 })
@@ -82,7 +88,10 @@ addApiEndpoint(
 )
 
 addApiEndpoint("questions", { permission: "admin" }, async () => {
-  const sql = `SELECT * FROM questions`
+  const sql = `
+  SELECT *
+  FROM questions
+  `
   const results = await conn.any<IUser>(sql)
   return results
 })
@@ -92,13 +101,15 @@ addApiEndpoint(
   { permission: "authenticated" },
   async ({ currentUser, req }) => {
     const data = req.body
-    const feedbackSql = `INSERT INTO "feedbacks" ("feedback", "dateTime") VALUES ('${pgp.as.value(
-      data.data
-    )}', now()) RETURNING "id"`
+    const feedbackSql = `
+    INSERT INTO "feedbacks" ("feedback", "dateTime")
+    VALUES ('${pgp.as.value(data.data)}', now()) RETURNING "id"
+    `
     const feedback = await conn.any<IUser>(feedbackSql)
-    const userFeedbackSql = `INSERT INTO "usersFeedbacks" ("userId", "feedbackId") VALUES ('${pgp.as.value(
-      currentUser.id
-    )}', '${feedback[0].id}')`
+    const userFeedbackSql = `
+    INSERT INTO "usersFeedbacks" ("userId", "feedbackId")
+    VALUES ('${pgp.as.value(currentUser.id)}', '${feedback[0].id}')
+    `
     const userFeedback = await conn.any<IUser>(userFeedbackSql)
     return userFeedback
   }
@@ -109,13 +120,15 @@ addApiEndpoint(
   { permission: "authenticated" },
   async ({ currentUser, req }) => {
     const data = req.body
-    const bugReportSql = `INSERT INTO "bugReports" ("bugReport", "dateTime") VALUES ('${pgp.as.value(
-      data.data
-    )}', now()) RETURNING "id"`
+    const bugReportSql = `
+    INSERT INTO "bugReports" ("bugReport", "dateTime")
+    VALUES ('${pgp.as.value(data.data)}', now()) RETURNING "id"
+    `
     const bugReport = await conn.any<IUser>(bugReportSql)
-    const userBugReportSql = `INSERT INTO "usersBugReports" ("userId", "bugReportId") VALUES ('${pgp.as.value(
-      currentUser.id
-    )}', '${bugReport[0].id}')`
+    const userBugReportSql = `
+    INSERT INTO "usersBugReports" ("userId", "bugReportId")
+    VALUES ('${pgp.as.value(currentUser.id)}', '${bugReport[0].id}')
+    `
     const userBugReport = await conn.any<IUser>(userBugReportSql)
     return userBugReport
   }
@@ -131,9 +144,8 @@ addApiEndpoint(
     }: {
       questionId: string
       labId: string
-      history: { value: string; error: string }
+      history: { value: string; error: string; completed: boolean }
     } = req.body.data
-
     const sql = `
       INSERT INTO "answers" ("userId", "questionId")
       VALUES ('${currentUser.id}', '${pgp.as.value(questionId)}')
@@ -141,23 +153,32 @@ addApiEndpoint(
       RETURNING "id"
     `
     const answerRecord = await conn.one<{ id: string }>(sql)
-
-    const historyItem = { ...history, dateTime: Date(), completed: false }
+    const historyItem = { ...history, dateTime: Date() }
     const updateHistorySql = `
       UPDATE answers
       SET "history" = "history" || ${pgp.as.json([historyItem])}
       WHERE "id" = '${pgp.as.value(answerRecord.id)}'
       RETURNING "history"
     `
+    const updateHistory = await conn.one<{ id: string }>(updateHistorySql)
+    return updateHistory
+  }
+)
 
-    const updatedAnswerRecord = await conn.one(updateHistorySql)
-    //
-    // Add opened record to activity array as above
-    // Search all other non-completed answers for currentUser
-    // Get last entry of activity array -> if status === opened add new record
-    // to close
-    //
-    return updatedAnswerRecord.history
+addApiEndpoint(
+  "updateCompleted",
+  { permission: "authenticated" },
+  async ({ currentUser, req }) => {
+    const questionId = req.body.data.questionId
+    console.log(questionId)
+    const updateCompletedSql = `
+    UPDATE answers
+    SET "completed" = true
+    WHERE "userId" = '${pgp.as.value(currentUser.id)}'
+    AND "questionId" = '${pgp.as.value(questionId)}'
+    `
+    const updateCompleted = await conn.any<IUser>(updateCompletedSql)
+    return updateCompleted
   }
 )
 

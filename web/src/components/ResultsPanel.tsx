@@ -6,8 +6,16 @@ interface IProps {
   onClearResults(): void
   error
   results
+  answerError
+  answerAcknowledgement
 }
-export function ResultsPanel({ onClearResults, error, results }: IProps) {
+export function ResultsPanel({
+  onClearResults,
+  error,
+  results,
+  answerError,
+  answerAcknowledgement,
+}: IProps) {
   return (
     <div
       style={{
@@ -41,7 +49,12 @@ export function ResultsPanel({ onClearResults, error, results }: IProps) {
           background: "#263638",
         }}
       >
-        <Results error={error} results={results} />
+        <Results
+          error={error}
+          results={results}
+          answerError={answerError}
+          answerAcknowledgement={answerAcknowledgement}
+        />
       </div>
     </div>
   )

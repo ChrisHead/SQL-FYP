@@ -9,7 +9,7 @@ export const labs = [
       {
         question:
           "If you haven’t done so yet, finish the exercises from the previous lab.",
-        modelAnswer: "SELECT * FROM table",
+        modelAnswer: "select loc from dept where dname='Sales'",
         databaseId: "2",
         startingText: "None",
         response: "This has been a response",
@@ -19,7 +19,7 @@ export const labs = [
       {
         question:
           "Display the name of each employee with their department name.",
-        modelAnswer: "SELECT * FROM table",
+        modelAnswer: "SELECT * FROM emp",
         databaseId: "2",
         startingText: "None",
         response: "This has been a response",
@@ -29,7 +29,7 @@ export const labs = [
       {
         question:
           "Display a list of ALL departments with their employees (i.e. list a department even if it hasn’t got any employees).",
-        modelAnswer: "SELECT * FROM table",
+        modelAnswer: "SELECT * FROM dept",
         databaseId: "2",
         startingText: "None",
         response: "This has been a response",

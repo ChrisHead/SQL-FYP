@@ -84,7 +84,7 @@ export function SqlPanel({
             }}
             onKeyUp={(editor, event) => {
               if (autoRun && (event as any).key === ";") {
-                onExecute()
+                setTimeout(() => onExecute())
               }
             }}
           />

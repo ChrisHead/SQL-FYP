@@ -52,7 +52,6 @@ async function run() {
     "userId" UUID REFERENCES "users"("id"),
     "questionId" UUID REFERENCES "questions"("id"),
     "history" JSONB DEFAULT '[]',
-    "activity" JSONB DEFAULT '[]',
     "completed" BOOLEAN DEFAULT false,
     CONSTRAINT user_question_uniq UNIQUE ("userId", "questionId")
     )`)

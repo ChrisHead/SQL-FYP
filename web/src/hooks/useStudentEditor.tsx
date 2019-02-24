@@ -4,6 +4,7 @@ import { AppContext } from "src/AppContext"
 import { ILab } from "src/stores/DbStore"
 import { DbContext } from "../DbContext"
 import { observe } from "mobx"
+import produce from "immer"
 export function useStudentEditor() {
   const app = React.useContext(AppContext)
   const db = React.useContext(DbContext)
@@ -15,6 +16,31 @@ export function useStudentEditor() {
   >(null)
   const [sqlValue, setSqlValue] = React.useState("")
   const [dbKey, setDbKey] = React.useState(0)
+  const loaded = labs && labs.length > 0
+  const currentLab = currentLabId
+    ? labs.find(lab => lab.id === currentLabId)
+    : undefined
+  const currentLabIdx = currentLabId
+    ? labs.findIndex(lab => lab.id === currentLabId)
+    : -1
+  const currentQuestion =
+    currentLab && currentQuestionId
+      ? currentLab.questions.find(question => question.id === currentQuestionId)
+      : undefined
+  const currentQuestionIdx =
+    currentLab && currentQuestionId
+      ? currentLab.questions.findIndex(
+          question => question.id === currentQuestionId
+        )
+      : -1
+  const history =
+    currentQuestion && currentQuestion.answer
+      ? currentQuestion.answer.history
+      : []
+  const [results, setResults] = React.useState([])
+  const [error, setError] = React.useState("")
+  const [answerError, setAnswerError] = React.useState("")
+  const answerAcknowledgement = db.answerAcknowledgement
 
   React.useEffect(() => {
     if (app.authToken) {
@@ -22,107 +48,36 @@ export function useStudentEditor() {
     }
   }, [])
 
-  React.useEffect(() => {
-    db.sqlValue = sqlValue
-  }, [sqlValue])
-
   function handleSetCurrentQuestion(labId: string, questionId: string) {
-    if (db.currentQuestion !== questionId && db.currentQuestion) {
+    if (currentQuestionId && currentQuestionId !== questionId) {
       db.clear()
       setSqlValue("")
+      setAnswerError("")
     }
-    db.currentLab = labId
-    db.currentQuestion = questionId
     setCurrentLabId(labId)
     setCurrentQuestionId(questionId)
-    //function to handle activity update
   }
 
-  // function activityUpdate() {
-  //    if question is not completed:
-  //    send update to server
-  // }
-
   async function handleExecuteQuery() {
-    // console.log("db sql value ", db.sqlValue)
-    const sql = sqlValue
-    // console.log("sql value ", sql)
-    db.executeSql()
-    const historyItem = {
-      value: sql,
-      dateTime: Date(),
-      //function to set completed correctly
-      completed: false,
-      error: db.error,
-    }
-    // console.log(historyItem)
-
-    const currentLabIdx = labs.findIndex(lab => lab.id === currentLabId)
-    const currentQuestionIdx =
-      currentLabIdx > -1
-        ? labs[currentLabIdx].questions.findIndex(
-            question => question.id === currentQuestionId
-          )
-        : -1
-
-    if (currentQuestionIdx === -1) {
+    if (!currentQuestion || currentLabIdx === -1 || currentQuestionIdx === -1) {
       return
     }
 
-    const currentLab = labs[currentLabIdx]
-    const currentQuestion = currentLab.questions[currentQuestionIdx]
+    db.executeSql(sqlValue)
 
-    console.log(db.checkAnswer(currentQuestion.modelAnswer))
-    //display incorrect/correct message
-    //if correct update in db and histtory item below
+    setSqlValue("")
 
-    if (currentQuestion.answer) {
-      currentQuestion.answer.history = [
-        ...currentQuestion.answer.history,
-        historyItem,
-      ]
-      // if historyItem.completed === true, currentQuestion.answer = true
-    } else {
-      currentQuestion.answer = {
-        id: "TEMP_ID",
-        activity: [],
-        // if historyItem.completed === true, currentQuestion.answer = true
-        completed: false,
-        questionId: currentQuestion.id,
-        history: [historyItem],
-      }
+    const { correct, error } = await validateAnswer()
+    if (error) {
+      setAnswerError(error)
     }
-    setLabs(labs)
 
-    await api.updateHistory(
-      { questionId: currentQuestion.id, history: historyItem },
-      app.authToken!
-    )
-
-    //update completed value if currentQuestion.answer.completed === true
+    addHistoryItem(sqlValue, correct, db.error, error)
   }
 
   function handleSelectHistory(history) {
-    db!.sqlValue = history.value
+    setSqlValue(history.value)
   }
-
-  const loaded = labs && labs.length > 0
-
-  const currentLab = currentLabId
-    ? labs.find(lab => lab.id === currentLabId)
-    : undefined
-  const currentQuestion =
-    currentLab && currentQuestionId
-      ? currentLab.questions.find(question => question.id === currentQuestionId)
-      : undefined
-
-  const history =
-    currentQuestion && currentQuestion.answer
-      ? currentQuestion.answer.history
-      : []
-
-  const [results, setResults] = React.useState([])
-  const [error, setError] = React.useState("")
 
   function clearResults() {
     setResults([])
@@ -132,10 +87,6 @@ export function useStudentEditor() {
   React.useEffect(() => {
     observe(db, "results", change => {
       setResults(change.newValue)
-    })
-    observe(db, "sqlValue", change => {
-      // console.log("newvalue", change.newValue)
-      setSqlValue(change.newValue)
     })
     observe(db, "error", change => {
       setError(change.newValue)
@@ -160,6 +111,79 @@ export function useStudentEditor() {
     error,
     results,
     dbKey,
-    // results: results.concat(`${dbKey} asd` as any),
+    answerError,
+    answerAcknowledgement,
+  }
+  async function addHistoryItem(value, completed, error, answerError) {
+    if (!currentQuestionId) {
+      return
+    }
+    const historyItem = {
+      value,
+      dateTime: Date(),
+      completed,
+      error,
+      answerError,
+    }
+    const newLabs = produce(labs, draft => {
+      const currentLabIdx = labs.findIndex(lab => lab.id === currentLabId)
+      const currentQuestionIdx =
+        currentLabIdx > -1
+          ? labs[currentLabIdx].questions.findIndex(
+              question => question.id === currentQuestionId
+            )
+          : -1
+
+      if (currentQuestionIdx === -1) {
+        return
+      }
+      const currentQuestion = draft[currentLabIdx].questions[currentQuestionIdx]
+      if (!currentQuestion.answer) {
+        currentQuestion.answer = createAnswer()
+      }
+      currentQuestion.answer.history = [
+        ...currentQuestion.answer.history,
+        historyItem,
+      ]
+    })
+    // console.log(historyItem)
+    setLabs(newLabs)
+
+    await api.updateHistory(
+      { questionId: currentQuestionId, history: historyItem },
+      app.authToken!
+    )
+  }
+  async function validateAnswer() {
+    if (!currentQuestion || currentLabIdx === -1 || currentQuestionIdx === -1) {
+      return { correct: false, error: "" }
+    }
+    const result = db.checkAnswer(currentQuestion.modelAnswer)
+    console.log(result)
+
+    if (result.correct) {
+      const newLabs = produce(labs, draft => {
+        const currentQuestion =
+          draft[currentLabIdx].questions[currentQuestionIdx]
+        if (!currentQuestion.answer) {
+          currentQuestion.answer = createAnswer()
+        }
+        currentQuestion.answer.completed = true
+      })
+      setLabs(newLabs)
+      await api.updateCompleted(
+        { questionId: currentQuestion.id },
+        app.authToken!
+      )
+    }
+    return result
+  }
+}
+
+function createAnswer() {
+  return {
+    id: Math.random() + "",
+    history: [],
+    completed: false,
   }
 }

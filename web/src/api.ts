@@ -48,4 +48,8 @@ export const api = {
   ) {
     return apiRequest("updateHistory", { data }, authToken)
   },
+
+  async updateCompleted(data: { questionId: string }, authToken: string) {
+    return apiRequest("updateCompleted", { data }, authToken)
+  },
 }
