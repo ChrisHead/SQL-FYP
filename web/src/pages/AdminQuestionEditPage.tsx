@@ -36,7 +36,7 @@ export function AdminQuestionEditPage({
 
       <form onSubmit={handleSubmit}>
         <TextInput label="Question" value={question.question} />
-        <TextInput label="Answer" value={question.answer} />
+        <TextInput label="Answer" value={question.modelAnswer} />
         <SelectInput
           label="Database"
           value={question.database + ""}

@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import * as React from "react"
 import Collapsible from "react-collapsible"
 
-import { ILab, IQuestion } from "../stores/DbStore"
+import { ILab } from "../stores/DbStore"
 
 library.add(faAngleDoubleDown)
 library.add(faAngleDoubleUp)
@@ -30,8 +30,6 @@ export function QuestionsPanel({
     setCurrentQuestion(lab.id, question.id)
     //add activity entry
   }
-
-  // console.log(labs)
 
   function isSelected(lab, question) {
     return (

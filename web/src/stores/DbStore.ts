@@ -36,7 +36,7 @@ export interface ILab {
 export interface IQuestion {
   id: string
   question: string
-  answer: string
+  modelAnswer: string
   database: number
   startingText: string
   response: string
@@ -59,29 +59,9 @@ export interface IHistory {
   completed: boolean
 }
 
-interface IQuestionActivity {
-  dateTime: string
-  question: string
-  activity: string
-}
-
 export class DbStore {
   @observable
   history: IHistory[] = []
-
-  @observable
-  activity: IQuestionActivity[] = [
-    {
-      dateTime: new Date().toLocaleString(),
-      question: "example question id",
-      activity: "opened",
-    },
-    {
-      dateTime: new Date().toLocaleString(),
-      question: "example question id",
-      activity: "closed",
-    },
-  ]
 
   @observable
   results = []
@@ -127,7 +107,7 @@ export class DbStore {
           mgr: 7902,
           hiredate: "17/12/1980",
           sal: 800,
-          comm: "",
+          comm: null,
           deptno: 20,
         },
         {
@@ -157,7 +137,7 @@ export class DbStore {
           mgr: 7839,
           hiredate: "02/04/1981",
           sal: 2975,
-          comm: "",
+          comm: null,
           deptno: 20,
         },
         {
@@ -177,7 +157,7 @@ export class DbStore {
           mgr: 7839,
           hiredate: "01/05/1981",
           sal: 2850,
-          comm: "",
+          comm: null,
           deptno: 30,
         },
         {
@@ -187,7 +167,7 @@ export class DbStore {
           mgr: 7839,
           hiredate: "09/06/1981",
           sal: 2450,
-          comm: "",
+          comm: null,
           deptno: 10,
         },
         {
@@ -197,7 +177,7 @@ export class DbStore {
           mgr: 7566,
           hiredate: "09/12/1982",
           sal: 3000,
-          comm: "",
+          comm: null,
           deptno: 20,
         },
         {
@@ -207,7 +187,7 @@ export class DbStore {
           mgr: "",
           hiredate: "17/11/1981",
           sal: 5000,
-          comm: "",
+          comm: null,
           deptno: 10,
         },
         {
@@ -227,7 +207,7 @@ export class DbStore {
           mgr: 7788,
           hiredate: "12/01/1983",
           sal: 1100,
-          comm: "",
+          comm: null,
           deptno: 20,
         },
         {
@@ -237,7 +217,7 @@ export class DbStore {
           mgr: 7698,
           hiredate: "03/12/1981",
           sal: 950,
-          comm: "",
+          comm: null,
           deptno: 30,
         },
         {
@@ -247,7 +227,7 @@ export class DbStore {
           mgr: 7566,
           hiredate: "13/12/1981",
           sal: 3000,
-          comm: "",
+          comm: null,
           deptno: 20,
         },
         {
@@ -257,7 +237,7 @@ export class DbStore {
           mgr: 7782,
           hiredate: "23/01/1982",
           sal: 1300,
-          comm: "",
+          comm: null,
           deptno: 10,
         },
       ],
@@ -291,9 +271,7 @@ export class DbStore {
   }
 
   generateDb() {
-    // console.log("generate start")
     this.db = this.resetToFactoryDb.slice(0)
-    // console.log(this.db)
     this.db.forEach(table => {
       alasql(
         `CREATE TABLE ${table.name} (${table.columns
@@ -303,12 +281,10 @@ export class DbStore {
       ;(alasql as any).tables[table.name].data = toJS(table.data)
     })
     alasql.options.casesensitive = false
-    // console.log("generate end")
     this.refreshDb()
   }
 
   refreshDb() {
-    // console.log("refresh start")
     const newdb: ITable[] = Object.keys((alasql as any).tables).map(name => {
       const columns = (alasql as any).tables[name].columns.map(
         (column: IAlaColumnType) => {
@@ -324,7 +300,6 @@ export class DbStore {
     })
     this.db = newdb
     this.dbKey++
-    // console.log("refresh end")
   }
 
   @action.bound
@@ -353,7 +328,6 @@ export class DbStore {
     const alasql = require("alasql")
     alasql("CREATE DATABASE tempDb")
     alasql("USE tempDb")
-    // console.log("Current database:", alasql.useid)
     this.resetToFactoryDb.forEach(table => {
       alasql(
         `CREATE TABLE ${table.name} (${table.columns
@@ -363,8 +337,6 @@ export class DbStore {
       ;(alasql as any).tables[table.name].data = table.data
     })
     alasql.options.casesensitive = false
-    // console.log("Current database:", alasql.useid)
-    // console.log(alasql.databases)
   }
 
   executeModelAnswer(query) {

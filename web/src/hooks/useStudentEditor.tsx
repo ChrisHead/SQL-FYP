@@ -5,6 +5,7 @@ import { ILab } from "src/stores/DbStore"
 import { DbContext } from "../DbContext"
 import { observe } from "mobx"
 import produce from "immer"
+
 export function useStudentEditor() {
   const app = React.useContext(AppContext)
   const db = React.useContext(DbContext)
@@ -16,6 +17,10 @@ export function useStudentEditor() {
   >(null)
   const [sqlValue, setSqlValue] = React.useState("")
   const [dbKey, setDbKey] = React.useState(0)
+  const [results, setResults] = React.useState([])
+  const [error, setError] = React.useState("")
+  const [answerError, setAnswerError] = React.useState("")
+
   const loaded = labs && labs.length > 0
   const currentLab = currentLabId
     ? labs.find(lab => lab.id === currentLabId)
@@ -37,9 +42,6 @@ export function useStudentEditor() {
     currentQuestion && currentQuestion.answer
       ? currentQuestion.answer.history
       : []
-  const [results, setResults] = React.useState([])
-  const [error, setError] = React.useState("")
-  const [answerError, setAnswerError] = React.useState("")
   const answerAcknowledgement = db.answerAcknowledgement
 
   React.useEffect(() => {
@@ -62,16 +64,12 @@ export function useStudentEditor() {
     if (!currentQuestion || currentLabIdx === -1 || currentQuestionIdx === -1) {
       return
     }
-
     db.executeSql(sqlValue)
-
     setSqlValue("")
-
     const { correct, error } = await validateAnswer()
     if (error) {
       setAnswerError(error)
     }
-
     addHistoryItem(sqlValue, correct, db.error, error)
   }
 
@@ -81,6 +79,7 @@ export function useStudentEditor() {
 
   function clearResults() {
     setResults([])
+    setAnswerError("")
     db.clearResults()
   }
 
@@ -146,7 +145,6 @@ export function useStudentEditor() {
         historyItem,
       ]
     })
-    // console.log(historyItem)
     setLabs(newLabs)
 
     await api.updateHistory(
@@ -159,8 +157,6 @@ export function useStudentEditor() {
       return { correct: false, error: "" }
     }
     const result = db.checkAnswer(currentQuestion.modelAnswer)
-    console.log(result)
-
     if (result.correct) {
       const newLabs = produce(labs, draft => {
         const currentQuestion =
@@ -170,7 +166,7 @@ export function useStudentEditor() {
         }
         currentQuestion.answer.completed = true
       })
-      setLabs(newLabs)
+      setLabs(newLabs) //need to trigger tick update
       await api.updateCompleted(
         { questionId: currentQuestion.id },
         app.authToken!
