@@ -1,4 +1,4 @@
-import { IHistory } from "./stores/DbStore"
+import { IHistory, IQuestion } from "./stores/DbStore"
 
 async function apiRequest(path: string, data: any, authToken?: string) {
   const headers = new Headers()
@@ -50,6 +50,13 @@ export const api = {
   },
 
   async updateCompleted(data: { questionId: string }, authToken: string) {
+    return apiRequest("updateCompleted", { data }, authToken)
+  },
+
+  async updateQuestion(
+    data: { updatedQuestion: IQuestion },
+    authToken: string
+  ) {
     return apiRequest("updateCompleted", { data }, authToken)
   },
 }

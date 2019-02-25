@@ -9,7 +9,11 @@ interface ICheckboxInputProps {
 export function CheckboxInput({ label, value, onChange }: ICheckboxInputProps) {
   return (
     <label className="input">
-      <input type="checkbox" value={value} onChange={e => onChange && onChange(e.target.value)} />
+      <input
+        type="checkbox"
+        value={value}
+        onChange={e => onChange && onChange(e.target.value)}
+      />
       {label}
     </label>
   )

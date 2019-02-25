@@ -4,20 +4,15 @@ import { api } from "../api"
 import { AppContext } from "../AppContext"
 
 export function ReportBugPage() {
-  const [error, setError] = React.useState("")
   const [bugReport, setBugReport] = React.useState("")
   const [response, setResponse] = React.useState("")
   const app = React.useContext(AppContext)
 
   async function handleSubmit(e) {
     e.preventDefault()
-    const submitError = await api.bugReport(bugReport, app.authToken!)
-    console.log(submitError)
-    if (submitError) {
-      setError(submitError)
-    }
+    const submit = await api.bugReport(bugReport, app.authToken!)
     setBugReport("")
-    setResponse("Feedback Submitted")
+    setResponse("Bug Report Submitted")
   }
 
   return (
@@ -41,7 +36,6 @@ export function ReportBugPage() {
         }}
       >
         <h1>Report Bug</h1>
-        {error}
         <form
           id={"bugReportForm"}
           onSubmit={handleSubmit}

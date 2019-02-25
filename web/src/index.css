@@ -178,3 +178,26 @@ a:visited {
 .CodeMirror {
   font-size: 18px;
 }
+
+.ReactTable .-pagination .-btn {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: 28px;
+  padding: 6px;
+  font-size: 1em;
+  color: rgba(0, 0, 0, 0.781);
+  background: #dacc12;
+  transition: all 0.1s ease;
+  cursor: pointer;
+  outline: none;
+}
+
+.ReactTable .-pagination .-btn:not([disabled]):hover {
+  background: #dacc12;
+  color: rgba(0, 0, 0, 0.781);
+}

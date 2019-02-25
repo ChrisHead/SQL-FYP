@@ -102,16 +102,13 @@ addApiEndpoint(
   async ({ currentUser, req }) => {
     const data = req.body
     const feedbackSql = `
-    INSERT INTO "feedbacks" ("feedback", "dateTime")
-    VALUES ('${pgp.as.value(data.data)}', now()) RETURNING "id"
+    INSERT INTO "feedbacks" ("feedback", "userId", "dateTime")
+    VALUES ('${pgp.as.value(data.data)}', '${
+      currentUser.id
+    }', now()) RETURNING "id"
     `
     const feedback = await conn.any<IUser>(feedbackSql)
-    const userFeedbackSql = `
-    INSERT INTO "usersFeedbacks" ("userId", "feedbackId")
-    VALUES ('${pgp.as.value(currentUser.id)}', '${feedback[0].id}')
-    `
-    const userFeedback = await conn.any<IUser>(userFeedbackSql)
-    return userFeedback
+    return feedback
   }
 )
 
@@ -121,16 +118,13 @@ addApiEndpoint(
   async ({ currentUser, req }) => {
     const data = req.body
     const bugReportSql = `
-    INSERT INTO "bugReports" ("bugReport", "dateTime")
-    VALUES ('${pgp.as.value(data.data)}', now()) RETURNING "id"
+    INSERT INTO "bugReports" ("bugReport", "userId", "dateTime")
+    VALUES ('${pgp.as.value(data.data)}', '${
+      currentUser.id
+    }', now()) RETURNING "id"
     `
     const bugReport = await conn.any<IUser>(bugReportSql)
-    const userBugReportSql = `
-    INSERT INTO "usersBugReports" ("userId", "bugReportId")
-    VALUES ('${pgp.as.value(currentUser.id)}', '${bugReport[0].id}')
-    `
-    const userBugReport = await conn.any<IUser>(userBugReportSql)
-    return userBugReport
+    return bugReport
   }
 )
 
@@ -179,6 +173,16 @@ addApiEndpoint(
     `
     const updateCompleted = await conn.any<IUser>(updateCompletedSql)
     return updateCompleted
+  }
+)
+
+addApiEndpoint(
+  "updateQuestion",
+  { permission: "authenticated" },
+  async ({ currentUser, req }) => {
+    const data = req.body
+    console.log(data)
+    return data
   }
 )
 

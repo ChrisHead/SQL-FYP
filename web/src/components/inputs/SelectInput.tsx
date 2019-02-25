@@ -8,12 +8,21 @@ interface ISelectInputProps {
   onChange?(val: string): void
 }
 
-export function SelectInput({ label, blank, value, onChange, options }: ISelectInputProps) {
+export function SelectInput({
+  label,
+  blank,
+  value,
+  onChange,
+  options,
+}: ISelectInputProps) {
   return (
     <label className="input">
       {label}
       <br />
-      <select value={value} onChange={e => onChange && onChange(e.target.value)}>
+      <select
+        value={value}
+        onChange={e => onChange && onChange(e.target.value)}
+      >
         {blank && <option>{blank}</option>}
         {options.map(option => (
           <option value={option.value}>{option.label}</option>

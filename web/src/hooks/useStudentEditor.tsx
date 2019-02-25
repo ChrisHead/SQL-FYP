@@ -56,8 +56,11 @@ export function useStudentEditor() {
       setSqlValue("")
       setAnswerError("")
     }
+    console.log(labs)
     setCurrentLabId(labId)
+    console.log(currentLabId)
     setCurrentQuestionId(questionId)
+    console.log(currentQuestionId)
   }
 
   async function handleExecuteQuery() {

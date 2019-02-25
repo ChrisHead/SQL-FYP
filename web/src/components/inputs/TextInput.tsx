@@ -11,7 +11,11 @@ export function TextInput({ label, value, onChange }: ITextInputProps) {
     <label className="input">
       {label}
       <br />
-      <input type="text" value={value} onChange={e => onChange && onChange(e.target.value)} />
+      <input
+        type="text"
+        value={value}
+        onChange={e => onChange && onChange(e.target.value)}
+      />
     </label>
   )
 }

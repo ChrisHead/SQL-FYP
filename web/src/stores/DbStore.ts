@@ -37,11 +37,8 @@ export interface IQuestion {
   id: string
   question: string
   modelAnswer: string
-  database: number
+  databaseId: string
   startingText: string
-  response: string
-  respondAfter: number
-  autoResponse: boolean
 }
 
 interface IConditions {
@@ -253,7 +250,7 @@ export class DbStore {
   answerAcknowledgement = "Answer Correct"
 
   @observable
-  dbKey = 0
+  dbKey = 1
 
   conditions: IConditions[] = [
     {

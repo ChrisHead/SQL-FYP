@@ -73,6 +73,7 @@ export function StudentEditor() {
           setCurrentQuestion={handleSetCurrentQuestion}
           currentLab={currentLab}
           currentQuestion={currentQuestion}
+          dbKey={dbKey}
         />
         {currentQuestion ? (
           <>

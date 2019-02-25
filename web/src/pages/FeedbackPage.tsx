@@ -4,18 +4,13 @@ import { api } from "../api"
 import { AppContext } from "../AppContext"
 
 export function FeedbackPage() {
-  const [error, setError] = React.useState("")
   const [feedback, setFeedback] = React.useState("")
   const [response, setResponse] = React.useState("")
   const app = React.useContext(AppContext)
 
   async function handleSubmit(e) {
     e.preventDefault()
-    const submitError = await api.feedback(feedback, app.authToken!)
-    console.log(submitError)
-    if (submitError) {
-      setError(submitError)
-    }
+    const submit = await api.feedback(feedback, app.authToken!)
     setFeedback("")
     setResponse("Feedback Submitted")
   }
@@ -41,14 +36,12 @@ export function FeedbackPage() {
         }}
       >
         <h1>Feedback</h1>
-        {error}
         <form
           id={"feedbackForm"}
           onSubmit={handleSubmit}
           style={{ flexDirection: "row" }}
         >
           <textarea
-            id={"feedbackText"}
             value={feedback}
             onChange={e => setFeedback(e.target.value)}
             wrap="true"

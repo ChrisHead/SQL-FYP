@@ -2,8 +2,6 @@ import * as React from "react"
 import ReactTable from "react-table"
 import "react-table/react-table.css"
 import { Link } from "react-router-dom"
-import { SelectInput } from "./inputs/SelectInput"
-import { TextInput } from "./inputs/TextInput"
 import { useQuestions } from "../hooks/useQuestions"
 import { AppContext } from "src/AppContext"
 import { DbContext } from "src/DbContext"
@@ -17,39 +15,51 @@ export function AdminQuestion() {
     {
       Header: "Question",
       accessor: "question",
+      style: { whiteSpace: "unset" },
     },
     {
       Header: "Answer",
-      accessor: "answer",
+      accessor: "modelAnswer",
+      style: { whiteSpace: "unset" },
     },
     {
       Header: "Database",
-      accessor: "database",
+      accessor: "databaseId",
     },
     {
       Header: "Starting Text",
       accessor: "startingText",
-    },
-    {
-      Header: "Response",
-      accessor: "response",
-    },
-    {
-      Header: "Respond After No.",
-      accessor: "respondAfter",
-    },
-    {
-      Header: "Auto Response",
-      id: "autoResponse",
-      // accessor: d => {
-      //   debugger
-      //   d.autoResponse.toString()
-      // },
+      style: { whiteSpace: "unset" },
     },
     {
       Header: "",
-      id: "actions",
-      accessor: d => <Link to={`/questions/${d.id}/edit`}>Edit</Link>,
+      id: "edit",
+      accessor: d => (
+        <Link
+          // className={"button"}
+          style={{ textDecoration: "none", color: "#dacc12" }}
+          to={`/questions/${d.id}/edit`}
+        >
+          Edit
+        </Link>
+      ),
+      width: 41,
+      // width: 49,
+    },
+    {
+      Header: "",
+      id: "delete",
+      accessor: d => (
+        <Link
+          // className={"button"}
+          style={{ textDecoration: "none", color: "#dacc12" }}
+          to={`/questions/${d.id}/edit`}
+        >
+          Delete
+        </Link>
+      ),
+      width: 62,
+      // width: 70,
     },
   ]
 
@@ -89,13 +99,26 @@ export function AdminQuestion() {
         height: 0.94 * app.windowHeight,
       }}
     >
+      <div
+        style={{
+          padding: 8,
+          backgroundColor: "#30434d",
+          marginTop: 10,
+          marginBottom: 10,
+        }}
+      >
+        <Link className={"button"} to={`/questions/edit`}>
+          Add Question
+        </Link>
+      </div>
       <ReactTable
         data={questions}
         columns={columns}
         sortable
+        defaultPageSize={20}
         className="-striped -highlight"
         style={{
-          height: 400,
+          height: 0.85 * app.windowHeight,
           width: 0.78 * app.windowWidth,
           backgroundColor: "#30434d",
         }}
@@ -112,101 +135,6 @@ export function AdminQuestion() {
           )
         }}
       />
-      <div
-        style={{
-          padding: 8,
-          backgroundColor: "#30434d",
-          marginTop: 10,
-          marginBottom: 10,
-        }}
-      >
-        Add Question:
-        <form
-          style={{
-            // display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          Question:
-          <input type="text" />
-          Answer:
-          <input type="text" />
-          Database:
-          <select>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-          </select>
-          Starting Text (Custom, Blank or 'previous'):
-          <input type="text" />
-          Response After:
-          <input type="text" />
-          Conditions:
-          <input type="checkbox" />
-          <input type="checkbox" />
-          <input type="checkbox" />
-          <input type="checkbox" />
-          <input type="submit" value="Submit" />
-        </form>
-      </div>
-
-      <div
-        style={{
-          padding: 8,
-          backgroundColor: "#30434d",
-          marginTop: 10,
-          marginBottom: 10,
-        }}
-      >
-        <form
-          style={{
-            // display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          <SelectInput
-            label="Edit Question Response"
-            blank="-- Select Id --"
-            options={[
-              { value: "1", label: "1" },
-              { value: "2", label: "2" },
-              { value: "3", label: "3" },
-              { value: "4", label: "4" },
-            ]}
-          />
-          <TextInput label={"Response"} value="" />
-          <input type="submit" value="Submit" />
-        </form>
-      </div>
-      <div
-        style={{
-          padding: 8,
-          backgroundColor: "#30434d",
-          marginTop: 10,
-          marginBottom: 10,
-        }}
-      >
-        <form
-          style={{
-            // display: "flex",
-            flexDirection: "column",
-          }}
-          onSubmit={e => e.preventDefault()}
-        >
-          <SelectInput
-            label="Remove Question (Select ID)"
-            value="1"
-            options={[
-              { value: "1", label: "1" },
-              { value: "2", label: "2" },
-              { value: "3", label: "3" },
-              { value: "4", label: "4" },
-            ]}
-          />
-          <input type="submit" value="Submit" />
-        </form>
-      </div>
     </div>
   )
 }

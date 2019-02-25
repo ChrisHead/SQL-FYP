@@ -19,12 +19,14 @@ interface IProps {
   setCurrentQuestion(labId: string, questionId: string): void
   currentLab?: ILab
   currentQuestion?: ILab["questions"][number]
+  dbKey
 }
 export function QuestionsPanel({
   labs,
   setCurrentQuestion,
   currentLab,
   currentQuestion,
+  dbKey,
 }: IProps) {
   function handleQuestionClick(lab, question) {
     setCurrentQuestion(lab.id, question.id)
@@ -114,15 +116,14 @@ export function QuestionsPanel({
                     icon="check-circle"
                     size={"2x"}
                     color={
-                      question.answer && question.answer.completed
+                      question.answer && question.answer.completed && dbKey
                         ? "Green"
                         : "White"
                     }
                   />
                 </div>
-
                 <div style={{ fontSize: 14, padding: 8 }}>
-                  {question.question}
+                  {i + 1 + ". " + question.question}
                 </div>
               </div>
             ))}

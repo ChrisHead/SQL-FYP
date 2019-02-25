@@ -41,10 +41,7 @@ async function run() {
     "question" TEXT,
     "modelAnswer" TEXT,
     "databaseId" UUID REFERENCES "databaseTemplates"("id"),
-    "startingText" TEXT,
-    "response" TEXT,
-    "respondAfter" INTEGER,
-    "autoResponse" BOOLEAN DEFAULT false
+    "startingText" TEXT
   )`)
 
   await conn.any(`CREATE TABLE IF NOT EXISTS "answers" (
@@ -106,29 +103,14 @@ async function run() {
       `)
 
     for (const questionData of lab.questions) {
-      const {
-        question,
-        modelAnswer,
-        startingText,
-        response,
-        respondAfter,
-        autoResponse,
-      } = questionData
+      const { question, modelAnswer, startingText } = questionData
 
-      const values = [
-        question,
-        modelAnswer,
-        databases[0].id,
-        startingText,
-        response,
-        respondAfter,
-        autoResponse,
-      ]
+      const values = [question, modelAnswer, databases[0].id, startingText]
         .map(v => `'${pgp.as.value(v)}'`)
         .join()
 
       const questionRecord = await conn.one(`
-        INSERT INTO "questions" ("question","modelAnswer","databaseId","startingText","response","respondAfter","autoResponse")
+        INSERT INTO "questions" ("question","modelAnswer","databaseId","startingText")
         VALUES (${values})
         RETURNING "id"
       `)
