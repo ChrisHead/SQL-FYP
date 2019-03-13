@@ -5,9 +5,17 @@ import { IHistory } from "../stores/DbStore"
 interface IProps {
   history: IHistory[]
   onSelectHistory(history: IHistory): void
+  addActivity(activity: string)
 }
 
-export function HistoryPanel({ history, onSelectHistory }: IProps) {
+export function HistoryPanel({
+  history,
+  onSelectHistory,
+  addActivity,
+}: IProps) {
+  function updateActivity(val) {
+    addActivity(val)
+  }
   return (
     <div id="historyDiv">
       <Collapsible
@@ -21,6 +29,8 @@ export function HistoryPanel({ history, onSelectHistory }: IProps) {
             <span style={{ margin: "0 16px" }}>History</span>
           </>
         }
+        onOpen={() => updateActivity("History Opened")}
+        onClose={() => updateActivity("History Closed")}
         transitionTime={100}
         overflowWhenOpen="auto"
         triggerStyle={{
@@ -39,7 +49,10 @@ export function HistoryPanel({ history, onSelectHistory }: IProps) {
               key={i}
               className="history-div"
               style={{ fontSize: 14, fontFamily: "monospace" }}
-              onClick={() => onSelectHistory(line)}
+              onClick={() => {
+                onSelectHistory(line)
+                updateActivity("History Selected: " + line.value)
+              }}
             >
               {line.value}
               {/* {JSON.stringify(line)} */}

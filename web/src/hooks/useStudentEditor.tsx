@@ -56,11 +56,8 @@ export function useStudentEditor() {
       setSqlValue("")
       setAnswerError("")
     }
-    console.log(labs)
     setCurrentLabId(labId)
-    console.log(currentLabId)
     setCurrentQuestionId(questionId)
-    console.log(currentQuestionId)
   }
 
   async function handleExecuteQuery() {
@@ -98,24 +95,6 @@ export function useStudentEditor() {
     })
   }, [])
 
-  return {
-    labs,
-    loaded,
-    handleSetCurrentQuestion,
-    handleExecuteQuery,
-    handleSelectHistory,
-    history,
-    currentQuestion,
-    currentLab,
-    sqlValue,
-    setSqlValue,
-    clearResults,
-    error,
-    results,
-    dbKey,
-    answerError,
-    answerAcknowledgement,
-  }
   async function addHistoryItem(value, completed, error, answerError) {
     if (!currentQuestionId) {
       return
@@ -169,13 +148,32 @@ export function useStudentEditor() {
         }
         currentQuestion.answer.completed = true
       })
-      setLabs(newLabs) //need to trigger tick update
+      setLabs(newLabs)
       await api.updateCompleted(
         { questionId: currentQuestion.id },
         app.authToken!
       )
     }
     return result
+  }
+
+  return {
+    labs,
+    loaded,
+    handleSetCurrentQuestion,
+    handleExecuteQuery,
+    handleSelectHistory,
+    history,
+    currentQuestion,
+    currentLab,
+    sqlValue,
+    setSqlValue,
+    clearResults,
+    error,
+    results,
+    dbKey,
+    answerError,
+    answerAcknowledgement,
   }
 }
 

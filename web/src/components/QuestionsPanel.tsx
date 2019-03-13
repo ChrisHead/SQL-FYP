@@ -17,6 +17,7 @@ library.add(faCheckCircle)
 interface IProps {
   labs: ILab[]
   setCurrentQuestion(labId: string, questionId: string): void
+  addActivity(activity: string)
   currentLab?: ILab
   currentQuestion?: ILab["questions"][number]
   dbKey
@@ -24,13 +25,16 @@ interface IProps {
 export function QuestionsPanel({
   labs,
   setCurrentQuestion,
+  addActivity,
   currentLab,
   currentQuestion,
-  dbKey,
 }: IProps) {
   function handleQuestionClick(lab, question) {
     setCurrentQuestion(lab.id, question.id)
-    //add activity entry
+  }
+
+  function updateActivity(val) {
+    addActivity(val)
   }
 
   function isSelected(lab, question) {
@@ -56,6 +60,7 @@ export function QuestionsPanel({
           padding: 8,
           margin: 10,
           display: "flex",
+          height: 34,
           justifyContent: "center",
           backgroundColor: "#30434d",
         }}
@@ -83,6 +88,8 @@ export function QuestionsPanel({
                 <FontAwesomeIcon icon="angle-double-up" />
               </>
             }
+            onOpen={() => updateActivity("Lab Opened: " + lab.id)}
+            onClose={() => updateActivity("Lab Closed: " + lab.id)}
             transitionTime={100}
             overflowWhenOpen="auto"
             triggerStyle={{
@@ -104,7 +111,12 @@ export function QuestionsPanel({
                   display: "flex",
                   flexDirection: "row",
                 }}
-                onClick={() => handleQuestionClick(lab, question)}
+                onClick={() => {
+                  handleQuestionClick(lab, question)
+                  updateActivity(
+                    "Question Selected: " + question.id + " In Lab: " + lab.id
+                  )
+                }}
               >
                 <div
                   style={{
@@ -116,7 +128,7 @@ export function QuestionsPanel({
                     icon="check-circle"
                     size={"2x"}
                     color={
-                      question.answer && question.answer.completed && dbKey
+                      question.answer && question.answer.completed
                         ? "Green"
                         : "White"
                     }

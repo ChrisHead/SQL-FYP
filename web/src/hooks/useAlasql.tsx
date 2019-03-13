@@ -1,4 +1,6 @@
-import { observable, action, toJS } from "mobx"
+import * as React from "react"
+import { api } from "src/api"
+import { AppContext } from "src/AppContext"
 import alasql from "alasql"
 
 export interface ITable {
@@ -12,42 +14,6 @@ interface IAlaColumnType {
   dbtypeid: any
 }
 
-export interface ILab {
-  id: string
-  labNumber: number
-  dateTime: string
-  questions: {
-    id: string
-    question: string
-    modelAnswer: string
-    answer?: {
-      id: string
-      history: IHistory[]
-      completed: boolean
-    }
-    databaseId: string
-    startingText: string
-    response: string
-    respondAfter: number
-    autoResponse: boolean
-  }[]
-}
-
-export interface IQuestion {
-  id: string
-  question: string
-  modelAnswer: string
-  databaseId: string
-  startingText: string
-}
-
-interface IConditions {
-  conditionOne: boolean
-  conditionTwo: boolean
-  conditionThree: boolean
-  conditionFour: boolean
-}
-
 export interface IHistory {
   dateTime: string
   value: string
@@ -56,20 +22,20 @@ export interface IHistory {
   completed: boolean
 }
 
-export class DbStore {
-  @observable
-  history: IHistory[] = []
+export function useAlasql() {
+  console.log("alasql")
+}
 
-  @observable
-  results = []
+export function DbStore() {
+  const history: IHistory[] = []
 
-  @observable
-  answerResults = []
+  const results = []
 
-  @observable
-  db: ITable[] = []
+  const answerResults = []
 
-  resetToFactoryDb: ITable[] = [
+  const db: ITable[] = []
+
+  const resetToFactoryDb: ITable[] = [
     {
       name: "dept",
       columns: [
@@ -241,27 +207,15 @@ export class DbStore {
     },
   ]
 
-  answerdb: ITable[] = []
+  const answerdb: ITable[] = []
 
-  @observable
-  error: any
+  const error: any
 
-  @observable
-  answerAcknowledgement = "Answer Correct"
+  const answerAcknowledgement = "Answer Correct"
 
-  @observable
-  dbKey = 1
+  const dbKey = 1
 
-  conditions: IConditions[] = [
-    {
-      conditionOne: true,
-      conditionTwo: false,
-      conditionThree: true,
-      conditionFour: false,
-    },
-  ]
-
-  ala = alasql
+  const ala = alasql
 
   constructor() {
     this.generateDb()

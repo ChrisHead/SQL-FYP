@@ -25,7 +25,8 @@ export const labs = [
       },
 
       {
-        question: "Display the name of the employee with the lowest salary.",
+        question:
+          "Display the name and salary of the employee with the lowest salary.",
         modelAnswer:
           "SELECT ename, sal FROM emp WHERE sal = (SELECT MIN(sal) FROM emp)",
         databaseId: "2",

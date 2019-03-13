@@ -8,6 +8,7 @@ interface IProps {
   results
   answerError
   answerAcknowledgement
+  addActivity(activity: string)
 }
 export function ResultsPanel({
   onClearResults,
@@ -15,7 +16,11 @@ export function ResultsPanel({
   results,
   answerError,
   answerAcknowledgement,
+  addActivity,
 }: IProps) {
+  function updateActivity(val) {
+    addActivity(val)
+  }
   return (
     <div
       style={{
@@ -34,7 +39,13 @@ export function ResultsPanel({
         }}
       >
         <div style={{ flex: 1 }}>
-          <button style={{ marginLeft: 8 }} onClick={onClearResults}>
+          <button
+            style={{ marginLeft: 8 }}
+            onClick={() => {
+              onClearResults()
+              updateActivity("Clear Results")
+            }}
+          >
             Clear Results
           </button>
         </div>

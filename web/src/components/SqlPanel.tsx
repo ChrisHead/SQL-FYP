@@ -15,17 +15,21 @@ interface IProps {
   onExecute(): void
   sqlValue: string
   onSqlValueChange(val: string): void
+  addActivity(activity: string)
 }
 
 export function SqlPanel({
   history,
   onSelectHistory,
+  addActivity,
   onExecute,
   sqlValue,
   onSqlValueChange,
 }: IProps) {
-  const [autoRun, setAutoRun] = React.useState(true)
-
+  // const [autoRun, setAutoRun] = React.useState(true)
+  function updateActivity(val) {
+    addActivity(val)
+  }
   return (
     <div
       style={{
@@ -44,7 +48,13 @@ export function SqlPanel({
           justifyContent: "flex-start",
         }}
       >
-        <button style={{ width: 100, marginLeft: 8 }} onClick={onExecute}>
+        <button
+          style={{ width: 100, marginLeft: 8 }}
+          onClick={() => {
+            onExecute()
+            updateActivity("SQL Run: " + sqlValue)
+          }}
+        >
           Run
         </button>
         {/* <label
@@ -82,15 +92,19 @@ export function SqlPanel({
             onBeforeChange={(editor, data, value) => {
               onSqlValueChange(value)
             }}
-            onKeyUp={(editor, event) => {
-              if (autoRun && (event as any).key === ";") {
-                setTimeout(() => onExecute())
-              }
-            }}
+            // onKeyUp={(editor, event) => {
+            //   if (autoRun && (event as any).key === ";") {
+            //     setTimeout(() => onExecute())
+            //   }
+            // }}
           />
         )}
       </Observer>
-      <HistoryPanel history={history} onSelectHistory={onSelectHistory} />
+      <HistoryPanel
+        history={history}
+        onSelectHistory={onSelectHistory}
+        addActivity={addActivity}
+      />
     </div>
   )
 }

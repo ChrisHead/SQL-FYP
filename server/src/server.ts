@@ -176,13 +176,29 @@ addApiEndpoint(
   }
 )
 
+// addApiEndpoint(
+//   "updateQuestion",
+//   { permission: "authenticated" },
+//   async ({ currentUser, req }) => {
+//     const data = req.body
+//     console.log(data)
+//     return data
+//   }
+// )
+
 addApiEndpoint(
-  "updateQuestion",
+  "updateActivity",
   { permission: "authenticated" },
   async ({ currentUser, req }) => {
-    const data = req.body
-    console.log(data)
-    return data
+    const activity = { dateTime: Date(), activity: req.body.data.activity }
+    const updateActivitySql = `
+      UPDATE users
+      SET "activity" = "activity" || ${pgp.as.json([activity])}
+      WHERE "id" = '${pgp.as.value(currentUser.id)}'
+      RETURNING "activity"
+    `
+    const updateActivity = await conn.one<{ id: string }>(updateActivitySql)
+    return updateActivity
   }
 )
 

@@ -22,12 +22,13 @@ async function run() {
     "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     "username" TEXT UNIQUE,
     "password" TEXT NOT NULL,
-    "admin" BOOLEAN DEFAULT 'false'
+    "admin" BOOLEAN DEFAULT 'false',
+    "activity" JSONB DEFAULT '[]'
   )`)
 
   await conn.any(`CREATE TABLE IF NOT EXISTS "databaseTemplates" (
     "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    "data" JSONB DEFAULT '{}'
+    "data" JSONB DEFAULT '[]'
   )`)
 
   await conn.any(`CREATE TABLE IF NOT EXISTS "labs" (

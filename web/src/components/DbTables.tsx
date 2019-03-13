@@ -2,6 +2,8 @@ import * as React from "react"
 import { observable, computed } from "mobx"
 import { observer } from "mobx-react"
 import { ITable } from "src/stores/DbStore"
+import { api } from "src/api"
+import { AppContext } from "src/AppContext"
 
 interface IProps {
   db: ITable[]
@@ -19,6 +21,13 @@ export class DbTables extends React.Component<IProps> {
     this.index = index
   }
   render() {
+    // function addNewActivity(activity: string) {
+    //   const app = React.useContext(AppContext)
+    //   async function func() {
+    //     await api.updateActivity({ activity }, app.authToken!)
+    //   }
+    //   func()
+    // }
     const { db } = this.props
     return (
       <div
@@ -41,7 +50,10 @@ export class DbTables extends React.Component<IProps> {
             <button
               key={table.name}
               style={{ marginLeft: 8 }}
-              onClick={() => this.handleTableButton(i)}
+              onClick={() => {
+                this.handleTableButton(i)
+                // addNewActivity("Table Selected: " + table.name)
+              }}
             >
               {table.name + " Table"}
             </button>

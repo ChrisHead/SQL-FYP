@@ -1,9 +1,9 @@
 import * as React from "react"
 import SplitPane from "react-split-pane"
-
 import { AppContext } from "../AppContext"
 import { DbContext } from "../DbContext"
 import { useStudentEditor } from "../hooks/useStudentEditor"
+import { useActivity } from "../hooks/useActivity"
 import { QuestionsPanel } from "./QuestionsPanel"
 import { ResultsPanel } from "./ResultsPanel"
 import { SqlPanel } from "./SqlPanel"
@@ -49,6 +49,8 @@ export function StudentEditor() {
     answerAcknowledgement,
   } = useStudentEditor()
 
+  const { addNewActivity } = useActivity()
+
   if (!loaded) {
     return <>"Loading"</>
   }
@@ -71,6 +73,7 @@ export function StudentEditor() {
         <QuestionsPanel
           labs={labs}
           setCurrentQuestion={handleSetCurrentQuestion}
+          addActivity={addNewActivity}
           currentLab={currentLab}
           currentQuestion={currentQuestion}
           dbKey={dbKey}
@@ -86,6 +89,7 @@ export function StudentEditor() {
             >
               <SqlPanel
                 history={history}
+                addActivity={addNewActivity}
                 onSelectHistory={handleSelectHistory}
                 onExecute={handleExecuteQuery}
                 sqlValue={sqlValue}
@@ -101,6 +105,7 @@ export function StudentEditor() {
                 >
                   <ResultsPanel
                     onClearResults={clearResults}
+                    addActivity={addNewActivity}
                     error={error}
                     results={results}
                     answerError={answerError}
