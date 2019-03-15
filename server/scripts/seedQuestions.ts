@@ -34,7 +34,7 @@ export const labs = [
       },
       {
         question:
-          "Display the names of all employees except the one with the lowest salary.",
+          "Display the names and salaries of all employees except the one with the lowest salary.",
         modelAnswer:
           "SELECT ename, sal FROM emp WHERE sal > (SELECT MIN(sal) FROM emp)",
         databaseId: "2",

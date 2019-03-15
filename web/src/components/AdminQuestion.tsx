@@ -3,11 +3,12 @@ import ReactTable from "react-table"
 import "react-table/react-table.css"
 import { Link } from "react-router-dom"
 import { useQuestions } from "../hooks/useQuestions"
+import { useAlasql } from "../hooks/useAlasql"
 import { AppContext } from "src/AppContext"
-import { DbContext } from "src/DbContext"
+// import { DbContext } from "src/DbContext"
 
 export function AdminQuestion() {
-  const db = React.useContext(DbContext)
+  const { db } = useAlasql()
   const app = React.useContext(AppContext)
   const questions = useQuestions()
 
@@ -122,18 +123,18 @@ export function AdminQuestion() {
           width: 0.78 * app.windowWidth,
           backgroundColor: "#30434d",
         }}
-        SubComponent={row => {
-          return (
-            <div style={{ padding: "20px" }}>
-              <ReactTable
-                data={db.conditions}
-                columns={conditionColumns}
-                defaultPageSize={1}
-                showPagination={false}
-              />
-            </div>
-          )
-        }}
+        // SubComponent={row => {
+        //   return (
+        //     <div style={{ padding: "20px" }}>
+        //       <ReactTable
+        //         data={db.conditions}
+        //         columns={conditionColumns}
+        //         defaultPageSize={1}
+        //         showPagination={false}
+        //       />
+        //     </div>
+        //   )
+        // }}
       />
     </div>
   )

@@ -40,9 +40,7 @@ export function Results({
         </div>
       )}
       {answerError === answerAcknowledgement && (
-        <div
-          style={{ color: "green", display: "flex", justifyContent: "center" }}
-        >
+        <div style={{ color: "green" }}>
           {JSON.stringify(answerError, null, "  ").slice(1, -1)}
         </div>
       )}

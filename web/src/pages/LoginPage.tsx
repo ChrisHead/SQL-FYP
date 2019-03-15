@@ -19,7 +19,7 @@ export function LoginPage() {
   }
   // TODO REMOVE THIS BEFORE PUSHING TO PRODUCTION
   // React.useEffect(() => {
-  //   app.login("admin", password)
+  //   app.login("asd", password)
   // })
 
   return (

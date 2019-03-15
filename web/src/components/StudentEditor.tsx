@@ -1,13 +1,11 @@
 import * as React from "react"
 import SplitPane from "react-split-pane"
 import { AppContext } from "../AppContext"
-import { DbContext } from "../DbContext"
 import { useStudentEditor } from "../hooks/useStudentEditor"
 import { useActivity } from "../hooks/useActivity"
 import { QuestionsPanel } from "./QuestionsPanel"
 import { ResultsPanel } from "./ResultsPanel"
 import { SqlPanel } from "./SqlPanel"
-import { Observer } from "mobx-react"
 import { DbTables } from "./DbTables"
 
 export function StudentEditor() {
@@ -28,7 +26,6 @@ export function StudentEditor() {
   }
 
   const app = React.useContext(AppContext)
-  const db = React.useContext(DbContext)
 
   const {
     labs,
@@ -42,11 +39,12 @@ export function StudentEditor() {
     sqlValue,
     setSqlValue,
     clearResults,
-    error,
+    db,
+    sqlError,
     results,
-    dbKey,
     answerError,
     answerAcknowledgement,
+    dbKey,
   } = useStudentEditor()
 
   const { addNewActivity } = useActivity()
@@ -106,14 +104,12 @@ export function StudentEditor() {
                   <ResultsPanel
                     onClearResults={clearResults}
                     addActivity={addNewActivity}
-                    error={error}
+                    error={sqlError}
                     results={results}
                     answerError={answerError}
                     answerAcknowledgement={answerAcknowledgement}
                   />
-                  <Observer>
-                    {() => <DbTables db={db.db} dbKey={dbKey} />}
-                  </Observer>
+                  <DbTables db={db} addActivity={addNewActivity} />
                 </SplitPane>
               </div>
             </SplitPane>

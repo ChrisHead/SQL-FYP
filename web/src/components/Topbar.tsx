@@ -1,8 +1,16 @@
 import * as React from "react"
-import { AppStore } from "../stores/AppStore"
-import { inject } from "mobx-react"
 import { Link } from "react-router-dom"
-export const Topbar = inject("app")(({ app }: { app?: AppStore }) => {
+import { AppContext } from "src/AppContext"
+
+interface IProps {
+  addActivity(activity: string)
+}
+export function Topbar({ addActivity }) {
+  const app = React.useContext(AppContext)
+
+  function updateActivity(val) {
+    addActivity(val)
+  }
   return (
     <div
       style={{
@@ -22,16 +30,30 @@ export const Topbar = inject("app")(({ app }: { app?: AppStore }) => {
           justifyContent: "flex-end",
         }}
       >
-        <Link className="button" to="/Feedback" style={{ width: 100, marginRight: 8 }}>
+        <Link
+          className="button"
+          to="/Feedback"
+          style={{ width: 100, marginRight: 8 }}
+        >
           Feedback
         </Link>
-        <Link className="button" to="/Report_Bug" style={{ width: 100, marginRight: 8 }}>
+        <Link
+          className="button"
+          to="/Report_Bug"
+          style={{ width: 100, marginRight: 8 }}
+        >
           Report Bug
         </Link>
-        <button style={{ width: 100, marginRight: 8 }} onClick={() => app!.logout()}>
+        <button
+          style={{ width: 100, marginRight: 8 }}
+          onClick={() => {
+            updateActivity("Logout")
+            app!.logout()
+          }}
+        >
           Logout
         </button>
       </div>
     </div>
   )
-})
+}

@@ -38,6 +38,7 @@ addApiEndpoint("login", {}, async ({ req }) => {
   }
   const user = results[0]
   const authToken = jwt.sign({ id: user.id }, secretKey)
+  await addActivity(user, "Login")
   return { data: { authToken } }
 })
 
@@ -190,17 +191,22 @@ addApiEndpoint(
   "updateActivity",
   { permission: "authenticated" },
   async ({ currentUser, req }) => {
-    const activity = { dateTime: Date(), activity: req.body.data.activity }
-    const updateActivitySql = `
-      UPDATE users
-      SET "activity" = "activity" || ${pgp.as.json([activity])}
-      WHERE "id" = '${pgp.as.value(currentUser.id)}'
-      RETURNING "activity"
-    `
-    const updateActivity = await conn.one<{ id: string }>(updateActivitySql)
-    return updateActivity
+    return addActivity(currentUser, req.body.data.activity)
   }
 )
+
+async function addActivity(user: IUser, activity: string) {
+  const updateActivitySql = `
+    UPDATE users
+    SET "activity" = "activity" || ${pgp.as.json([
+      { dateTime: Date(), activity },
+    ])}
+    WHERE "id" = '${pgp.as.value(user.id)}'
+    RETURNING "activity"
+  `
+  const updateActivity = await conn.one<{ id: string }>(updateActivitySql)
+  return updateActivity
+}
 
 // default response is 404
 app.use((req, res, next) => next(404))

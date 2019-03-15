@@ -2,15 +2,18 @@ import React from "react"
 import { Link } from "react-router-dom"
 import { api } from "../api"
 import { AppContext } from "../AppContext"
+import { useActivity } from "../hooks/useActivity"
 
 export function FeedbackPage() {
   const [feedback, setFeedback] = React.useState("")
   const [response, setResponse] = React.useState("")
   const app = React.useContext(AppContext)
+  const { addNewActivity } = useActivity()
 
   async function handleSubmit(e) {
     e.preventDefault()
     const submit = await api.feedback(feedback, app.authToken!)
+    addNewActivity("Feedback Submitted: " + feedback)
     setFeedback("")
     setResponse("Feedback Submitted")
   }

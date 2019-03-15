@@ -2,58 +2,56 @@ import * as React from "react"
 import { AdminPanel } from "./AdminPanel"
 import SplitPane from "react-split-pane"
 import { AdminControls } from "./AdminControls"
-import { DbStore } from "src/stores/DbStore"
+// import { DbStore } from "src/stores/DbStore"
 import { observer, inject } from "mobx-react"
 import { observable } from "mobx"
 import { AppStore } from "../stores/AppStore"
 import { withRouter } from "react-router"
+import { AppContext } from "src/AppContext"
 
-interface IProps {
-  db?: DbStore
-  app?: AppStore
-}
+// interface IProps {
+//   // db?: DbStore
+//   // app?: AppStore
+// }
+export function AdminEditor() {
+  const resultsSection = React.createRef<HTMLDivElement>()
 
-@(withRouter as any)
-@inject("db", "app")
-@observer
-export class AdminEditor extends React.Component<IProps> {
-  resultsSection = React.createRef<HTMLDivElement>()
-  @observable
-  contentWidth = 1000
-  handleChange = () => {
-    this.updateContentWidth()
+  const app = React.useContext(AppContext)
+
+  let contentWidth = 1000
+  function handleChange() {
+    updateContentWidth()
   }
-  componentDidMount() {
-    this.updateContentWidth()
+  function componentDidMount() {
+    updateContentWidth()
   }
-  updateContentWidth() {
-    if (!this.resultsSection.current) {
+  function updateContentWidth() {
+    if (!resultsSection.current) {
       return
     }
-    this.contentWidth = this.resultsSection.current.getBoundingClientRect().width
+    contentWidth = resultsSection.current.getBoundingClientRect().width
   }
 
-  render() {
-    const { app } = this.props
-    return (
-      <div
-        style={{
-          display: "flex",
-          flex: 1,
-          position: "relative",
-        }}
+  // const { app } = this.props
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        flex: 1,
+        position: "relative",
+      }}
+    >
+      <SplitPane
+        split="vertical"
+        minSize={0.1 * app!.windowWidth}
+        defaultSize={0.2 * app!.windowWidth}
+        maxSize={0.5 * app!.windowWidth}
+        onChange={handleChange}
       >
-        <SplitPane
-          split="vertical"
-          minSize={0.1 * app!.windowWidth}
-          defaultSize={0.2 * app!.windowWidth}
-          maxSize={0.5 * app!.windowWidth}
-          onChange={this.handleChange}
-        >
-          <AdminControls />
-          <AdminPanel />
-        </SplitPane>
-      </div>
-    )
-  }
+        <AdminControls />
+        <AdminPanel />
+      </SplitPane>
+    </div>
+  )
 }

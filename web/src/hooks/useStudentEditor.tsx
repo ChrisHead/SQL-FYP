@@ -2,13 +2,25 @@ import * as React from "react"
 import { api } from "src/api"
 import { AppContext } from "src/AppContext"
 import { ILab } from "src/stores/DbStore"
-import { DbContext } from "../DbContext"
-import { observe } from "mobx"
 import produce from "immer"
+import { useAlasql } from "../hooks/useAlasql"
 
 export function useStudentEditor() {
   const app = React.useContext(AppContext)
-  const db = React.useContext(DbContext)
+
+  const {
+    db,
+    results,
+    sqlError,
+    sqlVal,
+    answerAcknowledgement,
+    executeSql,
+    checkAnswer,
+    clear,
+    clearAlaResults,
+    dbKey,
+    updateDbKey,
+  } = useAlasql()
 
   const [labs, setLabs] = React.useState<ILab[]>([])
   const [currentLabId, setCurrentLabId] = React.useState<string | null>(null)
@@ -16,9 +28,6 @@ export function useStudentEditor() {
     string | null
   >(null)
   const [sqlValue, setSqlValue] = React.useState("")
-  const [dbKey, setDbKey] = React.useState(0)
-  const [results, setResults] = React.useState([])
-  const [error, setError] = React.useState("")
   const [answerError, setAnswerError] = React.useState("")
 
   const loaded = labs && labs.length > 0
@@ -42,7 +51,6 @@ export function useStudentEditor() {
     currentQuestion && currentQuestion.answer
       ? currentQuestion.answer.history
       : []
-  const answerAcknowledgement = db.answerAcknowledgement
 
   React.useEffect(() => {
     if (app.authToken) {
@@ -52,7 +60,7 @@ export function useStudentEditor() {
 
   function handleSetCurrentQuestion(labId: string, questionId: string) {
     if (currentQuestionId && currentQuestionId !== questionId) {
-      db.clear()
+      clear()
       setSqlValue("")
       setAnswerError("")
     }
@@ -60,17 +68,31 @@ export function useStudentEditor() {
     setCurrentQuestionId(questionId)
   }
 
+  React.useEffect(() => {
+    clear()
+  }, [currentQuestionId])
+
   async function handleExecuteQuery() {
     if (!currentQuestion || currentLabIdx === -1 || currentQuestionIdx === -1) {
       return
     }
-    db.executeSql(sqlValue)
-    setSqlValue("")
-    const { correct, error } = await validateAnswer()
-    if (error) {
-      setAnswerError(error)
+    clearResults()
+    executeSql(sqlValue)
+  }
+
+  React.useEffect(() => {
+    validation()
+  }, [results, sqlError, sqlVal])
+
+  async function validation() {
+    if (results.length || sqlError.length) {
+      const { correct, error } = await validateAnswer()
+      if (error) {
+        setAnswerError(error)
+      }
+      setSqlValue("")
+      addHistoryItem(sqlValue, correct, sqlError, error)
     }
-    addHistoryItem(sqlValue, correct, db.error, error)
   }
 
   function handleSelectHistory(history) {
@@ -78,22 +100,9 @@ export function useStudentEditor() {
   }
 
   function clearResults() {
-    setResults([])
     setAnswerError("")
-    db.clearResults()
+    clearAlaResults()
   }
-
-  React.useEffect(() => {
-    observe(db, "results", change => {
-      setResults(change.newValue)
-    })
-    observe(db, "error", change => {
-      setError(change.newValue)
-    })
-    observe(db, "dbKey", change => {
-      setDbKey(change.newValue)
-    })
-  }, [])
 
   async function addHistoryItem(value, completed, error, answerError) {
     if (!currentQuestionId) {
@@ -126,6 +135,8 @@ export function useStudentEditor() {
         ...currentQuestion.answer.history,
         historyItem,
       ]
+      currentQuestion.answer.completed =
+        currentQuestion.answer.completed || completed
     })
     setLabs(newLabs)
 
@@ -138,17 +149,8 @@ export function useStudentEditor() {
     if (!currentQuestion || currentLabIdx === -1 || currentQuestionIdx === -1) {
       return { correct: false, error: "" }
     }
-    const result = db.checkAnswer(currentQuestion.modelAnswer)
+    const result = checkAnswer(currentQuestion.modelAnswer)
     if (result.correct) {
-      const newLabs = produce(labs, draft => {
-        const currentQuestion =
-          draft[currentLabIdx].questions[currentQuestionIdx]
-        if (!currentQuestion.answer) {
-          currentQuestion.answer = createAnswer()
-        }
-        currentQuestion.answer.completed = true
-      })
-      setLabs(newLabs)
       await api.updateCompleted(
         { questionId: currentQuestion.id },
         app.authToken!
@@ -168,12 +170,13 @@ export function useStudentEditor() {
     currentLab,
     sqlValue,
     setSqlValue,
+    db,
     clearResults,
-    error,
+    sqlError,
     results,
-    dbKey,
     answerError,
     answerAcknowledgement,
+    dbKey,
   }
 }
 

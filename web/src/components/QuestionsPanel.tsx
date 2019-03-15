@@ -28,6 +28,7 @@ export function QuestionsPanel({
   addActivity,
   currentLab,
   currentQuestion,
+  dbKey,
 }: IProps) {
   function handleQuestionClick(lab, question) {
     setCurrentQuestion(lab.id, question.id)
@@ -59,10 +60,10 @@ export function QuestionsPanel({
         style={{
           padding: 8,
           margin: 10,
-          display: "flex",
           height: 34,
           justifyContent: "center",
           backgroundColor: "#30434d",
+          textAlign: "center",
         }}
       >
         Questions
@@ -124,6 +125,7 @@ export function QuestionsPanel({
                     alignItems: "center",
                   }}
                 >
+                  {/* {JSON.stringify({ ...question.answer, history: undefined })} */}
                   <FontAwesomeIcon
                     icon="check-circle"
                     size={"2x"}

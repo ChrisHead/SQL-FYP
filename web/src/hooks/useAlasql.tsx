@@ -1,6 +1,4 @@
 import * as React from "react"
-import { api } from "src/api"
-import { AppContext } from "src/AppContext"
 import alasql from "alasql"
 
 export interface ITable {
@@ -14,28 +12,9 @@ interface IAlaColumnType {
   dbtypeid: any
 }
 
-export interface IHistory {
-  dateTime: string
-  value: string
-  error: string
-  answerError: string
-  completed: boolean
-}
-
 export function useAlasql() {
-  console.log("alasql")
-}
-
-export function DbStore() {
-  const history: IHistory[] = []
-
-  const results = []
-
-  const answerResults = []
-
-  const db: ITable[] = []
-
-  const resetToFactoryDb: ITable[] = [
+  const [results, setResults] = React.useState([])
+  const factoryDb: ITable[] = [
     {
       name: "dept",
       columns: [
@@ -206,80 +185,71 @@ export function DbStore() {
       ],
     },
   ]
-
-  const answerdb: ITable[] = []
-
-  const error: any
-
+  const [db, setDb] = React.useState<ITable[]>(factoryDb)
+  const [sqlError, setSqlError] = React.useState("" as any)
   const answerAcknowledgement = "Answer Correct"
+  const [sqlVal, setSqlVal] = React.useState("")
+  const [dbKey, setDbKey] = React.useState(1)
 
-  const dbKey = 1
-
-  const ala = alasql
-
-  constructor() {
-    this.generateDb()
-  }
-
-  generateDb() {
-    this.db = this.resetToFactoryDb.slice(0)
-    this.db.forEach(table => {
+  function generateDb() {
+    Object.keys((alasql as any).tables).forEach(name => {
+      alasql(`DROP TABLE ${name}`)
+    })
+    factoryDb.forEach(table => {
       alasql(
         `CREATE TABLE ${table.name} (${table.columns
           .map(column => `${column.name} ${column.type}`)
-          .join(",")})`
+          .join(",")}, UNIQUE(${table.columns[0]}))`
       )
-      ;(alasql as any).tables[table.name].data = toJS(table.data)
+      ;(alasql as any).tables[table.name].data = [...table.data]
     })
     alasql.options.casesensitive = false
-    this.refreshDb()
+    refreshDb()
   }
 
-  refreshDb() {
+  function refreshDb() {
     const newdb: ITable[] = Object.keys((alasql as any).tables).map(name => {
       const columns = (alasql as any).tables[name].columns.map(
         (column: IAlaColumnType) => {
           return {
             name: `${column.columnid}`,
-            type: `${column.dbtypeid || "undefinedTest"}`,
+            type: `${column.dbtypeid}`,
           }
         }
       )
       alasql.options.casesensitive = false
-      const data = (alasql as any).tables[name].data
+      const data = [...(alasql as any).tables[name].data]
       return { name, columns, data }
     })
-    this.db = newdb
-    this.dbKey++
+    setDb(newdb)
   }
 
-  @action.bound
-  executeSql(sql) {
-    this.results = []
-    this.error = ""
+  function executeSql(sql) {
+    clearAlaResults()
     try {
-      this.results = alasql(sql)
+      setSqlVal(sql)
+      setResults(alasql(sql))
     } catch (err) {
-      this.error = err.message
+      setSqlError(err.message)
     }
-    this.refreshDb()
+    refreshDb()
   }
 
-  checkAnswer(query): { error?: string; correct?: boolean } {
-    this.createAnswerDb()
-    const { result, error } = this.executeModelAnswer(query)
-    this.cleanUpAnswerDb()
+  function checkAnswer(query): { error?: string; correct?: boolean } {
+    createAnswerDb()
+    const { result, error } = executeModelAnswer(query)
+    cleanUpAnswerDb()
     if (error) {
       return { error }
     }
-    return this.compareAnswer(result, error)
+    return compareAnswer(result, error)
   }
 
-  createAnswerDb() {
+  function createAnswerDb() {
     const alasql = require("alasql")
     alasql("CREATE DATABASE tempDb")
     alasql("USE tempDb")
-    this.resetToFactoryDb.forEach(table => {
+    factoryDb.forEach(table => {
       alasql(
         `CREATE TABLE ${table.name} (${table.columns
           .map(column => `${column.name} ${column.type}`)
@@ -290,7 +260,7 @@ export function DbStore() {
     alasql.options.casesensitive = false
   }
 
-  executeModelAnswer(query) {
+  function executeModelAnswer(query) {
     let result
     let error = ""
     try {
@@ -301,19 +271,19 @@ export function DbStore() {
     return { result, error }
   }
 
-  cleanUpAnswerDb() {
+  function cleanUpAnswerDb() {
     alasql("DROP DATABASE tempDb")
     alasql("USE alasql")
   }
 
-  compareAnswer(answer, error) {
+  function compareAnswer(answer, error) {
     try {
-      const results: any = toJS(this.results)
+      const tempResults: any = results
       if (error !== "") {
         return { correct: false, error }
-      } else if (Array.isArray(results)) {
-        if (results.length !== answer.length) {
-          if (results.length < answer.length) {
+      } else if (Array.isArray(tempResults)) {
+        if (tempResults.length !== answer.length) {
+          if (tempResults.length < answer.length) {
             return {
               correct: false,
               error: "Number of rows does not match: Too few rows",
@@ -325,7 +295,7 @@ export function DbStore() {
             }
           }
         } else {
-          const resultsProps = Object.keys(results[0])
+          const resultsProps = Object.keys(tempResults[0])
           const answerProps = Object.keys(answer[0])
           if (resultsProps.length !== answerProps.length) {
             if (resultsProps.length < answerProps.length) {
@@ -342,7 +312,7 @@ export function DbStore() {
           } else {
             for (const i in answer) {
               for (const k in answer[0]) {
-                if (results[i][k] !== answer[i][k]) {
+                if (tempResults[i][k] !== answer[i][k]) {
                   return {
                     correct: false,
                     error: "Values of rows do not match",
@@ -350,7 +320,7 @@ export function DbStore() {
                 }
               }
             }
-            return { correct: true, error: this.answerAcknowledgement }
+            return { correct: true, error: answerAcknowledgement }
           }
         }
       } else {
@@ -362,21 +332,32 @@ export function DbStore() {
     }
   }
 
-  clear() {
-    this.results = []
-    this.error = ""
-    Object.keys((alasql as any).tables).forEach(name => {
-      alasql(`DROP TABLE ${name}`)
-    })
-    this.generateDb()
+  function clear() {
+    clearAlaResults()
+    generateDb()
   }
 
-  clearResults() {
-    this.results = []
-    this.error = ""
+  function clearAlaResults() {
+    setResults([])
+    setSqlError("")
   }
 
-  clearHistory() {
-    this.history = []
+  function updateDbKey() {
+    setDbKey(dbKey + 1)
+  }
+
+  return {
+    results,
+    db,
+    sqlError,
+    sqlVal,
+    answerAcknowledgement,
+    generateDb,
+    executeSql,
+    checkAnswer,
+    clear,
+    clearAlaResults,
+    dbKey,
+    updateDbKey,
   }
 }
