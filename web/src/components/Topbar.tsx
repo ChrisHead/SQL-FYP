@@ -34,6 +34,9 @@ export function Topbar({ addActivity }) {
           className="button"
           to="/Feedback"
           style={{ width: 100, marginRight: 8 }}
+          onClick={() => {
+            updateActivity("Feedback")
+          }}
         >
           Feedback
         </Link>
@@ -41,6 +44,9 @@ export function Topbar({ addActivity }) {
           className="button"
           to="/Report_Bug"
           style={{ width: 100, marginRight: 8 }}
+          onClick={() => {
+            updateActivity("Report Bug")
+          }}
         >
           Report Bug
         </Link>

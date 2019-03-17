@@ -165,7 +165,6 @@ addApiEndpoint(
   { permission: "authenticated" },
   async ({ currentUser, req }) => {
     const questionId = req.body.data.questionId
-    console.log(questionId)
     const updateCompletedSql = `
     UPDATE answers
     SET "completed" = true
@@ -177,15 +176,28 @@ addApiEndpoint(
   }
 )
 
-// addApiEndpoint(
-//   "updateQuestion",
-//   { permission: "authenticated" },
-//   async ({ currentUser, req }) => {
-//     const data = req.body
-//     console.log(data)
-//     return data
-//   }
-// )
+addApiEndpoint(
+  "updateQuestion",
+  { permission: "admin" },
+  async ({ currentUser, req }) => {
+    const questionId = req.body.data.updatedQuestion.id
+    const question = req.body.data.updatedQuestion.question
+    const modelAnswer = req.body.data.updatedQuestion.modelAnswer
+    const databaseId = req.body.data.updatedQuestion.databaseId
+    const startingText = req.body.data.updatedQuestion.startingText
+    const updateQuestionSql = `
+      UPDATE questions
+      SET
+      "question" = '${pgp.as.value(question)}',
+      "modelAnswer" = '${pgp.as.value(modelAnswer)}',
+      "databaseId" = '${pgp.as.value(databaseId)}',
+      "startingText" = '${pgp.as.value(startingText)}'
+      WHERE "id" = '${pgp.as.value(questionId)}'
+    `
+    const updateQuestion = await conn.any<IUser>(updateQuestionSql)
+    return updateQuestion
+  }
+)
 
 addApiEndpoint(
   "updateActivity",

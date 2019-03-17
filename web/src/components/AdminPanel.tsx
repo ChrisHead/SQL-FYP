@@ -19,6 +19,7 @@ export function AdminPanel() {
         path="/questions/:id/edit"
         component={AdminQuestionEditPage}
       />
+      <Route exact path="/questions/add" component={AdminQuestionEditPage} />
       <Route exact path="/database" component={AdminDatabase} />
       <Route exact path="/stats" component={AdminStats} />
     </Switch>

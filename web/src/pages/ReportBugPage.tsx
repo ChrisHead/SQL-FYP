@@ -25,6 +25,9 @@ export function ReportBugPage() {
           className="button"
           to="/"
           style={{ display: "flex", margin: 20, padding: 15 }}
+          onClick={() => {
+            addNewActivity("Return")
+          }}
         >
           Return
         </Link>

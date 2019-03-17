@@ -57,7 +57,7 @@ export const api = {
     data: { updatedQuestion: IQuestion },
     authToken: string
   ) {
-    return apiRequest("updateCompleted", { data }, authToken)
+    return apiRequest("updateQuestion", { data }, authToken)
   },
 
   async updateActivity(data: { activity: string }, authToken: string) {

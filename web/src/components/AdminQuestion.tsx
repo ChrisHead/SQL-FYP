@@ -23,15 +23,15 @@ export function AdminQuestion() {
       accessor: "modelAnswer",
       style: { whiteSpace: "unset" },
     },
-    {
-      Header: "Database",
-      accessor: "databaseId",
-    },
-    {
-      Header: "Starting Text",
-      accessor: "startingText",
-      style: { whiteSpace: "unset" },
-    },
+    // {
+    //   Header: "Database",
+    //   accessor: "databaseId",
+    // },
+    // {
+    //   Header: "Starting Text",
+    //   accessor: "startingText",
+    //   style: { whiteSpace: "unset" },
+    // },
     {
       Header: "",
       id: "edit",
@@ -64,28 +64,28 @@ export function AdminQuestion() {
     },
   ]
 
-  const conditionColumns = [
-    {
-      Header: "Condition One",
-      id: "conditionOne",
-      accessor: d => d.conditionOne.toString(),
-    },
-    {
-      Header: "Condition Two",
-      id: "conditionTwo",
-      accessor: d => d.conditionTwo.toString(),
-    },
-    {
-      Header: "Condition Three",
-      id: "conditionThree",
-      accessor: d => d.conditionThree.toString(),
-    },
-    {
-      Header: "Condition Four",
-      id: "conditionFour",
-      accessor: d => d.conditionFour.toString(),
-    },
-  ]
+  // const conditionColumns = [
+  //   {
+  //     Header: "Condition One",
+  //     id: "conditionOne",
+  //     accessor: d => d.conditionOne.toString(),
+  //   },
+  //   {
+  //     Header: "Condition Two",
+  //     id: "conditionTwo",
+  //     accessor: d => d.conditionTwo.toString(),
+  //   },
+  //   {
+  //     Header: "Condition Three",
+  //     id: "conditionThree",
+  //     accessor: d => d.conditionThree.toString(),
+  //   },
+  //   {
+  //     Header: "Condition Four",
+  //     id: "conditionFour",
+  //     accessor: d => d.conditionFour.toString(),
+  //   },
+  // ]
 
   return (
     <div
@@ -108,7 +108,7 @@ export function AdminQuestion() {
           marginBottom: 10,
         }}
       >
-        <Link className={"button"} to={`/questions/edit`}>
+        <Link className={"button"} to={`/questions/add`}>
           Add Question
         </Link>
       </div>

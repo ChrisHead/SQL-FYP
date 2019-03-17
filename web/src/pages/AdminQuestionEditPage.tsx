@@ -17,15 +17,23 @@ export function AdminQuestionEditPage({
   history,
 }: IPageProps<{ id: string }>) {
   const currentId = String(match.params.id)
-  const question = useQuestions().find(l => l.id === currentId)
+  const question = useQuestions().find(lab => lab.id === currentId)
   const app = React.useContext(AppContext)
   const [error, setError] = React.useState("")
-  const [updatedQuestion, setUpdatedQuestion] = React.useState({} as IQuestion)
 
   const [newQuestion, setNewQuestion] = React.useState("")
   const [newAnswer, setNewAnswer] = React.useState("")
   const [newDatabase, setNewDatabase] = React.useState("")
   const [newStarting, setNewStarting] = React.useState("")
+
+  React.useEffect(() => {
+    if (question !== undefined) {
+      setNewQuestion(question.question)
+      setNewAnswer(question.modelAnswer)
+      setNewDatabase(question.databaseId)
+      setNewStarting(question.startingText)
+    }
+  }, [question])
 
   if (!question) {
     return <p>404 Question Not Found</p>
@@ -34,21 +42,16 @@ export function AdminQuestionEditPage({
   async function handleSubmit(e) {
     e.preventDefault()
 
-    setUpdatedQuestion({
-      id: currentId,
-      question: newQuestion,
-      modelAnswer: newAnswer,
-      databaseId: newDatabase,
-      startingText: newStarting,
-    })
-
-    console.log(newQuestion)
-    console.log(newAnswer)
-    console.log(newDatabase)
-    console.log(newStarting)
-
     const submitError = await api.updateQuestion(
-      { updatedQuestion },
+      {
+        updatedQuestion: {
+          id: currentId,
+          question: newQuestion,
+          modelAnswer: newAnswer,
+          databaseId: newDatabase,
+          startingText: newStarting,
+        },
+      },
       app.authToken!
     )
     console.log(submitError)
@@ -67,7 +70,7 @@ export function AdminQuestionEditPage({
     <PageWrapper>
       <h1>Editing Question {currentId}</h1>
       {error}
-      {/* {JSON.stringify(question)} */}
+      {JSON.stringify(question)}
 
       <form onSubmit={handleSubmit}>
         <TextInput
@@ -80,7 +83,7 @@ export function AdminQuestionEditPage({
           value={newAnswer}
           onChange={e => setNewAnswer(e)}
         />
-        <SelectInput
+        {/* <SelectInput
           label="Database"
           value={newDatabase}
           options={[
@@ -93,15 +96,15 @@ export function AdminQuestionEditPage({
           label="Starting Text (Custom, None or Previous)"
           value={newStarting}
           onChange={e => setNewStarting(e)}
-        />
-        <Spacer height="small" />
+        /> */}
+        {/* <Spacer height="small" />
         <fieldset>
           <legend>Restrictions</legend>
           <CheckboxInput label="No Joins" />
           <CheckboxInput label="No Sub Queries" />
           <CheckboxInput label="No Sort" />
           <CheckboxInput label="No Left Join" />
-        </fieldset>
+        </fieldset> */}
         <Spacer height="small" />
         <SubmitInput>Submit</SubmitInput>
       </form>
