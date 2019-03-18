@@ -268,6 +268,23 @@ addApiEndpoint(
   }
 )
 
+addApiEndpoint(
+  "addLab",
+  { permission: "admin" },
+  async ({ currentUser, req }) => {
+    const labNumber = req.body.data.addedLab.labNumber
+    const sql = `
+      INSERT INTO
+      labs ("labNumber","dateTime")
+      VALUES
+      ('${pgp.as.value(labNumber)}',
+      now())
+    `
+    const addLab = await conn.any<IUser>(sql)
+    return addLab
+  }
+)
+
 async function addActivity(user: IUser, activity: string) {
   const updateActivitySql = `
     UPDATE users

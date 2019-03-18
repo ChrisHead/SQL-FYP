@@ -79,6 +79,10 @@ export const api = {
     return apiRequest("addUser", { data }, authToken)
   },
 
+  async addLab(data: { addedLab: { labNumber: string } }, authToken: string) {
+    return apiRequest("addLab", { data }, authToken)
+  },
+
   async updateUser(
     data: {
       updatedUser: {

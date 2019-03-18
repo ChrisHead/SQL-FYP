@@ -18,9 +18,9 @@ export function LoginPage() {
     }
   }
   // TODO REMOVE THIS BEFORE PUSHING TO PRODUCTION
-  React.useEffect(() => {
-    app.login("admin", password)
-  })
+  // React.useEffect(() => {
+  //   app.login("admin", password)
+  // })
 
   return (
     <div
