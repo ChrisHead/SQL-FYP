@@ -33,10 +33,3 @@ export interface IQuestion {
   databaseId: string
   startingText: string
 }
-
-interface IConditions {
-  conditionOne: boolean
-  conditionTwo: boolean
-  conditionThree: boolean
-  conditionFour: boolean
-}

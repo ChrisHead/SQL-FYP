@@ -1,18 +1,18 @@
 import React from "react"
 
-interface ITextInputProps {
+interface IPasswordInputProps {
   label: string
   value?: string
   onChange?(val: string): void
 }
 
-export function TextInput({ label, value, onChange }: ITextInputProps) {
+export function PasswordInput({ label, value, onChange }: IPasswordInputProps) {
   return (
     <label className="input">
       {label}
       <br />
       <input
-        type="text"
+        type="password"
         required
         value={value}
         onChange={e => onChange && onChange(e.target.value)}

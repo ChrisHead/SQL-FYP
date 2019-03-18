@@ -1,19 +1,21 @@
 import React from "react"
 
-interface ITextInputProps {
+interface ITextBoxInputProps {
   label: string
   value?: string
   onChange?(val: string): void
 }
 
-export function TextInput({ label, value, onChange }: ITextInputProps) {
+export function TextBoxInput({ label, value, onChange }: ITextBoxInputProps) {
   return (
     <label className="input">
-      {label}
+      {label + ":"}
       <br />
-      <input
-        type="text"
+      <textarea
+        style={{ display: "flex" }}
         required
+        cols={106}
+        rows={10}
         value={value}
         onChange={e => onChange && onChange(e.target.value)}
       />

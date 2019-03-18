@@ -189,7 +189,6 @@ export function useAlasql() {
   const [sqlError, setSqlError] = React.useState("" as any)
   const answerAcknowledgement = "Answer Correct"
   const [sqlVal, setSqlVal] = React.useState("")
-  const [dbKey, setDbKey] = React.useState(1)
 
   function generateDb() {
     Object.keys((alasql as any).tables).forEach(name => {
@@ -342,10 +341,6 @@ export function useAlasql() {
     setSqlError("")
   }
 
-  function updateDbKey() {
-    setDbKey(dbKey + 1)
-  }
-
   return {
     results,
     db,
@@ -357,7 +352,5 @@ export function useAlasql() {
     checkAnswer,
     clear,
     clearAlaResults,
-    dbKey,
-    updateDbKey,
   }
 }

@@ -5,13 +5,16 @@ import { AdminDatabase } from "./AdminDatabase"
 import { AdminLab } from "./AdminLab"
 import { AdminQuestion } from "./AdminQuestion"
 import { AdminStats } from "./AdminStats"
-import { AdminStudent } from "./AdminStudent"
+import { AdminUsers } from "./AdminUsers"
 import { AdminQuestionEditPage } from "../pages/AdminQuestionEditPage"
+import { AdminQuestionAddPage } from "../pages/AdminQuestionAddPage"
+import { AdminUserEditPage } from "../pages/AdminUserEditPage"
+import { AdminUserAddPage } from "../pages/AdminUserAddPage"
 
 export function AdminPanel() {
   return (
     <Switch>
-      <Route exact path="/students" component={AdminStudent} />
+      <Route exact path="/users" component={AdminUsers} />
       <Route exact path="/labs" component={AdminLab} />
       <Route exact path="/questions" component={AdminQuestion} />
       <Route
@@ -19,7 +22,9 @@ export function AdminPanel() {
         path="/questions/:id/edit"
         component={AdminQuestionEditPage}
       />
-      <Route exact path="/questions/add" component={AdminQuestionEditPage} />
+      <Route exact path="/questions/add" component={AdminQuestionAddPage} />
+      <Route exact path="/users/:id/edit" component={AdminUserEditPage} />
+      <Route exact path="/users/add" component={AdminUserAddPage} />
       <Route exact path="/database" component={AdminDatabase} />
       <Route exact path="/stats" component={AdminStats} />
     </Switch>

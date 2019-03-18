@@ -13,7 +13,7 @@ export function AdminControls() {
         overflow: "auto",
       }}
     >
-      <NavLink to="/students">Manage Students</NavLink>
+      <NavLink to="/users">Manage Users</NavLink>
       <NavLink to="/questions">Manage Questions</NavLink>
       <NavLink to="/labs">Manage Labs</NavLink>
       {/* <NavLink to="/database">Manage Databases</NavLink>

@@ -20,7 +20,6 @@ interface IProps {
   addActivity(activity: string)
   currentLab?: ILab
   currentQuestion?: ILab["questions"][number]
-  dbKey
 }
 export function QuestionsPanel({
   labs,
@@ -28,7 +27,6 @@ export function QuestionsPanel({
   addActivity,
   currentLab,
   currentQuestion,
-  dbKey,
 }: IProps) {
   function handleQuestionClick(lab, question) {
     setCurrentQuestion(lab.id, question.id)

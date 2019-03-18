@@ -44,7 +44,6 @@ export function StudentEditor() {
     results,
     answerError,
     answerAcknowledgement,
-    dbKey,
   } = useStudentEditor()
 
   const { addNewActivity } = useActivity()
@@ -74,7 +73,6 @@ export function StudentEditor() {
           addActivity={addNewActivity}
           currentLab={currentLab}
           currentQuestion={currentQuestion}
-          dbKey={dbKey}
         />
         {currentQuestion ? (
           <>

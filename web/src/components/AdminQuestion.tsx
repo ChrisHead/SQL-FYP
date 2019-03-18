@@ -3,12 +3,10 @@ import ReactTable from "react-table"
 import "react-table/react-table.css"
 import { Link } from "react-router-dom"
 import { useQuestions } from "../hooks/useQuestions"
-import { useAlasql } from "../hooks/useAlasql"
 import { AppContext } from "src/AppContext"
 // import { DbContext } from "src/DbContext"
 
 export function AdminQuestion() {
-  const { db } = useAlasql()
   const app = React.useContext(AppContext)
   const questions = useQuestions()
 
@@ -47,21 +45,21 @@ export function AdminQuestion() {
       width: 41,
       // width: 49,
     },
-    {
-      Header: "",
-      id: "delete",
-      accessor: d => (
-        <Link
-          // className={"button"}
-          style={{ textDecoration: "none", color: "#dacc12" }}
-          to={`/questions/${d.id}/edit`}
-        >
-          Delete
-        </Link>
-      ),
-      width: 62,
-      // width: 70,
-    },
+    // {
+    //   Header: "",
+    //   id: "delete",
+    //   accessor: d => (
+    //     <Link
+    //       // className={"button"}
+    //       style={{ textDecoration: "none", color: "#dacc12" }}
+    //       to={`/questions/${d.id}/edit`}
+    //     >
+    //       Delete
+    //     </Link>
+    //   ),
+    //   width: 62,
+    //   // width: 70,
+    // },
   ]
 
   // const conditionColumns = [

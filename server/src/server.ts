@@ -53,7 +53,7 @@ addApiEndpoint(
 
 addApiEndpoint("users", { permission: "admin" }, async () => {
   const sql = `
-  SELECT *
+  SELECT id, username, admin, activity
   FROM "users"
   `
   const results = await conn.any<IUser>(sql)
@@ -102,13 +102,13 @@ addApiEndpoint(
   { permission: "authenticated" },
   async ({ currentUser, req }) => {
     const data = req.body
-    const feedbackSql = `
+    const sql = `
     INSERT INTO "feedbacks" ("feedback", "userId", "dateTime")
     VALUES ('${pgp.as.value(data.data)}', '${
       currentUser.id
     }', now()) RETURNING "id"
     `
-    const feedback = await conn.any<IUser>(feedbackSql)
+    const feedback = await conn.any<IUser>(sql)
     return feedback
   }
 )
@@ -118,13 +118,13 @@ addApiEndpoint(
   { permission: "authenticated" },
   async ({ currentUser, req }) => {
     const data = req.body
-    const bugReportSql = `
+    const sql = `
     INSERT INTO "bugReports" ("bugReport", "userId", "dateTime")
     VALUES ('${pgp.as.value(data.data)}', '${
       currentUser.id
     }', now()) RETURNING "id"
     `
-    const bugReport = await conn.any<IUser>(bugReportSql)
+    const bugReport = await conn.any<IUser>(sql)
     return bugReport
   }
 )
@@ -165,13 +165,13 @@ addApiEndpoint(
   { permission: "authenticated" },
   async ({ currentUser, req }) => {
     const questionId = req.body.data.questionId
-    const updateCompletedSql = `
+    const sql = `
     UPDATE answers
     SET "completed" = true
     WHERE "userId" = '${pgp.as.value(currentUser.id)}'
     AND "questionId" = '${pgp.as.value(questionId)}'
     `
-    const updateCompleted = await conn.any<IUser>(updateCompletedSql)
+    const updateCompleted = await conn.any<IUser>(sql)
     return updateCompleted
   }
 )
@@ -185,7 +185,7 @@ addApiEndpoint(
     const modelAnswer = req.body.data.updatedQuestion.modelAnswer
     const databaseId = req.body.data.updatedQuestion.databaseId
     const startingText = req.body.data.updatedQuestion.startingText
-    const updateQuestionSql = `
+    const sql = `
       UPDATE questions
       SET
       "question" = '${pgp.as.value(question)}',
@@ -194,8 +194,30 @@ addApiEndpoint(
       "startingText" = '${pgp.as.value(startingText)}'
       WHERE "id" = '${pgp.as.value(questionId)}'
     `
-    const updateQuestion = await conn.any<IUser>(updateQuestionSql)
+    const updateQuestion = await conn.any<IUser>(sql)
     return updateQuestion
+  }
+)
+
+addApiEndpoint(
+  "addQuestion",
+  { permission: "admin" },
+  async ({ currentUser, req }) => {
+    const question = req.body.data.addedQuestion.question
+    const modelAnswer = req.body.data.addedQuestion.modelAnswer
+    const databaseId = req.body.data.addedQuestion.databaseId
+    const startingText = req.body.data.addedQuestion.startingText
+    const sql = `
+      INSERT INTO
+      questions ("question","modelAnswer","databaseId","startingText")
+      VALUES
+      ('${pgp.as.value(question)}',
+      '${pgp.as.value(modelAnswer)}',
+      '${pgp.as.value(databaseId)}',
+      '${pgp.as.value(startingText)}')
+    `
+    const addQuestion = await conn.any<IUser>(sql)
+    return addQuestion
   }
 )
 
@@ -204,6 +226,45 @@ addApiEndpoint(
   { permission: "authenticated" },
   async ({ currentUser, req }) => {
     return addActivity(currentUser, req.body.data.activity)
+  }
+)
+
+addApiEndpoint(
+  "addUser",
+  { permission: "admin" },
+  async ({ currentUser, req }) => {
+    const username = req.body.data.addedUser.username
+    const password = req.body.data.addedUser.password
+    const admin = req.body.data.addedUser.admin
+    const sql = `
+      INSERT INTO
+      users ("username","password","admin")
+      VALUES
+      ('${pgp.as.value(username)}',
+      crypt('${pgp.as.value(password)}', gen_salt('bf')),
+      '${pgp.as.value(admin)}')
+    `
+    const addQuestion = await conn.any<IUser>(sql)
+    return addQuestion
+  }
+)
+
+addApiEndpoint(
+  "updateUser",
+  { permission: "admin" },
+  async ({ currentUser, req }) => {
+    const userId = req.body.data.updatedUser.id
+    const username = req.body.data.updatedUser.username
+    const password = req.body.data.updatedUser.password
+    const sql = `
+      UPDATE users
+      SET
+      "username" = '${pgp.as.value(username)}',
+      "password" = crypt('${pgp.as.value(password)}', gen_salt('bf'))
+      WHERE "id" = '${pgp.as.value(userId)}'
+    `
+    const updateUser = await conn.any<IUser>(sql)
+    return updateUser
   }
 )
 

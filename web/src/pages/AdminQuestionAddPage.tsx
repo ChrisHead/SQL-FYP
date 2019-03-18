@@ -5,20 +5,11 @@ import { SelectInput } from "../components/inputs/SelectInput"
 import { CheckboxInput } from "../components/inputs/CheckboxInput"
 import { BooleanInput } from "../components/inputs/BooleanInput"
 import { Spacer } from "../components/Spacer"
-import { RouteComponentProps } from "react-router-dom"
-import { useQuestions } from "../hooks/useQuestions"
 import { api } from "../api"
 import { AppContext } from "../AppContext"
 import { IQuestion } from "src/stores/DbStore"
 
-type IPageProps<T extends Record<string, string>> = RouteComponentProps<T>
-
-export function AdminQuestionEditPage({
-  match,
-  history,
-}: IPageProps<{ id: string }>) {
-  const currentId = String(match.params.id)
-  const question = useQuestions().find(lab => lab.id === currentId)
+export function AdminQuestionAddPage({ history }) {
   const app = React.useContext(AppContext)
   const [error, setError] = React.useState("")
 
@@ -27,31 +18,18 @@ export function AdminQuestionEditPage({
   const [newDatabase, setNewDatabase] = React.useState("")
   const [newStarting, setNewStarting] = React.useState("")
 
-  React.useEffect(() => {
-    if (question !== undefined) {
-      setNewQuestion(question.question)
-      setNewAnswer(question.modelAnswer)
-      setNewDatabase(question.databaseId)
-      setNewStarting(question.startingText)
-    }
-  }, [question])
-
-  if (!question) {
-    return <p>404 Question Not Found</p>
-  }
-
   async function handleSubmit(e) {
     e.preventDefault()
     setError("")
 
-    const submitError = await api.updateQuestion(
+    const submitError = await api.addQuestion(
       {
-        updatedQuestion: {
-          id: currentId,
+        addedQuestion: {
+          id: "",
           question: newQuestion,
           modelAnswer: newAnswer,
-          databaseId: newDatabase,
-          startingText: newStarting,
+          databaseId: "095050b8-aeb4-4ecc-8e6d-b0dbd3235a96",
+          startingText: "none",
         },
       },
       app.authToken!
@@ -68,10 +46,8 @@ export function AdminQuestionEditPage({
 
   return (
     <PageWrapper>
-      <h1>Editing Question {currentId}</h1>
+      <h1>Add New Question</h1>
       {error}
-      {/* {JSON.stringify(question)} */}
-
       <form onSubmit={handleSubmit}>
         <TextBoxInput
           label="Question"

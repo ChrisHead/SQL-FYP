@@ -44,7 +44,7 @@ export function LoginPage() {
           <label className="input">
             Password <br />
             <input
-              type="text"
+              type="password"
               value={password}
               onChange={e => setPassword(e.target.value)}
             />

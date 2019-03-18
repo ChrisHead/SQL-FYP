@@ -60,7 +60,36 @@ export const api = {
     return apiRequest("updateQuestion", { data }, authToken)
   },
 
+  async addQuestion(data: { addedQuestion: IQuestion }, authToken: string) {
+    return apiRequest("addQuestion", { data }, authToken)
+  },
+
   async updateActivity(data: { activity: string }, authToken: string) {
     return apiRequest("updateActivity", { data }, authToken)
+  },
+
+  async users(authToken: string) {
+    return apiRequest("users", {}, authToken)
+  },
+
+  async addUser(
+    data: { addedUser: { username: string; password: string; admin: boolean } },
+    authToken: string
+  ) {
+    return apiRequest("addUser", { data }, authToken)
+  },
+
+  async updateUser(
+    data: {
+      updatedUser: {
+        id: string
+        username: string
+        password: string
+        admin: boolean
+      }
+    },
+    authToken: string
+  ) {
+    return apiRequest("updateUser", { data }, authToken)
   },
 }

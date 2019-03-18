@@ -18,8 +18,6 @@ export function useStudentEditor() {
     checkAnswer,
     clear,
     clearAlaResults,
-    dbKey,
-    updateDbKey,
   } = useAlasql()
 
   const [labs, setLabs] = React.useState<ILab[]>([])
@@ -176,7 +174,6 @@ export function useStudentEditor() {
     results,
     answerError,
     answerAcknowledgement,
-    dbKey,
   }
 }
 
