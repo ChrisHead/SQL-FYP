@@ -8,11 +8,14 @@ async function apiRequest(path: string, data: any, authToken?: string) {
   }
   const body = typeof data === "string" ? data : JSON.stringify(data)
 
-  const response = await fetch(`http://localhost:3001/api/${path}`, {
-    method: "POST",
-    body,
-    headers,
-  })
+  const response = await fetch(
+    `https://dashboard.heroku.com/apps/sql-fyp-server/api/${path}`,
+    {
+      method: "POST",
+      body,
+      headers,
+    }
+  )
   const json = await response.json()
   return json
 }
