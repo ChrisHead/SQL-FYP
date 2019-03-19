@@ -38,7 +38,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-require("dotenv").config();
+if (process.env.NODE_ENV !== "production")
+    require("dotenv").config();
 var pg_promise_1 = __importDefault(require("pg-promise"));
 var config_1 = require("../src/config");
 var seedQuestions_1 = require("./seedQuestions");
@@ -52,7 +53,7 @@ exports.pgp = pg_promise_1.default({
 var conn = exports.pgp(config_1.db);
 function run() {
     return __awaiter(this, void 0, void 0, function () {
-        var databases, _i, labs_1, lab, labRecord, _a, _b, questionData, question, answer, startingText, response, respondAfter, autoResponse, values, questionRecord;
+        var databases, _i, labs_1, lab, labRecord, _a, _b, questionData, question, modelAnswer, startingText, values, questionRecord;
         return __generator(this, function (_c) {
             switch (_c.label) {
                 case 0: return [4 /*yield*/, conn.any("DROP SCHEMA \"public\" CASCADE")];
@@ -64,19 +65,19 @@ function run() {
                     return [4 /*yield*/, conn.any("CREATE EXTENSION IF NOT EXISTS \"pgcrypto\"")];
                 case 3:
                     _c.sent();
-                    return [4 /*yield*/, conn.any("CREATE TABLE IF NOT EXISTS \"users\" (\n    \"id\" UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n    \"username\" TEXT UNIQUE,\n    \"password\" TEXT NOT NULL,\n    \"admin\" BOOLEAN DEFAULT 'false'\n  )")];
+                    return [4 /*yield*/, conn.any("CREATE TABLE IF NOT EXISTS \"users\" (\n    \"id\" UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n    \"username\" TEXT UNIQUE,\n    \"password\" TEXT NOT NULL,\n    \"admin\" BOOLEAN DEFAULT 'false',\n    \"activity\" JSONB DEFAULT '[]'\n  )")];
                 case 4:
                     _c.sent();
-                    return [4 /*yield*/, conn.any("CREATE TABLE IF NOT EXISTS \"databaseTemplates\" (\n    \"id\" UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n    \"data\" JSONB DEFAULT '{}'\n  )")];
+                    return [4 /*yield*/, conn.any("CREATE TABLE IF NOT EXISTS \"databaseTemplates\" (\n    \"id\" UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n    \"data\" JSONB DEFAULT '[]'\n  )")];
                 case 5:
                     _c.sent();
                     return [4 /*yield*/, conn.any("CREATE TABLE IF NOT EXISTS \"labs\" (\n    \"id\" UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n    \"labNumber\" INTEGER UNIQUE,\n    \"dateTime\" TIMESTAMP NOT NULL\n  )")];
                 case 6:
                     _c.sent();
-                    return [4 /*yield*/, conn.any("CREATE TABLE IF NOT EXISTS \"questions\" (\n    \"id\" UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n    \"question\" TEXT,\n    \"modelAnswer\" TEXT,\n    \"databaseId\" UUID REFERENCES \"databaseTemplates\"(\"id\"),\n    \"startingText\" TEXT,\n    \"response\" TEXT,\n    \"respondAfter\" INTEGER,\n    \"autoResponse\" BOOLEAN DEFAULT false\n  )")];
+                    return [4 /*yield*/, conn.any("CREATE TABLE IF NOT EXISTS \"questions\" (\n    \"id\" UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n    \"question\" TEXT,\n    \"modelAnswer\" TEXT,\n    \"databaseId\" UUID REFERENCES \"databaseTemplates\"(\"id\"),\n    \"startingText\" TEXT\n  )")];
                 case 7:
                     _c.sent();
-                    return [4 /*yield*/, conn.any("CREATE TABLE IF NOT EXISTS \"answers\" (\n    \"id\" UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n    \"userId\" UUID REFERENCES \"users\"(\"id\"),\n    \"questionId\" UUID REFERENCES \"questions\"(\"id\"),\n    \"history\" JSONB DEFAULT '[]',\n    \"activity\" JSONB DEFAULT '[]',\n    \"completed\" BOOLEAN DEFAULT false,\n    CONSTRAINT user_question_uniq UNIQUE (\"userId\", \"questionId\")\n    )")];
+                    return [4 /*yield*/, conn.any("CREATE TABLE IF NOT EXISTS \"answers\" (\n    \"id\" UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n    \"userId\" UUID REFERENCES \"users\"(\"id\"),\n    \"questionId\" UUID REFERENCES \"questions\"(\"id\"),\n    \"history\" JSONB DEFAULT '[]',\n    \"completed\" BOOLEAN DEFAULT false,\n    CONSTRAINT user_question_uniq UNIQUE (\"userId\", \"questionId\")\n    )")];
                 case 8:
                     _c.sent();
                     return [4 /*yield*/, conn.any("CREATE TABLE IF NOT EXISTS \"labsQuestions\" (\n    \"id\" UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n    \"labId\" UUID REFERENCES \"labs\"(\"id\"),\n    \"questionId\" UUID REFERENCES \"questions\"(\"id\")\n  )")];
@@ -135,19 +136,11 @@ function run() {
                 case 16:
                     if (!(_a < _b.length)) return [3 /*break*/, 20];
                     questionData = _b[_a];
-                    question = questionData.question, answer = questionData.answer, startingText = questionData.startingText, response = questionData.response, respondAfter = questionData.respondAfter, autoResponse = questionData.autoResponse;
-                    values = [
-                        question,
-                        answer,
-                        databases[0].id,
-                        startingText,
-                        response,
-                        respondAfter,
-                        autoResponse,
-                    ]
+                    question = questionData.question, modelAnswer = questionData.modelAnswer, startingText = questionData.startingText;
+                    values = [question, modelAnswer, databases[0].id, startingText]
                         .map(function (v) { return "'" + exports.pgp.as.value(v) + "'"; })
                         .join();
-                    return [4 /*yield*/, conn.one("\n        INSERT INTO \"questions\" (\"question\",\"modelAnswer\",\"databaseId\",\"startingText\",\"response\",\"respondAfter\",\"autoResponse\")\n        VALUES (" + values + ")\n        RETURNING \"id\"\n      ")];
+                    return [4 /*yield*/, conn.one("\n        INSERT INTO \"questions\" (\"question\",\"modelAnswer\",\"databaseId\",\"startingText\")\n        VALUES (" + values + ")\n        RETURNING \"id\"\n      ")];
                 case 17:
                     questionRecord = _c.sent();
                     return [4 /*yield*/, conn.any("\n        INSERT INTO \"labsQuestions\" (\"labId\", \"questionId\")\n        VALUES ('" + labRecord.id + "', '" + questionRecord.id + "')\n      ")];

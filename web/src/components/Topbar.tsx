@@ -50,7 +50,9 @@ export function Topbar({ addActivity }) {
         >
           Report Bug
         </Link>
-        <button
+        <Link
+          className="button"
+          to="/"
           style={{ width: 100, marginRight: 8 }}
           onClick={() => {
             updateActivity("Logout")
@@ -58,7 +60,7 @@ export function Topbar({ addActivity }) {
           }}
         >
           Logout
-        </button>
+        </Link>
       </div>
     </div>
   )

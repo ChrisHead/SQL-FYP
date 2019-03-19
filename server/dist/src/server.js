@@ -83,7 +83,7 @@ addApiEndpoint("login", {}, function (_a) {
             switch (_c.label) {
                 case 0:
                     _b = req.body, username = _b.username, password = _b.password;
-                    sql = "SELECT * FROM \"users\" WHERE \"username\"='" + config_1.pgp.as.value(username) + "' AND \"password\"=crypt('" + config_1.pgp.as.value(password) + "', \"password\")";
+                    sql = "\n  SELECT *\n  FROM \"users\"\n  WHERE \"username\"='" + config_1.pgp.as.value(username) + "'\n  AND \"password\"=crypt('" + config_1.pgp.as.value(password) + "', \"password\")\n  ";
                     return [4 /*yield*/, conn.any(sql)];
                 case 1:
                     results = _c.sent();
@@ -92,6 +92,9 @@ addApiEndpoint("login", {}, function (_a) {
                     }
                     user = results[0];
                     authToken = jwt.sign({ id: user.id }, config_1.secretKey);
+                    return [4 /*yield*/, addActivity(user, "Login")];
+                case 2:
+                    _c.sent();
                     return [2 /*return*/, { data: { authToken: authToken } }];
             }
         });
@@ -112,7 +115,7 @@ addApiEndpoint("users", { permission: "admin" }, function () { return __awaiter(
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                sql = "SELECT * FROM \"users\"";
+                sql = "\n  SELECT id, username, admin, activity\n  FROM \"users\"\n  ";
                 return [4 /*yield*/, conn.any(sql)];
             case 1:
                 results = _a.sent();
@@ -141,7 +144,7 @@ addApiEndpoint("questions", { permission: "admin" }, function () { return __awai
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                sql = "SELECT * FROM questions";
+                sql = "\n  SELECT *\n  FROM questions\n  ";
                 return [4 /*yield*/, conn.any(sql)];
             case 1:
                 results = _a.sent();
@@ -152,20 +155,16 @@ addApiEndpoint("questions", { permission: "admin" }, function () { return __awai
 addApiEndpoint("feedback", { permission: "authenticated" }, function (_a) {
     var currentUser = _a.currentUser, req = _a.req;
     return __awaiter(_this, void 0, void 0, function () {
-        var data, feedbackSql, feedback, userFeedbackSql, userFeedback;
+        var data, sql, feedback;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
                     data = req.body;
-                    feedbackSql = "INSERT INTO \"feedbacks\" (\"feedback\", \"dateTime\") VALUES ('" + config_1.pgp.as.value(data.data) + "', now()) RETURNING \"id\"";
-                    return [4 /*yield*/, conn.any(feedbackSql)];
+                    sql = "\n    INSERT INTO \"feedbacks\" (\"feedback\", \"userId\", \"dateTime\")\n    VALUES ('" + config_1.pgp.as.value(data.data) + "', '" + currentUser.id + "', now()) RETURNING \"id\"\n    ";
+                    return [4 /*yield*/, conn.any(sql)];
                 case 1:
                     feedback = _b.sent();
-                    userFeedbackSql = "INSERT INTO \"usersFeedbacks\" (\"userId\", \"feedbackId\") VALUES ('" + config_1.pgp.as.value(currentUser.id) + "', '" + feedback[0].id + "')";
-                    return [4 /*yield*/, conn.any(userFeedbackSql)];
-                case 2:
-                    userFeedback = _b.sent();
-                    return [2 /*return*/, userFeedback];
+                    return [2 /*return*/, feedback];
             }
         });
     });
@@ -173,20 +172,16 @@ addApiEndpoint("feedback", { permission: "authenticated" }, function (_a) {
 addApiEndpoint("bugReport", { permission: "authenticated" }, function (_a) {
     var currentUser = _a.currentUser, req = _a.req;
     return __awaiter(_this, void 0, void 0, function () {
-        var data, bugReportSql, bugReport, userBugReportSql, userBugReport;
+        var data, sql, bugReport;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
                     data = req.body;
-                    bugReportSql = "INSERT INTO \"bugReports\" (\"bugReport\", \"dateTime\") VALUES ('" + config_1.pgp.as.value(data.data) + "', now()) RETURNING \"id\"";
-                    return [4 /*yield*/, conn.any(bugReportSql)];
+                    sql = "\n    INSERT INTO \"bugReports\" (\"bugReport\", \"userId\", \"dateTime\")\n    VALUES ('" + config_1.pgp.as.value(data.data) + "', '" + currentUser.id + "', now()) RETURNING \"id\"\n    ";
+                    return [4 /*yield*/, conn.any(sql)];
                 case 1:
                     bugReport = _b.sent();
-                    userBugReportSql = "INSERT INTO \"usersBugReports\" (\"userId\", \"bugReportId\") VALUES ('" + config_1.pgp.as.value(currentUser.id) + "', '" + bugReport[0].id + "')";
-                    return [4 /*yield*/, conn.any(userBugReportSql)];
-                case 2:
-                    userBugReport = _b.sent();
-                    return [2 /*return*/, userBugReport];
+                    return [2 /*return*/, bugReport];
             }
         });
     });
@@ -194,7 +189,7 @@ addApiEndpoint("bugReport", { permission: "authenticated" }, function (_a) {
 addApiEndpoint("updateHistory", { permission: "authenticated" }, function (_a) {
     var currentUser = _a.currentUser, req = _a.req, res = _a.res, next = _a.next;
     return __awaiter(_this, void 0, void 0, function () {
-        var _b, questionId, history, sql, answerRecord, historyItem, updateHistorySql, updatedAnswerRecord;
+        var _b, questionId, history, sql, answerRecord, historyItem, updateHistorySql, updateHistory;
         return __generator(this, function (_c) {
             switch (_c.label) {
                 case 0:
@@ -203,29 +198,154 @@ addApiEndpoint("updateHistory", { permission: "authenticated" }, function (_a) {
                     return [4 /*yield*/, conn.one(sql)];
                 case 1:
                     answerRecord = _c.sent();
-                    historyItem = __assign({}, history, { dateTime: Date(), completed: false });
+                    historyItem = __assign({}, history, { dateTime: Date() });
                     updateHistorySql = "\n      UPDATE answers\n      SET \"history\" = \"history\" || " + config_1.pgp.as.json([historyItem]) + "\n      WHERE \"id\" = '" + config_1.pgp.as.value(answerRecord.id) + "'\n      RETURNING \"history\"\n    ";
-                    return [4 /*yield*/, conn.one(updateHistorySql)
-                        //
-                        // Add opened record to activity array as above
-                        // Search all other non-completed answers for currentUser
-                        // Get last entry of activity array -> if status === opened add new record
-                        // to close
-                        //
-                    ];
+                    return [4 /*yield*/, conn.one(updateHistorySql)];
                 case 2:
-                    updatedAnswerRecord = _c.sent();
-                    //
-                    // Add opened record to activity array as above
-                    // Search all other non-completed answers for currentUser
-                    // Get last entry of activity array -> if status === opened add new record
-                    // to close
-                    //
-                    return [2 /*return*/, updatedAnswerRecord.history];
+                    updateHistory = _c.sent();
+                    return [2 /*return*/, updateHistory];
             }
         });
     });
 });
+addApiEndpoint("updateCompleted", { permission: "authenticated" }, function (_a) {
+    var currentUser = _a.currentUser, req = _a.req;
+    return __awaiter(_this, void 0, void 0, function () {
+        var questionId, sql, updateCompleted;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    questionId = req.body.data.questionId;
+                    sql = "\n    UPDATE answers\n    SET \"completed\" = true\n    WHERE \"userId\" = '" + config_1.pgp.as.value(currentUser.id) + "'\n    AND \"questionId\" = '" + config_1.pgp.as.value(questionId) + "'\n    ";
+                    return [4 /*yield*/, conn.any(sql)];
+                case 1:
+                    updateCompleted = _b.sent();
+                    return [2 /*return*/, updateCompleted];
+            }
+        });
+    });
+});
+addApiEndpoint("updateQuestion", { permission: "admin" }, function (_a) {
+    var currentUser = _a.currentUser, req = _a.req;
+    return __awaiter(_this, void 0, void 0, function () {
+        var questionId, question, modelAnswer, databaseId, startingText, sql, updateQuestion;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    questionId = req.body.data.updatedQuestion.id;
+                    question = req.body.data.updatedQuestion.question;
+                    modelAnswer = req.body.data.updatedQuestion.modelAnswer;
+                    databaseId = req.body.data.updatedQuestion.databaseId;
+                    startingText = req.body.data.updatedQuestion.startingText;
+                    sql = "\n      UPDATE questions\n      SET\n      \"question\" = '" + config_1.pgp.as.value(question) + "',\n      \"modelAnswer\" = '" + config_1.pgp.as.value(modelAnswer) + "',\n      \"databaseId\" = '" + config_1.pgp.as.value(databaseId) + "',\n      \"startingText\" = '" + config_1.pgp.as.value(startingText) + "'\n      WHERE \"id\" = '" + config_1.pgp.as.value(questionId) + "'\n    ";
+                    return [4 /*yield*/, conn.any(sql)];
+                case 1:
+                    updateQuestion = _b.sent();
+                    return [2 /*return*/, updateQuestion];
+            }
+        });
+    });
+});
+addApiEndpoint("addQuestion", { permission: "admin" }, function (_a) {
+    var currentUser = _a.currentUser, req = _a.req;
+    return __awaiter(_this, void 0, void 0, function () {
+        var question, modelAnswer, databaseId, startingText, sql, addQuestion;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    question = req.body.data.addedQuestion.question;
+                    modelAnswer = req.body.data.addedQuestion.modelAnswer;
+                    databaseId = req.body.data.addedQuestion.databaseId;
+                    startingText = req.body.data.addedQuestion.startingText;
+                    sql = "\n      INSERT INTO\n      questions (\"question\",\"modelAnswer\",\"databaseId\",\"startingText\")\n      VALUES\n      ('" + config_1.pgp.as.value(question) + "',\n      '" + config_1.pgp.as.value(modelAnswer) + "',\n      '" + config_1.pgp.as.value(databaseId) + "',\n      '" + config_1.pgp.as.value(startingText) + "')\n    ";
+                    return [4 /*yield*/, conn.any(sql)];
+                case 1:
+                    addQuestion = _b.sent();
+                    return [2 /*return*/, addQuestion];
+            }
+        });
+    });
+});
+addApiEndpoint("updateActivity", { permission: "authenticated" }, function (_a) {
+    var currentUser = _a.currentUser, req = _a.req;
+    return __awaiter(_this, void 0, void 0, function () {
+        return __generator(this, function (_b) {
+            return [2 /*return*/, addActivity(currentUser, req.body.data.activity)];
+        });
+    });
+});
+addApiEndpoint("addUser", { permission: "admin" }, function (_a) {
+    var currentUser = _a.currentUser, req = _a.req;
+    return __awaiter(_this, void 0, void 0, function () {
+        var username, password, admin, sql, addQuestion;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    username = req.body.data.addedUser.username;
+                    password = req.body.data.addedUser.password;
+                    admin = req.body.data.addedUser.admin;
+                    sql = "\n      INSERT INTO\n      users (\"username\",\"password\",\"admin\")\n      VALUES\n      ('" + config_1.pgp.as.value(username) + "',\n      crypt('" + config_1.pgp.as.value(password) + "', gen_salt('bf')),\n      '" + config_1.pgp.as.value(admin) + "')\n    ";
+                    return [4 /*yield*/, conn.any(sql)];
+                case 1:
+                    addQuestion = _b.sent();
+                    return [2 /*return*/, addQuestion];
+            }
+        });
+    });
+});
+addApiEndpoint("updateUser", { permission: "admin" }, function (_a) {
+    var currentUser = _a.currentUser, req = _a.req;
+    return __awaiter(_this, void 0, void 0, function () {
+        var userId, username, password, sql, updateUser;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    userId = req.body.data.updatedUser.id;
+                    username = req.body.data.updatedUser.username;
+                    password = req.body.data.updatedUser.password;
+                    sql = "\n      UPDATE users\n      SET\n      \"username\" = '" + config_1.pgp.as.value(username) + "',\n      \"password\" = crypt('" + config_1.pgp.as.value(password) + "', gen_salt('bf'))\n      WHERE \"id\" = '" + config_1.pgp.as.value(userId) + "'\n    ";
+                    return [4 /*yield*/, conn.any(sql)];
+                case 1:
+                    updateUser = _b.sent();
+                    return [2 /*return*/, updateUser];
+            }
+        });
+    });
+});
+addApiEndpoint("addLab", { permission: "admin" }, function (_a) {
+    var currentUser = _a.currentUser, req = _a.req;
+    return __awaiter(_this, void 0, void 0, function () {
+        var labNumber, sql, addLab;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    labNumber = req.body.data.addedLab.labNumber;
+                    sql = "\n      INSERT INTO\n      labs (\"labNumber\",\"dateTime\")\n      VALUES\n      ('" + config_1.pgp.as.value(labNumber) + "',\n      now())\n    ";
+                    return [4 /*yield*/, conn.any(sql)];
+                case 1:
+                    addLab = _b.sent();
+                    return [2 /*return*/, addLab];
+            }
+        });
+    });
+});
+function addActivity(user, activity) {
+    return __awaiter(this, void 0, void 0, function () {
+        var updateActivitySql, updateActivity;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    updateActivitySql = "\n    UPDATE users\n    SET \"activity\" = \"activity\" || " + config_1.pgp.as.json([
+                        { dateTime: Date(), activity: activity },
+                    ]) + "\n    WHERE \"id\" = '" + config_1.pgp.as.value(user.id) + "'\n    RETURNING \"activity\"\n  ";
+                    return [4 /*yield*/, conn.one(updateActivitySql)];
+                case 1:
+                    updateActivity = _a.sent();
+                    return [2 /*return*/, updateActivity];
+            }
+        });
+    });
+}
 // default response is 404
 app.use(function (req, res, next) { return next(404); });
 // handle errors by returning them as json
