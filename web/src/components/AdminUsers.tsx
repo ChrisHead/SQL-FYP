@@ -105,7 +105,6 @@ export function AdminUsers() {
           backgroundColor: "#30434d",
         }}
         SubComponent={row => {
-          console.log(row)
           return (
             <div style={{ padding: "20px" }}>
               <ReactTable
