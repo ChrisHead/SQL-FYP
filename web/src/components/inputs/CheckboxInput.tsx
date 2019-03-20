@@ -8,7 +8,15 @@ interface ICheckboxInputProps {
 
 export function CheckboxInput({ label, value, onChange }: ICheckboxInputProps) {
   return (
-    <label className="input">
+    <label
+      className="input"
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        textAlign: "center",
+        flex: 1,
+      }}
+    >
       <input
         type="checkbox"
         value={value}

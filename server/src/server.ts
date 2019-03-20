@@ -101,12 +101,18 @@ addApiEndpoint(
   "feedback",
   { permission: "authenticated" },
   async ({ currentUser, req }) => {
-    const data = req.body
+    console.log(req.body.data)
     const sql = `
-    INSERT INTO "feedbacks" ("feedback", "userId", "dateTime")
-    VALUES ('${pgp.as.value(data.data)}', '${
-      currentUser.id
-    }', now()) RETURNING "id"
+    INSERT INTO "feedbacks"
+    ("qOne", "qTwo", "qThree", "comments", "userId", "dateTime")
+    VALUES (
+    '${pgp.as.value(req.body.data.qOne)}',
+    '${pgp.as.value(req.body.data.qTwo)}',
+    '${pgp.as.value(req.body.data.qThree)}',
+    '${pgp.as.value(req.body.data.comments)}',
+    '${currentUser.id}',
+    now())
+    RETURNING "id"
     `
     const feedback = await conn.any<IUser>(sql)
     return feedback

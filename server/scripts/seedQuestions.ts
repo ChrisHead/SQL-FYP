@@ -90,32 +90,4 @@ export const labs = [
       },
     ],
   },
-  {
-    labNumber: 5,
-    dataTime: moment()
-      .subtract(30, "minutes")
-      .toString(),
-    questions: [
-      {
-        question: "lab 5 question 1",
-        modelAnswer: "SELECT * FROM table",
-        databaseId: "2",
-        startingText: "None",
-      },
-    ],
-  },
-  {
-    labNumber: 6,
-    dataTime: moment()
-      .add(4, "days")
-      .toString(),
-    questions: [
-      {
-        question: "lab 6 question 1",
-        modelAnswer: "SELECT * FROM table",
-        databaseId: "2",
-        startingText: "None",
-      },
-    ],
-  },
 ]

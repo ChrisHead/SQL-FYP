@@ -3,6 +3,8 @@ if (process.env.NODE_ENV !== "production") require("dotenv").config()
 import pgPromise from "pg-promise"
 import { db } from "../src/config"
 import { labs } from "./seedQuestions"
+import { users } from "./seedUsers"
+
 export const pgp = pgPromise({
   query(e) {
     let str = e.query
@@ -62,7 +64,10 @@ async function run() {
 
   await conn.any(`CREATE TABLE IF NOT EXISTS "feedbacks" (
                   "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-                  "feedback" TEXT,
+                  "qOne" TEXT,
+                  "qTwo" TEXT,
+                  "qThree" TEXT,
+                  "comments" TEXT,
                   "userId" UUID REFERENCES "users"("id"),
                   "dateTime" TIMESTAMP NOT NULL
                 )`)
@@ -86,9 +91,19 @@ async function run() {
   await conn.any(`
     INSERT INTO "users" ("username", "password", "admin")
     VALUES
-      ('admin', crypt('pass123', gen_salt('bf')), true),
-      ('asd', crypt('pass123', gen_salt('bf')), false)
+      ('admin', crypt('coa201', gen_salt('bf')), true),
+      ('asd', crypt('test', gen_salt('bf')), false)
   `)
+
+  for (const user of users) {
+    const userRecord = await conn.any(`
+    INSERT INTO "users" ("username", "password", "admin")
+    VALUES
+      ('${user.username}',
+      crypt('${user.password}', gen_salt('bf')),
+      ${user.admin})
+    `)
+  }
 
   const databases = await conn.any(`
     INSERT INTO "databaseTemplates" ("data")
@@ -122,16 +137,6 @@ async function run() {
       `)
     }
   }
-
-  await conn.any(`
-    INSERT INTO "feedbacks" ("feedback", "dateTime", "userId")
-    VALUES ('This is the feedback', now(), (SELECT id from "users" WHERE "username" = 'asd'))
-  `)
-
-  await conn.any(`
-    INSERT INTO "bugReports" ("bugReport", "dateTime", "userId")
-    VALUES ('This is the bug report', now(), (SELECT id FROM "users" WHERE "username" = 'asd'))
-  `)
 }
 
 run()

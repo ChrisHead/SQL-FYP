@@ -171,9 +171,9 @@ a:visited {
   padding: 8px;
 }
 
-.input + .input {
+/* .input + .input {
   margin-top: 16px;
-}
+} */
 
 .CodeMirror {
   font-size: 18px;

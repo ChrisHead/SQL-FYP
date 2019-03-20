@@ -8,14 +8,11 @@ async function apiRequest(path: string, data: any, authToken?: string) {
   }
   const body = typeof data === "string" ? data : JSON.stringify(data)
 
-  const response = await fetch(
-    `https://sql-fyp-server.herokuapp.com/api/${path}`,
-    {
-      method: "POST",
-      body,
-      headers,
-    }
-  )
+  const response = await fetch(`http://localhost:3001/api/${path}`, {
+    method: "POST",
+    body,
+    headers,
+  })
   const json = await response.json()
   return json
 }
@@ -37,7 +34,10 @@ export const api = {
     return apiRequest("questions", {}, authToken)
   },
 
-  async feedback(data: string, authToken: string) {
+  async feedback(
+    data: { qOne: string; qTwo: string; qThree: string; comments: string },
+    authToken: string
+  ) {
     return apiRequest("feedback", { data }, authToken)
   },
 

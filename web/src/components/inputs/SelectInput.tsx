@@ -2,10 +2,11 @@ import React from "react"
 
 interface ISelectInputProps {
   label: string
-  options: { value: string; label: string }[]
+  options: { key: number; value: string; label: string }[]
   value?: string
   blank?: string
   onChange?(val: string): void
+  required?: boolean
 }
 
 export function SelectInput({
@@ -14,6 +15,7 @@ export function SelectInput({
   value,
   onChange,
   options,
+  required,
 }: ISelectInputProps) {
   return (
     <label className="input">
@@ -22,10 +24,13 @@ export function SelectInput({
       <select
         value={value}
         onChange={e => onChange && onChange(e.target.value)}
+        required={required}
       >
         {blank && <option>{blank}</option>}
         {options.map(option => (
-          <option value={option.value}>{option.label}</option>
+          <option key={option.key} value={option.value}>
+            {option.label}
+          </option>
         ))}
       </select>
     </label>
