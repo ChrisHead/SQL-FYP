@@ -19,7 +19,7 @@ exports.labs = [
             },
             {
                 question: "Display the names and department name of all employees working in the same city as Jones.",
-                modelAnswer: "SELECT ename, dname FROM emp, dept WHERE emp.deptno = dept.dept AND loc = (SELECT loc FROM emp, dept WHERE emp.deptno = dept.dept AND ename = 'Jones')",
+                modelAnswer: "SELECT ename, dname FROM emp, dept WHERE emp.deptno = dept.deptno AND loc = (SELECT loc FROM emp, dept WHERE emp.deptno = dept.deptno AND ename = 'Jones')",
                 databaseId: "2",
                 startingText: "None",
             },
@@ -37,7 +37,7 @@ exports.labs = [
             },
             {
                 question: "Display the names of all employees who have the same jobs as employees in the sales department.",
-                modelAnswer: "SELECT ename FROM emp WHERE job IN (SELECT job FROM emp, dept WHERE emp.deptno = dept.dept AND dname = 'Sales')",
+                modelAnswer: "SELECT ename FROM emp WHERE job IN (SELECT job FROM emp, dept WHERE emp.deptno = dept.deptno AND dname = 'Sales')",
                 databaseId: "2",
                 startingText: "None",
             },
@@ -68,34 +68,6 @@ exports.labs = [
             {
                 question: "Repeat the display for the last question but this time display in descending order of earnings.",
                 modelAnswer: "select * from ( SELECT ename, sal + comm AS earnings FROM emp WHERE comm IS NOT NULL UNION SELECT ename, sal FROM emp WHERE comm IS NULL) ORDER BY earnings DESC",
-                databaseId: "2",
-                startingText: "None",
-            },
-        ],
-    },
-    {
-        labNumber: 5,
-        dataTime: moment_1.default()
-            .subtract(30, "minutes")
-            .toString(),
-        questions: [
-            {
-                question: "lab 5 question 1",
-                modelAnswer: "SELECT * FROM table",
-                databaseId: "2",
-                startingText: "None",
-            },
-        ],
-    },
-    {
-        labNumber: 6,
-        dataTime: moment_1.default()
-            .add(4, "days")
-            .toString(),
-        questions: [
-            {
-                question: "lab 6 question 1",
-                modelAnswer: "SELECT * FROM table",
                 databaseId: "2",
                 startingText: "None",
             },

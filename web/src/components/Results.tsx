@@ -35,12 +35,12 @@ export function Results({
         </table>
       )}
       {error && (
-        <div style={{ color: "red" }}>
+        <div style={{ color: "red", textAlign: "center" }}>
           {JSON.stringify(error, null, "  ").slice(1, -1)}
         </div>
       )}
       {answerError === answerAcknowledgement && (
-        <div style={{ color: "green" }}>
+        <div style={{ color: "yellow", textAlign: "center" }}>
           {JSON.stringify(answerError, null, "  ").slice(1, -1)}
         </div>
       )}

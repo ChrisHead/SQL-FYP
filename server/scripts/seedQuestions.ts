@@ -19,7 +19,7 @@ export const labs = [
         question:
           "Display the names and department name of all employees working in the same city as Jones.",
         modelAnswer:
-          "SELECT ename, dname FROM emp, dept WHERE emp.deptno = dept.dept AND loc = (SELECT loc FROM emp, dept WHERE emp.deptno = dept.dept AND ename = 'Jones')",
+          "SELECT ename, dname FROM emp, dept WHERE emp.deptno = dept.deptno AND loc = (SELECT loc FROM emp, dept WHERE emp.deptno = dept.deptno AND ename = 'Jones')",
         databaseId: "2",
         startingText: "None",
       },
@@ -44,7 +44,7 @@ export const labs = [
         question:
           "Display the names of all employees who have the same jobs as employees in the sales department.",
         modelAnswer:
-          "SELECT ename FROM emp WHERE job IN (SELECT job FROM emp, dept WHERE emp.deptno = dept.dept AND dname = 'Sales')",
+          "SELECT ename FROM emp WHERE job IN (SELECT job FROM emp, dept WHERE emp.deptno = dept.deptno AND dname = 'Sales')",
         databaseId: "2",
         startingText: "None",
       },

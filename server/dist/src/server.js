@@ -88,7 +88,7 @@ addApiEndpoint("login", {}, function (_a) {
                 case 1:
                     results = _c.sent();
                     if (results.length !== 1) {
-                        return [2 /*return*/, { error: "no one found!!!! :(" }];
+                        return [2 /*return*/, { error: "Username or Password is Incorrect" }];
                     }
                     user = results[0];
                     authToken = jwt.sign({ id: user.id }, config_1.secretKey);
@@ -155,12 +155,12 @@ addApiEndpoint("questions", { permission: "admin" }, function () { return __awai
 addApiEndpoint("feedback", { permission: "authenticated" }, function (_a) {
     var currentUser = _a.currentUser, req = _a.req;
     return __awaiter(_this, void 0, void 0, function () {
-        var data, sql, feedback;
+        var sql, feedback;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
-                    data = req.body;
-                    sql = "\n    INSERT INTO \"feedbacks\" (\"feedback\", \"userId\", \"dateTime\")\n    VALUES ('" + config_1.pgp.as.value(data.data) + "', '" + currentUser.id + "', now()) RETURNING \"id\"\n    ";
+                    console.log(req.body.data);
+                    sql = "\n    INSERT INTO \"feedbacks\"\n    (\"qOne\", \"qTwo\", \"qThree\", \"comments\", \"userId\", \"dateTime\")\n    VALUES (\n    '" + config_1.pgp.as.value(req.body.data.qOne) + "',\n    '" + config_1.pgp.as.value(req.body.data.qTwo) + "',\n    '" + config_1.pgp.as.value(req.body.data.qThree) + "',\n    '" + config_1.pgp.as.value(req.body.data.comments) + "',\n    '" + currentUser.id + "',\n    now())\n    RETURNING \"id\"\n    ";
                     return [4 /*yield*/, conn.any(sql)];
                 case 1:
                     feedback = _b.sent();

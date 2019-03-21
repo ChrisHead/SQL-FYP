@@ -18,15 +18,15 @@ export function useAlasql() {
     {
       name: "dept",
       columns: [
-        { name: "dept", type: "int" },
+        { name: "deptno", type: "int" },
         { name: "dname", type: "string" },
         { name: "loc", type: "string" },
       ],
       data: [
-        { dept: 10, dname: "Accounting", loc: "New York" },
-        { dept: 20, dname: "Research", loc: "Dallas" },
-        { dept: 30, dname: "Sales", loc: "Chicago" },
-        { dept: 40, dname: "Operations", loc: "Boston" },
+        { deptno: 10, dname: "Accounting", loc: "New York" },
+        { deptno: 20, dname: "Research", loc: "Dallas" },
+        { deptno: 30, dname: "Sales", loc: "Chicago" },
+        { deptno: 40, dname: "Operations", loc: "Boston" },
       ],
     },
     {

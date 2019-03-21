@@ -34,7 +34,7 @@ addApiEndpoint("login", {}, async ({ req }) => {
   const results = await conn.any(sql)
 
   if (results.length !== 1) {
-    return { error: "no one found!!!! :(" }
+    return { error: "Username or Password is Incorrect" }
   }
   const user = results[0]
   const authToken = jwt.sign({ id: user.id }, secretKey)

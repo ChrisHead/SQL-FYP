@@ -1,6 +1,7 @@
 import * as React from "react"
 import { AppContext } from "../AppContext"
 import { TextInput } from "../components/inputs/TextInput"
+import { Spacer } from "../components/Spacer"
 
 export function LoginPage() {
   const [error, setError] = React.useState("")
@@ -18,9 +19,9 @@ export function LoginPage() {
     }
   }
   // TODO REMOVE THIS BEFORE PUSHING TO PRODUCTION
-  React.useEffect(() => {
-    app.login("asd", "test")
-  })
+  // React.useEffect(() => {
+  //   app.login("asd", "test")
+  // })
 
   return (
     <div
@@ -33,7 +34,10 @@ export function LoginPage() {
       }}
     >
       <h1>LOGIN</h1>
-      {error}
+      <div style={{ color: "red" }}>{error}</div>
+
+      <Spacer height="medium" />
+
       <div>
         <form onSubmit={handleSubmit}>
           <TextInput

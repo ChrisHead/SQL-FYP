@@ -6,9 +6,9 @@ import { useActivity } from "../hooks/useActivity"
 import { SelectInput } from "../components/inputs/SelectInput"
 import { Spacer } from "../components/Spacer"
 
-export function FeedbackPage() {
+export function FeedbackPage({ history }) {
   const [feedback, setFeedback] = React.useState("")
-  const [response, setResponse] = React.useState("")
+  // const [response, setResponse] = React.useState("")
   const app = React.useContext(AppContext)
   const { addNewActivity } = useActivity()
 
@@ -37,7 +37,11 @@ export function FeedbackPage() {
         feedback
     )
     setFeedback("")
-    setResponse("Feedback Submitted")
+    // setResponse("Feedback Submitted")
+
+    if ("success") {
+      history.push("/")
+    }
   }
 
   return (
@@ -172,7 +176,7 @@ export function FeedbackPage() {
           type="submit"
           value="Submit"
         />
-        {response}
+        {/* {response} */}
       </div>
       <div style={{ flex: 1 }} />
     </div>

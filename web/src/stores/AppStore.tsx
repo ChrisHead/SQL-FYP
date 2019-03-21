@@ -23,12 +23,10 @@ export class AppStore {
   }
   async login(username: string, password: string) {
     if (!username) {
-      return "username is required"
+      return "Username is required"
     }
 
     const response = await api.login(username, password)
-    // id = "admin"
-    // DO REQUEST
     if (response.error) {
       return response.error
     } else {
@@ -41,7 +39,7 @@ export class AppStore {
 
   async loadCurrentUser() {
     if (!this.authToken) {
-      throw new Error("cant load current user. not authenticated")
+      throw new Error("Cannot load current user. Not authenticated.")
     }
 
     const currentUser = await api.currentUser(this.authToken)

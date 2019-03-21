@@ -49,7 +49,7 @@ export function StudentEditor() {
   const { addNewActivity } = useActivity()
 
   if (!loaded) {
-    return <>"Loading"</>
+    return <>"Loading..."</>
   }
 
   return (
@@ -113,7 +113,7 @@ export function StudentEditor() {
             </SplitPane>
           </>
         ) : (
-          "Select a week and a question to begin"
+          "Select a lab and question to begin."
         )}
       </SplitPane>
     </div>

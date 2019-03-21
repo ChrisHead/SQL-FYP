@@ -83,13 +83,13 @@ export function useStudentEditor() {
   }, [results, sqlError, sqlVal])
 
   async function validation() {
-    if (results.length || sqlError.length) {
+    if (results.length || sqlError.length || sqlVal.length) {
       const { correct, error } = await validateAnswer()
       if (error) {
         setAnswerError(error)
       }
-      setSqlValue("")
       addHistoryItem(sqlValue, correct, sqlError, error)
+      setSqlValue("")
     }
   }
 

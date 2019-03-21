@@ -43,6 +43,7 @@ if (process.env.NODE_ENV !== "production")
 var pg_promise_1 = __importDefault(require("pg-promise"));
 var config_1 = require("../src/config");
 var seedQuestions_1 = require("./seedQuestions");
+var seedUsers_1 = require("./seedUsers");
 exports.pgp = pg_promise_1.default({
     query: function (e) {
         var str = e.query;
@@ -53,39 +54,39 @@ exports.pgp = pg_promise_1.default({
 var conn = exports.pgp(config_1.db);
 function run() {
     return __awaiter(this, void 0, void 0, function () {
-        var databases, _i, labs_1, lab, labRecord, _a, _b, questionData, question, modelAnswer, startingText, values, questionRecord;
-        return __generator(this, function (_c) {
-            switch (_c.label) {
+        var _i, users_1, user, userRecord, databases, _a, labs_1, lab, labRecord, _b, _c, questionData, question, modelAnswer, startingText, values, questionRecord;
+        return __generator(this, function (_d) {
+            switch (_d.label) {
                 case 0: return [4 /*yield*/, conn.any("DROP SCHEMA \"public\" CASCADE")];
                 case 1:
-                    _c.sent();
+                    _d.sent();
                     return [4 /*yield*/, conn.any("CREATE SCHEMA \"public\"")];
                 case 2:
-                    _c.sent();
+                    _d.sent();
                     return [4 /*yield*/, conn.any("CREATE EXTENSION IF NOT EXISTS \"pgcrypto\"")];
                 case 3:
-                    _c.sent();
+                    _d.sent();
                     return [4 /*yield*/, conn.any("CREATE TABLE IF NOT EXISTS \"users\" (\n    \"id\" UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n    \"username\" TEXT UNIQUE,\n    \"password\" TEXT NOT NULL,\n    \"admin\" BOOLEAN DEFAULT 'false',\n    \"activity\" JSONB DEFAULT '[]'\n  )")];
                 case 4:
-                    _c.sent();
+                    _d.sent();
                     return [4 /*yield*/, conn.any("CREATE TABLE IF NOT EXISTS \"databaseTemplates\" (\n    \"id\" UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n    \"data\" JSONB DEFAULT '[]'\n  )")];
                 case 5:
-                    _c.sent();
+                    _d.sent();
                     return [4 /*yield*/, conn.any("CREATE TABLE IF NOT EXISTS \"labs\" (\n    \"id\" UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n    \"labNumber\" INTEGER UNIQUE,\n    \"dateTime\" TIMESTAMP NOT NULL\n  )")];
                 case 6:
-                    _c.sent();
+                    _d.sent();
                     return [4 /*yield*/, conn.any("CREATE TABLE IF NOT EXISTS \"questions\" (\n    \"id\" UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n    \"question\" TEXT,\n    \"modelAnswer\" TEXT,\n    \"databaseId\" UUID REFERENCES \"databaseTemplates\"(\"id\"),\n    \"startingText\" TEXT\n  )")];
                 case 7:
-                    _c.sent();
+                    _d.sent();
                     return [4 /*yield*/, conn.any("CREATE TABLE IF NOT EXISTS \"answers\" (\n    \"id\" UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n    \"userId\" UUID REFERENCES \"users\"(\"id\"),\n    \"questionId\" UUID REFERENCES \"questions\"(\"id\"),\n    \"history\" JSONB DEFAULT '[]',\n    \"completed\" BOOLEAN DEFAULT false,\n    CONSTRAINT user_question_uniq UNIQUE (\"userId\", \"questionId\")\n    )")];
                 case 8:
-                    _c.sent();
+                    _d.sent();
                     return [4 /*yield*/, conn.any("CREATE TABLE IF NOT EXISTS \"labsQuestions\" (\n    \"id\" UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n    \"labId\" UUID REFERENCES \"labs\"(\"id\"),\n    \"questionId\" UUID REFERENCES \"questions\"(\"id\")\n  )")];
                 case 9:
-                    _c.sent();
-                    return [4 /*yield*/, conn.any("CREATE TABLE IF NOT EXISTS \"feedbacks\" (\n                  \"id\" UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n                  \"feedback\" TEXT,\n                  \"userId\" UUID REFERENCES \"users\"(\"id\"),\n                  \"dateTime\" TIMESTAMP NOT NULL\n                )")];
+                    _d.sent();
+                    return [4 /*yield*/, conn.any("CREATE TABLE IF NOT EXISTS \"feedbacks\" (\n                  \"id\" UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n                  \"qOne\" TEXT,\n                  \"qTwo\" TEXT,\n                  \"qThree\" TEXT,\n                  \"comments\" TEXT,\n                  \"userId\" UUID REFERENCES \"users\"(\"id\"),\n                  \"dateTime\" TIMESTAMP NOT NULL\n                )")];
                 case 10:
-                    _c.sent();
+                    _d.sent();
                     return [4 /*yield*/, conn.any("CREATE TABLE IF NOT EXISTS \"bugReports\" (\n                  \"id\" UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n                  \"bugReport\" TEXT,\n                  \"userId\" UUID REFERENCES \"users\"(\"id\"),\n                  \"dateTime\" TIMESTAMP NOT NULL\n                )")
                         //////////////////////////////////
                         //////////////////////////////////
@@ -98,7 +99,7 @@ function run() {
                         //////////////////////////////////
                     ];
                 case 11:
-                    _c.sent();
+                    _d.sent();
                     //////////////////////////////////
                     //////////////////////////////////
                     //////////////////////////////////
@@ -108,7 +109,7 @@ function run() {
                     //////////////////////////////////
                     //////////////////////////////////
                     //////////////////////////////////
-                    return [4 /*yield*/, conn.any("\n    INSERT INTO \"users\" (\"username\", \"password\", \"admin\")\n    VALUES\n      ('admin', crypt('pass123', gen_salt('bf')), true),\n      ('asd', crypt('pass123', gen_salt('bf')), false)\n  ")];
+                    return [4 /*yield*/, conn.any("\n    INSERT INTO \"users\" (\"username\", \"password\", \"admin\")\n    VALUES\n      ('admin', crypt('coa201', gen_salt('bf')), true),\n      ('asd', crypt('test', gen_salt('bf')), false)\n  ")];
                 case 12:
                     //////////////////////////////////
                     //////////////////////////////////
@@ -119,47 +120,53 @@ function run() {
                     //////////////////////////////////
                     //////////////////////////////////
                     //////////////////////////////////
-                    _c.sent();
-                    return [4 /*yield*/, conn.any("\n    INSERT INTO \"databaseTemplates\" (\"data\")\n    VALUES (" + exports.pgp.as.json([{ name: "testDb", columns: [], data: [] }]) + ")\n    RETURNING \"id\"\n  ")];
+                    _d.sent();
+                    _i = 0, users_1 = seedUsers_1.users;
+                    _d.label = 13;
                 case 13:
-                    databases = _c.sent();
-                    _i = 0, labs_1 = seedQuestions_1.labs;
-                    _c.label = 14;
+                    if (!(_i < users_1.length)) return [3 /*break*/, 16];
+                    user = users_1[_i];
+                    return [4 /*yield*/, conn.any("\n    INSERT INTO \"users\" (\"username\", \"password\", \"admin\")\n    VALUES\n      ('" + user.username + "',\n      crypt('" + user.password + "', gen_salt('bf')),\n      " + user.admin + ")\n    ")];
                 case 14:
-                    if (!(_i < labs_1.length)) return [3 /*break*/, 21];
-                    lab = labs_1[_i];
-                    return [4 /*yield*/, conn.one("\n        INSERT INTO \"labs\" (\"labNumber\", \"dateTime\")\n        VALUES ('" + lab.labNumber + "', '" + lab.dataTime + "')\n        RETURNING \"id\"\n      ")];
+                    userRecord = _d.sent();
+                    _d.label = 15;
                 case 15:
-                    labRecord = _c.sent();
-                    _a = 0, _b = lab.questions;
-                    _c.label = 16;
-                case 16:
-                    if (!(_a < _b.length)) return [3 /*break*/, 20];
-                    questionData = _b[_a];
+                    _i++;
+                    return [3 /*break*/, 13];
+                case 16: return [4 /*yield*/, conn.any("\n    INSERT INTO \"databaseTemplates\" (\"data\")\n    VALUES (" + exports.pgp.as.json([{ name: "testDb", columns: [], data: [] }]) + ")\n    RETURNING \"id\"\n  ")];
+                case 17:
+                    databases = _d.sent();
+                    _a = 0, labs_1 = seedQuestions_1.labs;
+                    _d.label = 18;
+                case 18:
+                    if (!(_a < labs_1.length)) return [3 /*break*/, 25];
+                    lab = labs_1[_a];
+                    return [4 /*yield*/, conn.one("\n        INSERT INTO \"labs\" (\"labNumber\", \"dateTime\")\n        VALUES ('" + lab.labNumber + "', '" + lab.dataTime + "')\n        RETURNING \"id\"\n      ")];
+                case 19:
+                    labRecord = _d.sent();
+                    _b = 0, _c = lab.questions;
+                    _d.label = 20;
+                case 20:
+                    if (!(_b < _c.length)) return [3 /*break*/, 24];
+                    questionData = _c[_b];
                     question = questionData.question, modelAnswer = questionData.modelAnswer, startingText = questionData.startingText;
                     values = [question, modelAnswer, databases[0].id, startingText]
                         .map(function (v) { return "'" + exports.pgp.as.value(v) + "'"; })
                         .join();
                     return [4 /*yield*/, conn.one("\n        INSERT INTO \"questions\" (\"question\",\"modelAnswer\",\"databaseId\",\"startingText\")\n        VALUES (" + values + ")\n        RETURNING \"id\"\n      ")];
-                case 17:
-                    questionRecord = _c.sent();
+                case 21:
+                    questionRecord = _d.sent();
                     return [4 /*yield*/, conn.any("\n        INSERT INTO \"labsQuestions\" (\"labId\", \"questionId\")\n        VALUES ('" + labRecord.id + "', '" + questionRecord.id + "')\n      ")];
-                case 18:
-                    _c.sent();
-                    _c.label = 19;
-                case 19:
-                    _a++;
-                    return [3 /*break*/, 16];
-                case 20:
-                    _i++;
-                    return [3 /*break*/, 14];
-                case 21: return [4 /*yield*/, conn.any("\n    INSERT INTO \"feedbacks\" (\"feedback\", \"dateTime\", \"userId\")\n    VALUES ('This is the feedback', now(), (SELECT id from \"users\" WHERE \"username\" = 'asd'))\n  ")];
                 case 22:
-                    _c.sent();
-                    return [4 /*yield*/, conn.any("\n    INSERT INTO \"bugReports\" (\"bugReport\", \"dateTime\", \"userId\")\n    VALUES ('This is the bug report', now(), (SELECT id FROM \"users\" WHERE \"username\" = 'asd'))\n  ")];
+                    _d.sent();
+                    _d.label = 23;
                 case 23:
-                    _c.sent();
-                    return [2 /*return*/];
+                    _b++;
+                    return [3 /*break*/, 20];
+                case 24:
+                    _a++;
+                    return [3 /*break*/, 18];
+                case 25: return [2 /*return*/];
             }
         });
     });

@@ -64,7 +64,7 @@ export function QuestionsPanel({
           textAlign: "center",
         }}
       >
-        Questions
+        Labs/Questions
       </div>
       {labs.map((lab, i) => (
         <div key={i} style={{ padding: 8 }}>
@@ -73,7 +73,7 @@ export function QuestionsPanel({
               <>
                 <FontAwesomeIcon icon="angle-double-down" />
                 <span style={{ margin: "0 16px" }}>
-                  {"Week " + lab.labNumber}
+                  {"Lab " + lab.labNumber}
                 </span>
                 <FontAwesomeIcon icon="angle-double-down" />
               </>
