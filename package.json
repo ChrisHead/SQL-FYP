@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "@types/node": "^11.9.4"
+    "@types/node": "^11.9.4",
+    "serve": "^10.1.2"
   }
 }

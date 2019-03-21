@@ -82,7 +82,7 @@ export function QuestionsPanel({
               <>
                 <FontAwesomeIcon icon="angle-double-up" />
                 <span style={{ margin: "0 16px" }}>
-                  {"Week " + lab.labNumber}
+                  {"Lab " + lab.labNumber}
                 </span>
                 <FontAwesomeIcon icon="angle-double-up" />
               </>

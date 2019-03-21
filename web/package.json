@@ -27,10 +27,12 @@
     "react-table": "^6.8.6"
   },
   "scripts": {
-    "start": "react-scripts-ts start",
+    "dev": "react-scripts-ts start",
+    "start": "serve -s build",
     "build": "react-scripts-ts build",
     "test": "react-scripts-ts test --env=jsdom",
-    "eject": "react-scripts-ts eject"
+    "eject": "react-scripts-ts eject",
+    "heroku-postbuild": "npm run build"
   },
   "devDependencies": {
     "@types/jest": "^23.3.4",
