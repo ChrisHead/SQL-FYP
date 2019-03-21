@@ -28,8 +28,8 @@
   },
   "scripts": {
     "dev": "react-scripts-ts start",
-    "start": "serve -s build",
-    "build": "react-scripts-ts build",
+    "start2": "serve -s build",
+    "build2": "react-scripts-ts build",
     "test": "react-scripts-ts test --env=jsdom",
     "eject": "react-scripts-ts eject",
     "heroku-postbuild": "npm run build"
