@@ -1,5 +1,6 @@
 const express = require("express")
 const app = express()
+const path = require("path")
 const fs = require("fs")
 fs.readdir(path.resolve("../build"), (error, data) => {
   console.log(error, data)
