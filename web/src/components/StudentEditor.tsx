@@ -113,7 +113,41 @@ export function StudentEditor() {
             </SplitPane>
           </>
         ) : (
-          "Select a lab and question to begin."
+          <div>
+            <p>Select a lab and question to begin.</p>
+            <p>NOTES </p>
+            <p>
+              Usage: The panels can be resized by dragging the borders between
+              them. History is shown by clicking the history bar. Make sure you
+              have the correct question selected when submitting an answer.
+            </p>
+            <p>
+              Case Sensitivity: The SQL of your statements is NOT case sensitive
+              and does not require a semicolon, however, the data from the
+              tables IS case sensitive. "select ename from emp where ename =
+              'JONES'" will error, use "select ename from emp where ename =
+              'Jones'"
+            </p>
+            <p>
+              Question Changes: Some of the questions may have been slightly
+              changed, check that your answers match the questions.
+            </p>
+            <p>
+              Nested Subqueries: Subqueries cannot be nested more than once.
+              '[select statement] ([select statement] ([select statement]))'
+              will error. Consider other ways of writing the same query.
+            </p>
+            <p>
+              Order By Clause: The Order By clause only affects the directly
+              preceding statement. '[select statement] [union] [select
+              statement] [order by]' will only order the second select
+              statement.
+            </p>
+            <p>
+              Feedback: To aid in the further development of this system, please
+              feel free to submit feedback at the end of the lab.
+            </p>
+          </div>
         )}
       </SplitPane>
     </div>

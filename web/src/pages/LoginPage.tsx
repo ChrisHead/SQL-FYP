@@ -41,18 +41,24 @@ export function LoginPage() {
       <div>
         <form onSubmit={handleSubmit}>
           <TextInput
-            label="User"
+            label="BNumber"
             value={username}
             onChange={value => setUsername(value)}
           />
+
+          <Spacer height="medium" />
+
           <label className="input">
-            Password <br />
+            Password (leave as default) <br />
             <input
               type="password"
               value={password}
               onChange={e => setPassword(e.target.value)}
             />
           </label>
+
+          <Spacer height="medium" />
+
           <input type="submit" value="Login" />
         </form>
       </div>
