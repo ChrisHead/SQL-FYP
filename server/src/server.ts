@@ -291,6 +291,34 @@ addApiEndpoint(
   }
 )
 
+addApiEndpoint(
+  "userAnswersQuestions",
+  { permission: "admin" },
+  async ({ currentUser, req, res, next }) => {
+    const userId = req.body.data
+    const sql = `
+
+    SELECT "labNumber", history, completed, question, "modelAnswer"
+    FROM
+    (
+    SELECT * from labs, "labsQuestions"
+    WHERE labs.id = "labId"
+    ) t1
+    JOIN
+    (
+    SELECT *
+    FROM answers, questions
+    WHERE "questionId" = questions.id
+    AND "userId" = '${pgp.as.value(userId)}'
+    ) t2
+    ON 	(t1."questionId" = t2."questionId")
+    `
+    const userAnswersQuestions = await conn.any<IUser>(sql)
+    console.log(userAnswersQuestions)
+    return userAnswersQuestions
+  }
+)
+
 async function addActivity(user: IUser, activity: string) {
   const updateActivitySql = `
     UPDATE users

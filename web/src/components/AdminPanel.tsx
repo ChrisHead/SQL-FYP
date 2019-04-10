@@ -12,6 +12,8 @@ import { AdminUserEditPage } from "../pages/AdminUserEditPage"
 import { AdminUserAddPage } from "../pages/AdminUserAddPage"
 import { AdminLabEditPage } from "../pages/AdminLabEditPage"
 import { AdminLabAddPage } from "../pages/AdminLabAddPage"
+import { AdminUserActivityPage } from "../pages/AdminUserActivityPage"
+import { AdminUserAnswerPage } from "../pages/AdminUserAnswerPage"
 export function AdminPanel() {
   return (
     <Switch>
@@ -25,6 +27,12 @@ export function AdminPanel() {
       />
       <Route exact path="/questions/add" component={AdminQuestionAddPage} />
       <Route exact path="/users/:id/edit" component={AdminUserEditPage} />
+      <Route exact path="/users/:id/answers" component={AdminUserAnswerPage} />
+      <Route
+        exact
+        path="/users/:id/activity"
+        component={AdminUserActivityPage}
+      />
       <Route exact path="/users/add" component={AdminUserAddPage} />
       <Route exact path="/lab/:id/edit" component={AdminLabEditPage} />
       <Route exact path="/lab/add" component={AdminLabAddPage} />

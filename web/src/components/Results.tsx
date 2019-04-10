@@ -44,13 +44,13 @@ export function Results({
           {JSON.stringify(answerError, null, "  ").slice(1, -1)}
         </div>
       )}
-      {/* {answerError !== answerAcknowledgement && answerError !== "" && (
+      {answerError !== answerAcknowledgement && answerError !== "" && (
         <div
           style={{ color: "red", display: "flex", justifyContent: "center" }}
         >
           {JSON.stringify(answerError, null, "  ").slice(1, -1)}
         </div>
-      )} */}
+      )}
     </div>
   )
 }

@@ -57,42 +57,46 @@ export function AdminUserEditPage({
   }
 
   return (
-    <PageWrapper>
-      <h1>Edit User {user.username}</h1>
-      {error}
-      <form onSubmit={handleSubmit}>
-        <TextInput
+    <div
+      style={{
+        display: "flex",
+        margin: 10,
+        padding: 8,
+        flexDirection: "column",
+        alignItems: "left",
+        overflow: "auto",
+        height: 0.94 * app.windowHeight,
+      }}
+    >
+      <div
+        style={{
+          padding: 8,
+          backgroundColor: "#30434d",
+          marginTop: 10,
+          marginBottom: 10,
+        }}
+      >
+        <h1>Change Password: User {user.username}</h1>
+        {error}
+        <form onSubmit={handleSubmit}>
+          {/* <TextInput
           label="Username"
           value={newUsername}
           onChange={e => {
             setNewUsername(e)
           }}
-        />
-        <PasswordInput
-          label="Password"
-          value={newPassword}
-          onChange={e => {
-            setNewPassword(e)
-          }}
-        />
-        <Spacer height="small" />
-        <SubmitInput>Submit</SubmitInput>
-      </form>
-    </PageWrapper>
-  )
-}
-
-function PageWrapper({ children }) {
-  return (
-    <div
-      style={{
-        padding: 8,
-        backgroundColor: "#30434d",
-        marginTop: 10,
-        marginBottom: 10,
-      }}
-    >
-      {children}
+        /> */}
+          <PasswordInput
+            label="Password"
+            value={newPassword}
+            onChange={e => {
+              setNewPassword(e)
+            }}
+          />
+          <Spacer height="small" />
+          <SubmitInput>Submit</SubmitInput>
+        </form>
+      </div>
     </div>
   )
 }

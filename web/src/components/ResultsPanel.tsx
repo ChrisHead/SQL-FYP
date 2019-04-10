@@ -57,7 +57,7 @@ export function ResultsPanel({
           padding: 8,
           overflow: "auto",
           flex: 1,
-          background: "#263638",
+          background: "#263238",
         }}
       >
         <Results

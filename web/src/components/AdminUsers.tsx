@@ -29,16 +29,42 @@ export function AdminUsers() {
     },
     {
       Header: "",
+      id: "answers",
+      accessor: d => (
+        <Link
+          style={{ textDecoration: "none", color: "#dacc12" }}
+          to={`/users/${d.id}/answers`}
+        >
+          View Answers
+        </Link>
+      ),
+      width: 123,
+    },
+    {
+      Header: "",
+      id: "activity",
+      accessor: d => (
+        <Link
+          style={{ textDecoration: "none", color: "#dacc12" }}
+          to={`/users/${d.id}/activity`}
+        >
+          View Activity
+        </Link>
+      ),
+      width: 112,
+    },
+    {
+      Header: "",
       id: "edit",
       accessor: d => (
         <Link
           style={{ textDecoration: "none", color: "#dacc12" }}
           to={`/users/${d.id}/edit`}
         >
-          Edit
+          Change Password
         </Link>
       ),
-      width: 41,
+      width: 151,
     },
     // {
     //   Header: "",
@@ -55,19 +81,6 @@ export function AdminUsers() {
     // },
   ]
 
-  const activityColumns = [
-    {
-      Header: "DateTime",
-      accessor: "dateTime",
-      style: { whiteSpace: "unset" },
-    },
-    {
-      Header: "Activity",
-      accessor: "activity",
-      style: { whiteSpace: "unset" },
-    },
-  ]
-
   return (
     <div
       style={{
@@ -80,7 +93,6 @@ export function AdminUsers() {
         height: 0.94 * app.windowHeight,
       }}
     >
-      {/* {JSON.stringify(users)} */}
       <div
         style={{
           padding: 8,
@@ -103,18 +115,6 @@ export function AdminUsers() {
           height: 0.85 * app.windowHeight,
           width: 0.78 * app.windowWidth,
           backgroundColor: "#30434d",
-        }}
-        SubComponent={row => {
-          return (
-            <div style={{ padding: "20px" }}>
-              <ReactTable
-                data={row.original.activity}
-                columns={activityColumns}
-                defaultPageSize={10}
-                showPagination
-              />
-            </div>
-          )
         }}
       />
     </div>

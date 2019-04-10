@@ -101,7 +101,8 @@ a:visited {
 }
 
 .Collapsible {
-  background: #2a3c46;
+  background: #263238;
+  /* background: #2a3c46; */
   cursor: pointer;
 }
 
@@ -120,7 +121,7 @@ a:visited {
 }
 
 .history-div:hover {
-  background: rgba(211, 211, 211, 0.13);
+  background: rgba(211, 211, 211, 0.13) !important;
 }
 
 .question-div:hover {

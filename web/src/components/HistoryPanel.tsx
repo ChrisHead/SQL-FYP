@@ -16,6 +16,18 @@ export function HistoryPanel({
   function updateActivity(val) {
     addActivity(val)
   }
+  function setBackground(index, completed) {
+    if (completed) {
+      return "#033c03"
+    } else {
+      if (index % 2 === 0) {
+        return "#263238"
+      } else {
+        // return "#2a3c46"
+        return "#30434d"
+      }
+    }
+  }
   return (
     <div id="historyDiv">
       <Collapsible
@@ -48,7 +60,11 @@ export function HistoryPanel({
             <div
               key={i}
               className="history-div"
-              style={{ fontSize: 14, fontFamily: "monospace" }}
+              style={{
+                fontSize: 14,
+                fontFamily: "monospace",
+                background: setBackground(i, line.completed),
+              }}
               onClick={() => {
                 onSelectHistory(line)
                 updateActivity("History Selected: " + line.value)
