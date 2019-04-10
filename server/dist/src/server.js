@@ -329,6 +329,24 @@ addApiEndpoint("addLab", { permission: "admin" }, function (_a) {
         });
     });
 });
+addApiEndpoint("userAnswersQuestions", { permission: "admin" }, function (_a) {
+    var currentUser = _a.currentUser, req = _a.req, res = _a.res, next = _a.next;
+    return __awaiter(_this, void 0, void 0, function () {
+        var userId, sql, userAnswersQuestions;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    userId = req.body.data;
+                    sql = "\n\n    SELECT \"labNumber\", history, completed, question, \"modelAnswer\"\n    FROM\n    (\n    SELECT * from labs, \"labsQuestions\"\n    WHERE labs.id = \"labId\"\n    ) t1\n    JOIN\n    (\n    SELECT *\n    FROM answers, questions\n    WHERE \"questionId\" = questions.id\n    AND \"userId\" = '" + config_1.pgp.as.value(userId) + "'\n    ) t2\n    ON \t(t1.\"questionId\" = t2.\"questionId\")\n    ";
+                    return [4 /*yield*/, conn.any(sql)];
+                case 1:
+                    userAnswersQuestions = _b.sent();
+                    console.log(userAnswersQuestions);
+                    return [2 /*return*/, userAnswersQuestions];
+            }
+        });
+    });
+});
 function addActivity(user, activity) {
     return __awaiter(this, void 0, void 0, function () {
         var updateActivitySql, updateActivity;
