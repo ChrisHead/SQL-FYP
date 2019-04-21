@@ -47,7 +47,6 @@ export class AppStore {
   }
 
   logout() {
-    // await api.logout()
     this.authToken = undefined
   }
 }

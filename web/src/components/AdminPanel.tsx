@@ -4,7 +4,6 @@ import { Route, Switch } from "react-router"
 import { AdminDatabase } from "./AdminDatabase"
 import { AdminLab } from "./AdminLab"
 import { AdminQuestion } from "./AdminQuestion"
-import { AdminStats } from "./AdminStats"
 import { AdminUsers } from "./AdminUsers"
 import { AdminQuestionEditPage } from "../pages/AdminQuestionEditPage"
 import { AdminQuestionAddPage } from "../pages/AdminQuestionAddPage"
@@ -12,6 +11,7 @@ import { AdminUserEditPage } from "../pages/AdminUserEditPage"
 import { AdminUserAddPage } from "../pages/AdminUserAddPage"
 import { AdminLabEditPage } from "../pages/AdminLabEditPage"
 import { AdminLabAddPage } from "../pages/AdminLabAddPage"
+import { AdminLabStatsPage } from "../pages/AdminLabStatsPage"
 import { AdminUserActivityPage } from "../pages/AdminUserActivityPage"
 import { AdminUserAnswerPage } from "../pages/AdminUserAnswerPage"
 export function AdminPanel() {
@@ -35,9 +35,9 @@ export function AdminPanel() {
       />
       <Route exact path="/users/add" component={AdminUserAddPage} />
       <Route exact path="/lab/:id/edit" component={AdminLabEditPage} />
+      <Route exact path="/lab/:id/stats" component={AdminLabStatsPage} />
       <Route exact path="/lab/add" component={AdminLabAddPage} />
       <Route exact path="/database" component={AdminDatabase} />
-      <Route exact path="/stats" component={AdminStats} />
     </Switch>
   )
 }

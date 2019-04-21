@@ -20,7 +20,7 @@ export function LoginPage() {
   }
   // TODO REMOVE THIS BEFORE PUSHING TO PRODUCTION
   React.useEffect(() => {
-    // app.login("admin", "coa201")
+    app.login("admin", "coa201")
     // app.login("asd", "test")
     // app.login("B512678", "pass123")
   })

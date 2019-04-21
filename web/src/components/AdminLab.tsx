@@ -23,6 +23,19 @@ export function AdminLab() {
       accessor: "labNumber",
       style: { whiteSpace: "unset" },
     },
+    {
+      Header: "",
+      id: "statistics",
+      accessor: d => (
+        <Link
+          style={{ textDecoration: "none", color: "#dacc12" }}
+          to={`/lab/${d.id}/stats`}
+        >
+          Statistics
+        </Link>
+      ),
+      width: 141,
+    },
     // {
     //   Header: "",
     //   id: "edit",

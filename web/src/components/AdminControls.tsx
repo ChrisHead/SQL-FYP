@@ -16,10 +16,9 @@ export function AdminControls() {
       <NavLink to="/users">Manage Users</NavLink>
       <NavLink to="/questions">Manage Questions</NavLink>
       <NavLink to="/labs">Manage Labs</NavLink>
-      {/* <NavLink to="/database">Manage Databases</NavLink>
-      <NavLink to="/stats">Live Statistics</NavLink>
-      <NavLink to={"#"}>Gaming Info</NavLink>
-      <NavLink to={"#"}>Problems Info</NavLink> */}
+      {/* <NavLink to="/database">Manage Databases</NavLink> */}
+      {/* <NavLink to={"#"}>Gaming Info</NavLink> */}
+      {/* <NavLink to={"#"}>Problems Info</NavLink> */}
     </div>
   )
 }

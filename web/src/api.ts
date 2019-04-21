@@ -8,16 +8,13 @@ async function apiRequest(path: string, data: any, authToken?: string) {
   }
   const body = typeof data === "string" ? data : JSON.stringify(data)
 
-  const response = await fetch(
-    `https://sql-fyp-server.herokuapp.com/api/${path}`,
-    {
-      method: "POST",
-      body,
-      headers,
-    }
-  )
-  //http://localhost:3001/api/${path}
+  const response = await fetch(`http://localhost:3001/api/${path}`, {
+    method: "POST",
+    body,
+    headers,
+  })
   //
+  //https://sql-fyp-server.herokuapp.com/api/${path}
   const json = await response.json()
   return json
 }
@@ -107,5 +104,26 @@ export const api = {
 
   async getUsersAnswersQuestions(data: { userId: string }, authToken: string) {
     return apiRequest("userAnswersQuestions", { data }, authToken)
+  },
+
+  //currently ordered by question id, change to question num later
+  async getQuestionsForLab(id: string, authToken: string) {
+    return apiRequest("getQuestionsForLab", { id }, authToken)
+  },
+
+  async getParticipantsForLab(id: string, authToken: string) {
+    return apiRequest("getParticipantsForLab", { id }, authToken)
+  },
+
+  async getParticipantsAnswers(id: string, authToken: string) {
+    return apiRequest("getParticipantsAnswers", { id }, authToken)
+  },
+
+  async getQuestionCompletions(id: string, authToken: string) {
+    return apiRequest("getQuestionCompletions", { id }, authToken)
+  },
+
+  async getQuestionAnswers(id: string, authToken: string) {
+    return apiRequest("getQuestionAnswers", { id }, authToken)
   },
 }

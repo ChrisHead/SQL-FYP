@@ -297,7 +297,6 @@ addApiEndpoint(
   async ({ currentUser, req, res, next }) => {
     const userId = req.body.data
     const sql = `
-
     SELECT "labNumber", history, completed, question, "modelAnswer"
     FROM
     (
@@ -314,11 +313,111 @@ addApiEndpoint(
     ON 	(t1."questionId" = t2."questionId")
     `
     const userAnswersQuestions = await conn.any<IUser>(sql)
-    console.log(userAnswersQuestions)
     return userAnswersQuestions
   }
 )
 
+addApiEndpoint(
+  "getQuestionsForLab",
+  { permission: "admin" },
+  async ({ currentUser, req }) => {
+    const sql = `
+    SELECT "questionId"
+    FROM labs, "labsQuestions"
+    WHERE labs.id = '${pgp.as.value(req.body.id)}'
+    ORDER BY "questionId"
+    `
+    const results = await conn.any(sql)
+    return results
+  }
+)
+
+addApiEndpoint(
+  "getParticipantsForLab",
+  { permission: "admin" },
+  async ({ currentUser, req, res, next }) => {
+    const sql = `
+    SELECT DISTINCT "userId"
+    FROM answers
+    WHERE "questionId"
+    IN (
+    SELECT "labsQuestions"."questionId" from labs, "labsQuestions"
+	  WHERE labs.id = "labId"
+    AND labs.id = '${pgp.as.value(req.body.id)}'
+    )
+    `
+    const results = await conn.any<IUser>(sql)
+    return results
+  }
+)
+
+addApiEndpoint(
+  "getParticipantsAnswers",
+  { permission: "admin" },
+  async ({ currentUser, req, res, next }) => {
+    const participantsSql = `
+    SELECT DISTINCT "userId"
+    FROM answers
+    WHERE "questionId"
+    IN (
+    SELECT "labsQuestions"."questionId" from labs, "labsQuestions"
+	  WHERE labs.id = "labId"
+    AND labs.id = '${pgp.as.value(req.body.id)}'
+    )
+    `
+    const participants = await conn.any(participantsSql)
+
+    const ans = participants.map(async (participant, i) => {
+      const sql = await `
+      SELECT history, completed
+      FROM answers
+      WHERE "questionId"
+      IN (
+      SELECT "labsQuestions"."questionId" from labs, "labsQuestions"
+      WHERE labs.id = "labId"
+      AND labs.id = '${pgp.as.value(req.body.id)}'
+      )
+      AND "userId" = '${pgp.as.value(participant.userId)}'
+      `
+      const results = await conn.any(sql)
+      return { participant, results }
+    })
+    return ans
+  }
+)
+
+addApiEndpoint(
+  "getQuestionCompletions",
+  { permission: "admin" },
+  async ({ currentUser, req, res, next }) => {
+    const sql = `
+    SELECT "questionId", completed
+    FROM answers
+    WHERE "questionId" = '${pgp.as.value(req.body.id)}'
+    AND completed = 'true'
+    `
+    const results = await conn.any(sql)
+    return results
+  }
+)
+
+addApiEndpoint(
+  "getQuestionAnswers",
+  { permission: "admin" },
+  async ({ currentUser, req, res, next }) => {
+    const sql = `
+    SELECT "questionId", history, completed
+    FROM answers
+    WHERE "questionId" = '${pgp.as.value(req.body.id)}'
+    `
+    const results = await conn.any(sql)
+    return results
+  }
+)
+
+///////////////////////////////
+/////////FUNCTIONS/////////////
+///////////////////////////////
 async function addActivity(user: IUser, activity: string) {
   const updateActivitySql = `
     UPDATE users
