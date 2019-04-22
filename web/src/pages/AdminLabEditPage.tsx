@@ -26,6 +26,7 @@ export function AdminLabEditPage({
   const [newAnswer, setNewAnswer] = React.useState("")
   const [newDatabase, setNewDatabase] = React.useState("")
   const [newStarting, setNewStarting] = React.useState("")
+  const [newQuestionNum, setNewQuestionNum] = React.useState("")
 
   React.useEffect(() => {
     if (question !== undefined) {
@@ -33,6 +34,7 @@ export function AdminLabEditPage({
       setNewAnswer(question.modelAnswer)
       setNewDatabase(question.databaseId)
       setNewStarting(question.startingText)
+      setNewQuestionNum(question.questionNum)
     }
   }, [question])
 
@@ -52,6 +54,7 @@ export function AdminLabEditPage({
           modelAnswer: newAnswer,
           databaseId: newDatabase,
           startingText: newStarting,
+          questionNum: newQuestionNum,
         },
       },
       app.authToken!

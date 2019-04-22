@@ -3,10 +3,10 @@ import { api } from "src/api"
 import { AppContext } from "src/AppContext"
 
 interface IQuestion {
-  questionId: string
+  id: string
+  questionNum: number
 }
 
-//change question id to question num later
 interface IAnswer {
   questionId: string
   history: {
@@ -26,6 +26,7 @@ interface ICompleted {
 
 interface ILabStats {
   questionId: string
+  questionNum: number
   answers: number
   completed: number
   totalMistakes: number
@@ -57,11 +58,9 @@ export function useStats(labId: string) {
   React.useEffect(() => {
     questions.forEach(question => {
       if (app.authToken) {
-        api
-          .getQuestionAnswers(question.questionId, app.authToken)
-          .then(response => {
-            updateAnswers(response)
-          })
+        api.getQuestionAnswers(question.id, app.authToken).then(response => {
+          updateAnswers(response)
+        })
       }
     })
   }, [questions])
@@ -70,7 +69,7 @@ export function useStats(labId: string) {
     questions.forEach(question => {
       if (app.authToken) {
         api
-          .getQuestionCompletions(question.questionId, app.authToken)
+          .getQuestionCompletions(question.id, app.authToken)
           .then(response => {
             setCompletedTemp(response)
           })
@@ -102,17 +101,15 @@ export function useStats(labId: string) {
     const questionStats: any = []
     paramsQuestions.forEach(question => {
       const newStats: ILabStats = {
-        questionId: question.questionId,
-        answers: getNumOfAnswers(question.questionId, paramsAnswers),
-        completed: getNumOfCompleted(question.questionId, paramsCompleted),
-        totalMistakes: getTotalNumOfMistakes(
-          question.questionId,
-          paramsAnswers
-        ),
+        questionId: question.id,
+        questionNum: question.questionNum,
+        answers: getNumOfAnswers(question.id, paramsAnswers),
+        completed: getNumOfCompleted(question.id, paramsCompleted),
+        totalMistakes: getTotalNumOfMistakes(question.id, paramsAnswers),
         avgMistakes: getAvgNumOfMistakes(
-          question.questionId,
+          question.id,
           paramsAnswers,
-          getNumOfAnswers(question.questionId, paramsAnswers)
+          getNumOfAnswers(question.id, paramsAnswers)
         ),
       }
       questionStats.push(newStats)

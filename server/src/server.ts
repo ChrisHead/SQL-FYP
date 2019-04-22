@@ -55,6 +55,7 @@ addApiEndpoint("users", { permission: "admin" }, async () => {
   const sql = `
   SELECT id, username, admin, activity
   FROM "users"
+  ORDER BY username
   `
   const results = await conn.any<IUser>(sql)
   return results
@@ -65,23 +66,30 @@ addApiEndpoint(
   { permission: "authenticated" },
   async ({ currentUser }) => {
     const sql = `
-  SELECT
-    "labs".*,
-    ((
-      SELECT json_agg("questions".*)
-      FROM (
-        SELECT
-          *,
-          (SELECT row_to_json("answers".*) FROM (
-            SELECT * FROM "answers" WHERE "questionId" = "questions"."id" AND "userId"='${
-              currentUser.id
-            }'
-          ) "answers") "answer"
-        FROM "questions"
-        WHERE "id" IN (SELECT "questionId" FROM "labsQuestions" WHERE "labId"="labs"."id" )
-          ) "questions"
-    )) questions
-  FROM "labs"
+    SELECT "labs".*, (
+      (
+            SELECT json_agg("questions".*)
+            FROM (
+              SELECT *, (SELECT row_to_json("answers".*)
+                        FROM (
+                                SELECT *
+                                FROM "answers"
+                                WHERE "questionId" = "questions"."id"
+                                AND "userId"='${currentUser.id}'
+                              ) "answers"
+                        ) "answer"
+              FROM "questions"
+              WHERE "id"
+              IN    (
+                    SELECT "questionId"
+                    FROM "labsQuestions"
+                    WHERE "labId"="labs"."id"
+                    )
+                    ORDER BY "questionNum"
+                  ) "questions"
+      )
+    ) questions
+    FROM "labs"
   `
     const results = await conn.any<IUser>(sql)
     return results
@@ -92,6 +100,7 @@ addApiEndpoint("questions", { permission: "admin" }, async () => {
   const sql = `
   SELECT *
   FROM questions
+  ORDER BY "questionNum"
   `
   const results = await conn.any<IUser>(sql)
   return results
@@ -191,13 +200,15 @@ addApiEndpoint(
     const modelAnswer = req.body.data.updatedQuestion.modelAnswer
     const databaseId = req.body.data.updatedQuestion.databaseId
     const startingText = req.body.data.updatedQuestion.startingText
+    const questionNum = parseInt(req.body.data.updatedQuestion.questionNum)
     const sql = `
       UPDATE questions
       SET
       "question" = '${pgp.as.value(question)}',
       "modelAnswer" = '${pgp.as.value(modelAnswer)}',
       "databaseId" = '${pgp.as.value(databaseId)}',
-      "startingText" = '${pgp.as.value(startingText)}'
+      "startingText" = '${pgp.as.value(startingText)}',
+      "questionNum" = '${pgp.as.value(questionNum)}'
       WHERE "id" = '${pgp.as.value(questionId)}'
     `
     const updateQuestion = await conn.any<IUser>(sql)
@@ -213,6 +224,7 @@ addApiEndpoint(
     const modelAnswer = req.body.data.addedQuestion.modelAnswer
     const databaseId = req.body.data.addedQuestion.databaseId
     const startingText = req.body.data.addedQuestion.startingText
+    const questionNum = parseInt(req.body.data.addedQuestion.questionNum)
     const sql = `
       INSERT INTO
       questions ("question","modelAnswer","databaseId","startingText")
@@ -220,7 +232,8 @@ addApiEndpoint(
       ('${pgp.as.value(question)}',
       '${pgp.as.value(modelAnswer)}',
       '${pgp.as.value(databaseId)}',
-      '${pgp.as.value(startingText)}')
+      '${pgp.as.value(startingText)}',
+      '${pgp.as.value(questionNum)}')
     `
     const addQuestion = await conn.any<IUser>(sql)
     return addQuestion
@@ -322,10 +335,15 @@ addApiEndpoint(
   { permission: "admin" },
   async ({ currentUser, req }) => {
     const sql = `
+    SELECT id, "questionNum"
+    FROM questions
+    WHERE id
+    IN (
     SELECT "questionId"
     FROM labs, "labsQuestions"
     WHERE labs.id = '${pgp.as.value(req.body.id)}'
-    ORDER BY "questionId"
+    )
+    ORDER BY "questionNum"
     `
     const results = await conn.any(sql)
     return results

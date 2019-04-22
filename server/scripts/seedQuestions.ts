@@ -13,6 +13,7 @@ export const labs = [
           "SELECT ename, job FROM emp WHERE job = (SELECT job FROM emp WHERE ename = 'Jones')",
         databaseId: "2",
         startingText: "None",
+        questionNum: 1,
       },
 
       {
@@ -22,6 +23,7 @@ export const labs = [
           "SELECT ename, dname FROM emp, dept WHERE emp.deptno = dept.deptno AND loc = (SELECT loc FROM emp, dept WHERE emp.deptno = dept.deptno AND ename = 'Jones')",
         databaseId: "2",
         startingText: "None",
+        questionNum: 2,
       },
 
       {
@@ -31,6 +33,7 @@ export const labs = [
           "SELECT ename, sal FROM emp WHERE sal = (SELECT MIN(sal) FROM emp)",
         databaseId: "2",
         startingText: "None",
+        questionNum: 3,
       },
       {
         question:
@@ -39,6 +42,7 @@ export const labs = [
           "SELECT ename, sal FROM emp WHERE sal > (SELECT MIN(sal) FROM emp)",
         databaseId: "2",
         startingText: "None",
+        questionNum: 4,
       },
       {
         question:
@@ -47,6 +51,7 @@ export const labs = [
           "SELECT ename FROM emp WHERE job IN (SELECT job FROM emp, dept WHERE emp.deptno = dept.deptno AND dname = 'Sales')",
         databaseId: "2",
         startingText: "None",
+        questionNum: 5,
       },
       {
         question:
@@ -55,6 +60,7 @@ export const labs = [
           "SELECT ename FROM emp WHERE deptno IN (SELECT DISTINCT deptno FROM emp WHERE job = 'Analyst')",
         databaseId: "2",
         startingText: "None",
+        questionNum: 6,
       },
       {
         question:
@@ -63,6 +69,7 @@ export const labs = [
           "SELECT ename, job, sal, 1.1 * sal AS 'newsal' FROM emp WHERE job = 'Clerk' UNION SELECT ename, job, sal, 1.07 * sal AS 'newsal' FROM emp WHERE job <> 'Clerk'",
         databaseId: "2",
         startingText: "None",
+        questionNum: 7,
       },
       {
         question:
@@ -71,6 +78,7 @@ export const labs = [
           "SELECT ename, sal, comm FROM emp WHERE comm IS NOT NULL UNION SELECT ename, sal, 0 FROM emp WHERE comm IS NULL",
         databaseId: "2",
         startingText: "None",
+        questionNum: 8,
       },
       {
         question:
@@ -79,6 +87,7 @@ export const labs = [
           "SELECT ename, sal + comm AS earnings FROM emp WHERE comm IS NOT NULL UNION SELECT ename, sal FROM emp WHERE comm IS NULL",
         databaseId: "2",
         startingText: "None",
+        questionNum: 9,
       },
       {
         question:
@@ -87,6 +96,7 @@ export const labs = [
           "select * from ( SELECT ename, sal + comm AS earnings FROM emp WHERE comm IS NOT NULL UNION SELECT ename, sal FROM emp WHERE comm IS NULL) ORDER BY earnings DESC",
         databaseId: "2",
         startingText: "None",
+        questionNum: 10,
       },
     ],
   },

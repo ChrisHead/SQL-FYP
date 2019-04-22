@@ -4,13 +4,17 @@ import "react-table/react-table.css"
 import { Link } from "react-router-dom"
 import { useQuestions } from "../hooks/useQuestions"
 import { AppContext } from "src/AppContext"
-// import { DbContext } from "src/DbContext"
 
 export function AdminQuestion() {
   const app = React.useContext(AppContext)
   const questions = useQuestions()
 
   const columns = [
+    {
+      Header: "Question No.",
+      accessor: "questionNum",
+      style: { whiteSpace: "unset" },
+    },
     {
       Header: "Question",
       accessor: "question",

@@ -44,7 +44,8 @@ async function run() {
     "question" TEXT,
     "modelAnswer" TEXT,
     "databaseId" UUID REFERENCES "databaseTemplates"("id"),
-    "startingText" TEXT
+    "startingText" TEXT,
+    "questionNum" INTEGER
   )`)
 
   await conn.any(`CREATE TABLE IF NOT EXISTS "answers" (

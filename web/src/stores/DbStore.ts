@@ -20,6 +20,7 @@ export interface ILab {
     }
     databaseId: string
     startingText: string
+    questionNum: number
     response: string
     respondAfter: number
     autoResponse: boolean
@@ -32,4 +33,5 @@ export interface IQuestion {
   modelAnswer: string
   databaseId: string
   startingText: string
+  questionNum: string
 }

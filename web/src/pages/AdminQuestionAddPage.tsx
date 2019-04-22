@@ -17,6 +17,7 @@ export function AdminQuestionAddPage({ history }) {
   const [newAnswer, setNewAnswer] = React.useState("")
   const [newDatabase, setNewDatabase] = React.useState("")
   const [newStarting, setNewStarting] = React.useState("")
+  const [newQuestionNum, setNewQuestionNum] = React.useState("")
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -30,6 +31,7 @@ export function AdminQuestionAddPage({ history }) {
           modelAnswer: newAnswer,
           databaseId: "095050b8-aeb4-4ecc-8e6d-b0dbd3235a96",
           startingText: "none",
+          questionNum: newQuestionNum,
         },
       },
       app.authToken!
@@ -49,6 +51,13 @@ export function AdminQuestionAddPage({ history }) {
       <h1>Add New Question</h1>
       {error}
       <form onSubmit={handleSubmit}>
+        <TextBoxInput
+          label="QuestionNum"
+          value={newQuestionNum.toString()}
+          onChange={e => {
+            setNewQuestionNum(e)
+          }}
+        />
         <TextBoxInput
           label="Question"
           value={newQuestion}

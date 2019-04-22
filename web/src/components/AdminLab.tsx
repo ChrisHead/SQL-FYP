@@ -66,6 +66,11 @@ export function AdminLab() {
 
   const questionColumns = [
     {
+      Header: "Question No.",
+      accessor: "questionNum",
+      style: { whiteSpace: "unset" },
+    },
+    {
       Header: "Question",
       accessor: "question",
       style: { whiteSpace: "unset" },

@@ -135,7 +135,7 @@ export function QuestionsPanel({
                   />
                 </div>
                 <div style={{ fontSize: 14, padding: 8 }}>
-                  {i + 1 + ". " + question.question}
+                  {question.questionNum + ". " + question.question}
                 </div>
               </div>
             ))}
