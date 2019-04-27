@@ -7,6 +7,32 @@ interface IQuestion {
   questionNum: number
 }
 
+interface IUser {
+  id: string
+}
+
+interface IParticpantsAnswers {
+  userId: string
+  username: string
+  history: {
+    dateTime: string
+    value: string
+    error: string
+    answerError: string
+    completed: boolean
+  }[]
+  completed: boolean
+}
+
+interface ILeaderStats {
+  id: string
+  username: string
+  answers: number
+  completed: number
+  mistakes: number
+  avgMistakes: number
+}
+
 interface IAnswer {
   questionId: string
   history: {
@@ -36,8 +62,10 @@ interface ILabStats {
 export function useStats(labId: string) {
   const app = React.useContext(AppContext)
   const [questions, setQuestions] = React.useState<IQuestion[]>([])
-  const [participants, setParticipants] = React.useState([])
-  // const [participantsAnswers, setParticipantsAnswers] = React.useState([])
+  const [participants, setParticipants] = React.useState<IUser[]>([])
+  const [participantsAnswers, setParticipantsAnswers] = React.useState<
+    IParticpantsAnswers[]
+  >([])
 
   const [answers, setAnswers] = React.useState<IAnswer[][]>([])
   const [completed, setCompleted] = React.useState<ICompleted[][]>([])
@@ -51,7 +79,9 @@ export function useStats(labId: string) {
       api
         .getParticipantsForLab(labId, app.authToken)
         .then(response => setParticipants(response))
-      // api.getParticipantsAnswers(labId, app.authToken)
+      api
+        .getParticipantsAnswers(labId, app.authToken)
+        .then(response => setParticipantsAnswers(response))
     }
   }, [])
 
@@ -98,7 +128,7 @@ export function useStats(labId: string) {
     paramsAnswers: IAnswer[][],
     paramsCompleted: ICompleted[][]
   ) {
-    const questionStats: any = []
+    const questionStats: ILabStats[] = []
     paramsQuestions.forEach(question => {
       const newStats: ILabStats = {
         questionId: question.id,
@@ -149,7 +179,7 @@ export function useStats(labId: string) {
       if (answerArray[0].questionId === id) {
         answerArray.forEach(answer => {
           answer.history.forEach(record => {
-            if (record.completed === false) {
+            if (!record.completed) {
               count++
             }
           })
@@ -166,7 +196,7 @@ export function useStats(labId: string) {
       if (answerArray[0].questionId === id) {
         answerArray.forEach(answer => {
           answer.history.forEach(record => {
-            if (record.completed === false) {
+            if (!record.completed) {
               count++
             }
           })
@@ -176,12 +206,77 @@ export function useStats(labId: string) {
     return count
   }
 
+  function leaderBoardStats(paramsAnswers: IParticpantsAnswers[]) {
+    const leaderStats: ILeaderStats[] = []
+    const ids: string[] = []
+
+    let currentId = ""
+    let currentUsername = ""
+    if (paramsAnswers[0] !== undefined) {
+      currentId = paramsAnswers[0].userId
+      currentUsername = paramsAnswers[0].username
+      ids.push(currentId)
+    }
+
+    let answerCount = 0
+    let completedCount = 0
+    let mistakeCount = 0
+
+    paramsAnswers.forEach(answer => {
+      if (ids.indexOf(answer.userId) !== -1) {
+        answerCount++
+        if (answer.completed) {
+          completedCount++
+        }
+        answer.history.forEach(record => {
+          if (!record.completed) {
+            mistakeCount++
+          }
+        })
+      } else {
+        leaderStats.push({
+          id: currentId,
+          username: currentUsername,
+          answers: answerCount,
+          completed: completedCount,
+          mistakes: mistakeCount,
+          avgMistakes: mistakeCount / answerCount,
+        })
+        currentId = answer.userId
+        currentUsername = answer.username
+        ids.push(currentId)
+        answerCount = 1
+        if (answer.completed) {
+          completedCount = 1
+        } else {
+          completedCount = 0
+        }
+        mistakeCount = 0
+        answer.history.forEach(record => {
+          if (!record.completed) {
+            mistakeCount++
+          }
+        })
+      }
+    })
+    leaderStats.push({
+      id: currentId,
+      username: currentUsername,
+      answers: answerCount,
+      completed: completedCount,
+      mistakes: mistakeCount,
+      avgMistakes: mistakeCount / answerCount,
+    })
+    return leaderStats
+  }
+
   return {
     questions,
     participants,
-    // participantsAnswers,
+    participantsAnswers,
     answers,
     completed,
     createLabStats,
+    leaderBoardStats,
   }
 }

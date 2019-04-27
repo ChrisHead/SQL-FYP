@@ -106,7 +106,6 @@ export const api = {
     return apiRequest("userAnswersQuestions", { data }, authToken)
   },
 
-  //currently ordered by question id, change to question num later
   async getQuestionsForLab(id: string, authToken: string) {
     return apiRequest("getQuestionsForLab", { id }, authToken)
   },

@@ -355,7 +355,7 @@ addApiEndpoint(
   { permission: "admin" },
   async ({ currentUser, req, res, next }) => {
     const sql = `
-    SELECT DISTINCT "userId"
+    SELECT DISTINCT "userId" AS "id"
     FROM answers
     WHERE "questionId"
     IN (
@@ -373,34 +373,20 @@ addApiEndpoint(
   "getParticipantsAnswers",
   { permission: "admin" },
   async ({ currentUser, req, res, next }) => {
-    const participantsSql = `
-    SELECT DISTINCT "userId"
-    FROM answers
-    WHERE "questionId"
-    IN (
-    SELECT "labsQuestions"."questionId" from labs, "labsQuestions"
-	  WHERE labs.id = "labId"
-    AND labs.id = '${pgp.as.value(req.body.id)}'
-    )
-    `
-    const participants = await conn.any(participantsSql)
-
-    const ans = participants.map(async (participant, i) => {
-      const sql = await `
-      SELECT history, completed
-      FROM answers
+    const sql = await `
+      SELECT "userId", username, history, completed
+      FROM answers, users
       WHERE "questionId"
       IN (
       SELECT "labsQuestions"."questionId" from labs, "labsQuestions"
       WHERE labs.id = "labId"
       AND labs.id = '${pgp.as.value(req.body.id)}'
       )
-      AND "userId" = '${pgp.as.value(participant.userId)}'
+      AND answers."userId" = users.id
+      ORDER BY "userId"
       `
-      const results = await conn.any(sql)
-      return { participant, results }
-    })
-    return ans
+    const results = await conn.any(sql)
+    return results
   }
 )
 
