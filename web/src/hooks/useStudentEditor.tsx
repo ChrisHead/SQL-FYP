@@ -88,7 +88,13 @@ export function useStudentEditor() {
       if (error) {
         setAnswerError(error)
       }
-      addHistoryItem(sqlValue, correct, sqlError, error)
+      await addHistoryItem(sqlValue, correct, sqlError, error)
+      if (correct && currentQuestion) {
+        await api.updateCompleted(
+          { questionId: currentQuestion.id },
+          app.authToken!
+        )
+      }
       setSqlValue("")
     }
   }
@@ -148,12 +154,6 @@ export function useStudentEditor() {
       return { correct: false, error: "" }
     }
     const result = checkAnswer(currentQuestion.modelAnswer)
-    if (result.correct) {
-      await api.updateCompleted(
-        { questionId: currentQuestion.id },
-        app.authToken!
-      )
-    }
     return result
   }
 

@@ -75,7 +75,7 @@ function run() {
                     return [4 /*yield*/, conn.any("CREATE TABLE IF NOT EXISTS \"labs\" (\n    \"id\" UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n    \"labNumber\" INTEGER UNIQUE,\n    \"dateTime\" TIMESTAMP NOT NULL\n  )")];
                 case 6:
                     _d.sent();
-                    return [4 /*yield*/, conn.any("CREATE TABLE IF NOT EXISTS \"questions\" (\n    \"id\" UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n    \"question\" TEXT,\n    \"modelAnswer\" TEXT,\n    \"databaseId\" UUID REFERENCES \"databaseTemplates\"(\"id\"),\n    \"startingText\" TEXT\n  )")];
+                    return [4 /*yield*/, conn.any("CREATE TABLE IF NOT EXISTS \"questions\" (\n    \"id\" UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n    \"question\" TEXT,\n    \"modelAnswer\" TEXT,\n    \"databaseId\" UUID REFERENCES \"databaseTemplates\"(\"id\"),\n    \"startingText\" TEXT,\n    \"questionNum\" INTEGER\n  )")];
                 case 7:
                     _d.sent();
                     return [4 /*yield*/, conn.any("CREATE TABLE IF NOT EXISTS \"answers\" (\n    \"id\" UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n    \"userId\" UUID REFERENCES \"users\"(\"id\"),\n    \"questionId\" UUID REFERENCES \"questions\"(\"id\"),\n    \"history\" JSONB DEFAULT '[]',\n    \"completed\" BOOLEAN DEFAULT false,\n    CONSTRAINT user_question_uniq UNIQUE (\"userId\", \"questionId\")\n    )")];

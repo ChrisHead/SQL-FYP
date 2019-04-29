@@ -115,7 +115,7 @@ addApiEndpoint("users", { permission: "admin" }, function () { return __awaiter(
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                sql = "\n  SELECT id, username, admin, activity\n  FROM \"users\"\n  ";
+                sql = "\n  SELECT id, username, admin, activity\n  FROM \"users\"\n  ORDER BY username\n  ";
                 return [4 /*yield*/, conn.any(sql)];
             case 1:
                 results = _a.sent();
@@ -130,7 +130,7 @@ addApiEndpoint("studentLabs", { permission: "authenticated" }, function (_a) {
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
-                    sql = "\n  SELECT\n    \"labs\".*,\n    ((\n      SELECT json_agg(\"questions\".*)\n      FROM (\n        SELECT\n          *,\n          (SELECT row_to_json(\"answers\".*) FROM (\n            SELECT * FROM \"answers\" WHERE \"questionId\" = \"questions\".\"id\" AND \"userId\"='" + currentUser.id + "'\n          ) \"answers\") \"answer\"\n        FROM \"questions\"\n        WHERE \"id\" IN (SELECT \"questionId\" FROM \"labsQuestions\" WHERE \"labId\"=\"labs\".\"id\" )\n          ) \"questions\"\n    )) questions\n  FROM \"labs\"\n  ";
+                    sql = "\n    SELECT \"labs\".*, (\n      (\n            SELECT json_agg(\"questions\".*)\n            FROM (\n              SELECT *, (SELECT row_to_json(\"answers\".*)\n                        FROM (\n                                SELECT *\n                                FROM \"answers\"\n                                WHERE \"questionId\" = \"questions\".\"id\"\n                                AND \"userId\"='" + currentUser.id + "'\n                              ) \"answers\"\n                        ) \"answer\"\n              FROM \"questions\"\n              WHERE \"id\"\n              IN    (\n                    SELECT \"questionId\"\n                    FROM \"labsQuestions\"\n                    WHERE \"labId\"=\"labs\".\"id\"\n                    )\n                    ORDER BY \"questionNum\"\n                  ) \"questions\"\n      )\n    ) questions\n    FROM \"labs\"\n  ";
                     return [4 /*yield*/, conn.any(sql)];
                 case 1:
                     results = _b.sent();
@@ -144,7 +144,7 @@ addApiEndpoint("questions", { permission: "admin" }, function () { return __awai
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                sql = "\n  SELECT *\n  FROM questions\n  ";
+                sql = "\n  SELECT *\n  FROM questions\n  ORDER BY \"questionNum\"\n  ";
                 return [4 /*yield*/, conn.any(sql)];
             case 1:
                 results = _a.sent();
@@ -217,7 +217,7 @@ addApiEndpoint("updateCompleted", { permission: "authenticated" }, function (_a)
                 case 0:
                     questionId = req.body.data.questionId;
                     sql = "\n    UPDATE answers\n    SET \"completed\" = true\n    WHERE \"userId\" = '" + config_1.pgp.as.value(currentUser.id) + "'\n    AND \"questionId\" = '" + config_1.pgp.as.value(questionId) + "'\n    ";
-                    return [4 /*yield*/, conn.any(sql)];
+                    return [4 /*yield*/, conn.one(sql)];
                 case 1:
                     updateCompleted = _b.sent();
                     return [2 /*return*/, updateCompleted];
@@ -228,7 +228,7 @@ addApiEndpoint("updateCompleted", { permission: "authenticated" }, function (_a)
 addApiEndpoint("updateQuestion", { permission: "admin" }, function (_a) {
     var currentUser = _a.currentUser, req = _a.req;
     return __awaiter(_this, void 0, void 0, function () {
-        var questionId, question, modelAnswer, databaseId, startingText, sql, updateQuestion;
+        var questionId, question, modelAnswer, databaseId, startingText, questionNum, sql, updateQuestion;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
@@ -237,7 +237,8 @@ addApiEndpoint("updateQuestion", { permission: "admin" }, function (_a) {
                     modelAnswer = req.body.data.updatedQuestion.modelAnswer;
                     databaseId = req.body.data.updatedQuestion.databaseId;
                     startingText = req.body.data.updatedQuestion.startingText;
-                    sql = "\n      UPDATE questions\n      SET\n      \"question\" = '" + config_1.pgp.as.value(question) + "',\n      \"modelAnswer\" = '" + config_1.pgp.as.value(modelAnswer) + "',\n      \"databaseId\" = '" + config_1.pgp.as.value(databaseId) + "',\n      \"startingText\" = '" + config_1.pgp.as.value(startingText) + "'\n      WHERE \"id\" = '" + config_1.pgp.as.value(questionId) + "'\n    ";
+                    questionNum = parseInt(req.body.data.updatedQuestion.questionNum);
+                    sql = "\n      UPDATE questions\n      SET\n      \"question\" = '" + config_1.pgp.as.value(question) + "',\n      \"modelAnswer\" = '" + config_1.pgp.as.value(modelAnswer) + "',\n      \"databaseId\" = '" + config_1.pgp.as.value(databaseId) + "',\n      \"startingText\" = '" + config_1.pgp.as.value(startingText) + "',\n      \"questionNum\" = '" + config_1.pgp.as.value(questionNum) + "'\n      WHERE \"id\" = '" + config_1.pgp.as.value(questionId) + "'\n    ";
                     return [4 /*yield*/, conn.any(sql)];
                 case 1:
                     updateQuestion = _b.sent();
@@ -249,7 +250,7 @@ addApiEndpoint("updateQuestion", { permission: "admin" }, function (_a) {
 addApiEndpoint("addQuestion", { permission: "admin" }, function (_a) {
     var currentUser = _a.currentUser, req = _a.req;
     return __awaiter(_this, void 0, void 0, function () {
-        var question, modelAnswer, databaseId, startingText, sql, addQuestion;
+        var question, modelAnswer, databaseId, startingText, questionNum, sql, addQuestion;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
@@ -257,7 +258,8 @@ addApiEndpoint("addQuestion", { permission: "admin" }, function (_a) {
                     modelAnswer = req.body.data.addedQuestion.modelAnswer;
                     databaseId = req.body.data.addedQuestion.databaseId;
                     startingText = req.body.data.addedQuestion.startingText;
-                    sql = "\n      INSERT INTO\n      questions (\"question\",\"modelAnswer\",\"databaseId\",\"startingText\")\n      VALUES\n      ('" + config_1.pgp.as.value(question) + "',\n      '" + config_1.pgp.as.value(modelAnswer) + "',\n      '" + config_1.pgp.as.value(databaseId) + "',\n      '" + config_1.pgp.as.value(startingText) + "')\n    ";
+                    questionNum = parseInt(req.body.data.addedQuestion.questionNum);
+                    sql = "\n      INSERT INTO\n      questions (\"question\",\"modelAnswer\",\"databaseId\",\"startingText\")\n      VALUES\n      ('" + config_1.pgp.as.value(question) + "',\n      '" + config_1.pgp.as.value(modelAnswer) + "',\n      '" + config_1.pgp.as.value(databaseId) + "',\n      '" + config_1.pgp.as.value(startingText) + "',\n      '" + config_1.pgp.as.value(questionNum) + "')\n    ";
                     return [4 /*yield*/, conn.any(sql)];
                 case 1:
                     addQuestion = _b.sent();
@@ -337,16 +339,115 @@ addApiEndpoint("userAnswersQuestions", { permission: "admin" }, function (_a) {
             switch (_b.label) {
                 case 0:
                     userId = req.body.data;
-                    sql = "\n\n    SELECT \"labNumber\", history, completed, question, \"modelAnswer\"\n    FROM\n    (\n    SELECT * from labs, \"labsQuestions\"\n    WHERE labs.id = \"labId\"\n    ) t1\n    JOIN\n    (\n    SELECT *\n    FROM answers, questions\n    WHERE \"questionId\" = questions.id\n    AND \"userId\" = '" + config_1.pgp.as.value(userId) + "'\n    ) t2\n    ON \t(t1.\"questionId\" = t2.\"questionId\")\n    ";
+                    sql = "\n    SELECT \"labNumber\", history, completed, question, \"modelAnswer\"\n    FROM\n    (\n    SELECT * from labs, \"labsQuestions\"\n    WHERE labs.id = \"labId\"\n    ) t1\n    JOIN\n    (\n    SELECT *\n    FROM answers, questions\n    WHERE \"questionId\" = questions.id\n    AND \"userId\" = '" + config_1.pgp.as.value(userId) + "'\n    ) t2\n    ON \t(t1.\"questionId\" = t2.\"questionId\")\n    ";
                     return [4 /*yield*/, conn.any(sql)];
                 case 1:
                     userAnswersQuestions = _b.sent();
-                    console.log(userAnswersQuestions);
                     return [2 /*return*/, userAnswersQuestions];
             }
         });
     });
 });
+addApiEndpoint("getQuestionsForLab", { permission: "admin" }, function (_a) {
+    var currentUser = _a.currentUser, req = _a.req;
+    return __awaiter(_this, void 0, void 0, function () {
+        var sql, results;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    sql = "\n    SELECT id, \"questionNum\"\n    FROM questions\n    WHERE id\n    IN (\n    SELECT \"questionId\"\n    FROM labs, \"labsQuestions\"\n    WHERE labs.id = '" + config_1.pgp.as.value(req.body.id) + "'\n    )\n    ORDER BY \"questionNum\"\n    ";
+                    return [4 /*yield*/, conn.any(sql)];
+                case 1:
+                    results = _b.sent();
+                    return [2 /*return*/, results];
+            }
+        });
+    });
+});
+addApiEndpoint("getParticipantsForLab", { permission: "admin" }, function (_a) {
+    var currentUser = _a.currentUser, req = _a.req, res = _a.res, next = _a.next;
+    return __awaiter(_this, void 0, void 0, function () {
+        var sql, results;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    sql = "\n    SELECT DISTINCT \"userId\" AS \"id\"\n    FROM answers\n    WHERE \"questionId\"\n    IN (\n    SELECT \"labsQuestions\".\"questionId\" from labs, \"labsQuestions\"\n\t  WHERE labs.id = \"labId\"\n    AND labs.id = '" + config_1.pgp.as.value(req.body.id) + "'\n    )\n    ";
+                    return [4 /*yield*/, conn.any(sql)];
+                case 1:
+                    results = _b.sent();
+                    return [2 /*return*/, results];
+            }
+        });
+    });
+});
+addApiEndpoint("getParticipantsAnswers", { permission: "admin" }, function (_a) {
+    var currentUser = _a.currentUser, req = _a.req, res = _a.res, next = _a.next;
+    return __awaiter(_this, void 0, void 0, function () {
+        var sql, results;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0: return [4 /*yield*/, "\n      SELECT \"userId\", username, history, completed\n      FROM answers, users\n      WHERE \"questionId\"\n      IN (\n      SELECT \"labsQuestions\".\"questionId\" from labs, \"labsQuestions\"\n      WHERE labs.id = \"labId\"\n      AND labs.id = '" + config_1.pgp.as.value(req.body.id) + "'\n      )\n      AND answers.\"userId\" = users.id\n      ORDER BY \"userId\"\n      "];
+                case 1:
+                    sql = _b.sent();
+                    return [4 /*yield*/, conn.any(sql)];
+                case 2:
+                    results = _b.sent();
+                    return [2 /*return*/, results];
+            }
+        });
+    });
+});
+addApiEndpoint("getQuestionCompletions", { permission: "admin" }, function (_a) {
+    var currentUser = _a.currentUser, req = _a.req, res = _a.res, next = _a.next;
+    return __awaiter(_this, void 0, void 0, function () {
+        var sql, results;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    sql = "\n    SELECT \"questionId\", completed\n    FROM answers\n    WHERE \"questionId\" = '" + config_1.pgp.as.value(req.body.id) + "'\n    AND completed = 'true'\n    ";
+                    return [4 /*yield*/, conn.any(sql)];
+                case 1:
+                    results = _b.sent();
+                    return [2 /*return*/, results];
+            }
+        });
+    });
+});
+addApiEndpoint("getQuestionAnswers", { permission: "admin" }, function (_a) {
+    var currentUser = _a.currentUser, req = _a.req, res = _a.res, next = _a.next;
+    return __awaiter(_this, void 0, void 0, function () {
+        var sql, results;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    sql = "\n    SELECT \"questionId\", history, completed\n    FROM answers\n    WHERE \"questionId\" = '" + config_1.pgp.as.value(req.body.id) + "'\n    ";
+                    return [4 /*yield*/, conn.any(sql)];
+                case 1:
+                    results = _b.sent();
+                    return [2 /*return*/, results];
+            }
+        });
+    });
+});
+addApiEndpoint("getLabNum", { permission: "admin" }, function (_a) {
+    var currentUser = _a.currentUser, req = _a.req, res = _a.res, next = _a.next;
+    return __awaiter(_this, void 0, void 0, function () {
+        var sql, results;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    sql = "\n    SELECT \"labNumber\"\n    FROM labs\n    WHERE \"id\" = '" + config_1.pgp.as.value(req.body.id) + "'\n    ";
+                    return [4 /*yield*/, conn.one(sql)];
+                case 1:
+                    results = _b.sent();
+                    return [2 /*return*/, results];
+            }
+        });
+    });
+});
+///////////////////////////////
+/////////FUNCTIONS/////////////
+///////////////////////////////
 function addActivity(user, activity) {
     return __awaiter(this, void 0, void 0, function () {
         var updateActivitySql, updateActivity;

@@ -1,5 +1,4 @@
 import React from "react"
-import { Spacer } from "../components/Spacer"
 import { RouteComponentProps } from "react-router-dom"
 import { useStats } from "../hooks/useStats"
 import {
@@ -34,10 +33,17 @@ export function AdminLabStatsPage({
     completed,
     createLabStats,
     leaderBoardStats,
+    labStats,
+    leaderStats,
   } = useStats(currentId)
 
-  const labStats = createLabStats(questions, answers, completed)
-  const leaderStats = leaderBoardStats(participantsAnswers)
+  // const [stats, setStats] = React.useState(useStats(currentId))
+
+  // const [questions, setQuestions] = React.useState(stats.questions)
+  // const [participants, setParticipants] = React.useState(stats.participants)
+  // const [participantsAnswers, setParticipantsAnswers] = React.useState(stats.participantsAnswers)
+  // const [answers, setAnswers] = React.useState(stats.answers)
+  // const [completed, setCompleted] = React.useState(stats.completed)
 
   if (!currentId) {
     return <p>404 Lab Not Found</p>
@@ -146,7 +152,14 @@ export function AdminLabStatsPage({
           100) /
           100
       )
-      return { username: user.username, concern: concernCoefficient }
+      return {
+        username: user.username,
+        concern: concernCoefficient,
+        answers: user.answers,
+        completed: user.completed,
+        mistakes: user.mistakes,
+        aveMistakes: user.avgMistakes,
+      }
     })
     return vals.sort((a, b) => {
       return a.concern - b.concern
@@ -154,38 +167,46 @@ export function AdminLabStatsPage({
   }
 
   function filteredLeaderBoard(vals: any[]) {
-    if (vals.length < 10) {
-      const divs = vals.map((user, i) => (
-        <div key={i} style={{ background: leaderColour(user) }}>
-          Student: {user.username} Concern: {user.concern}
+    const divs = vals.map((user, i) => (
+      <div
+        className="tooltip"
+        key={i}
+        style={{
+          background: leaderColour(user),
+          margin: 1,
+          paddingLeft: 5,
+          paddingRight: 5,
+          borderRadius: 5,
+          color: "#30434D",
+          display: "flex",
+          justifyContent: "space-between",
+        }}
+      >
+        <div>Student: {user.username}</div>
+        <div>
+          <span className="tooltiptext">
+            Attempted: {user.answers}
+            <br />
+            Completed: {user.completed}
+            <br />
+            Avg. Mistakes: {Math.round(user.aveMistakes)}{" "}
+          </span>
         </div>
-      ))
-      return divs
-    } else {
-      const filtered: any[] = []
-      for (let i = 0; i < 5; i++) {
-        filtered.push(vals[i])
-      }
-      for (let i = vals.length - 5; i < vals.length; i++) {
-        filtered.push(vals[i])
-      }
-
-      const divs = filtered.map((user, i) => (
-        <div key={i} style={{ background: leaderColour(user) }}>
-          Student: {user.username} &emsp; Concern: {user.concern}
-        </div>
-      ))
-      return divs
-    }
+        <div>Concern: {user.concern}</div>
+      </div>
+    ))
+    return divs
   }
 
   function leaderColour(user: any) {
-    if (user.concern < 100) {
-      return "green"
+    if (user.concern < 40) {
+      return "#4CAF50"
+    } else if (user.concern < 100) {
+      return "#FFC107"
     } else if (user.concern < 200) {
-      return "orange"
+      return "#FF5722"
     } else {
-      return "red"
+      return "#F44336"
     }
   }
 
@@ -205,16 +226,28 @@ export function AdminLabStatsPage({
   return (
     <PageWrapper>
       <h1>Statistics For Lab {currentId}</h1>
-      <div style={{ display: "flex", flexDirection: "column" }}>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
         <div
           style={{
             display: "flex",
             flexDirection: "row",
-            paddingBottom: 50,
-            boxShadow: "10px",
           }}
         >
-          <div style={{ flex: 1 }}>
+          <div
+            style={{
+              flex: 1,
+              margin: 5,
+              backgroundColor: "#354f5d",
+              padding: 5,
+            }}
+          >
+            Relative Difficulty:
+            <br />
             <PieChart width={600} height={500}>
               <Pie
                 data={pieChartStats()}
@@ -236,7 +269,16 @@ export function AdminLabStatsPage({
               <Tooltip />
             </PieChart>
           </div>
-          <div style={{ flex: 1 }}>
+          <div
+            style={{
+              flex: 1,
+              margin: 5,
+              backgroundColor: "#354f5d",
+              padding: 5,
+            }}
+          >
+            Question Comparison:
+            <br />
             <ComposedChart
               width={800}
               height={500}
@@ -301,32 +343,58 @@ export function AdminLabStatsPage({
             </ComposedChart>
           </div>
         </div>
-        <div style={{ display: "flex", flexDirection: "row" }}>
-          <div style={{ flex: 1 }}>
-            {/* {JSON.stringify(leaderCoefficients())}
+        <div style={{ display: "flex", flexDirection: "row", height: 245 }}>
+          <div
+            style={{
+              flex: 1,
+              overflow: "auto",
+              margin: 5,
+              backgroundColor: "#354f5d",
+              padding: 5,
+            }}
+          >
+            Leaderboard:
             <br />
-            <br /> */}
+            <br />
             {filteredLeaderBoard(leaderCoefficients())}
           </div>
-          <div style={{ flex: 1 }}>
-            <div>No. of participants: {participants.length}</div>
-            <div>No. of Questions: {questions.length}</div>
-            <div>
+          <div
+            style={{
+              flex: 1,
+              margin: 5,
+              backgroundColor: "#354f5d",
+              padding: 5,
+            }}
+          >
+            Lab Statistics:
+            <br />
+            <br />
+            <div className="Statistic">
+              No. of Participants: {participants.length}
+            </div>
+            <div className="Statistic">
+              No. of Questions: {questions.length}
+            </div>
+            <div className="Statistic">
               Total No. of Questions Answered: {JSON.stringify(totalAnswers())}
             </div>
-            <div>
-              Avg No. of Questions Answered: {JSON.stringify(avgAnswers())}
-            </div>
-            <div>
+            <div className="Statistic">
               Total No. of Questions Answered Correctly:{" "}
               {JSON.stringify(totalCorrectAnswers())}
             </div>
-            <div>
+            <div className="Statistic">
+              Total No. of Mistakes: {JSON.stringify(totalMistakes())}
+            </div>
+            <div className="Statistic">
+              Avg No. of Questions Answered: {JSON.stringify(avgAnswers())}
+            </div>
+            <div className="Statistic">
               Avg No. of Questions Answered Correctly:{" "}
               {JSON.stringify(avgCorrectAnswers())}
             </div>
-            <div>Total No. of Mistakes: {JSON.stringify(totalMistakes())}</div>
-            <div>Avg No. of Mistakes: {JSON.stringify(avgMistakes())}</div>
+            <div className="Statistic">
+              Avg No. of Mistakes: {JSON.stringify(avgMistakes())}
+            </div>
           </div>
         </div>
       </div>

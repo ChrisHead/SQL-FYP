@@ -123,7 +123,7 @@ export function QuestionsPanel({
                     alignItems: "center",
                   }}
                 >
-                  {/* {JSON.stringify({ ...question.answer, history: undefined })} */}
+                  {/* {JSON.stringify(question.answer)} */}
                   <FontAwesomeIcon
                     icon="check-circle"
                     size={"2x"}

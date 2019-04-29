@@ -186,7 +186,7 @@ addApiEndpoint(
     WHERE "userId" = '${pgp.as.value(currentUser.id)}'
     AND "questionId" = '${pgp.as.value(questionId)}'
     `
-    const updateCompleted = await conn.any<IUser>(sql)
+    const updateCompleted = await conn.one<IUser>(sql)
     return updateCompleted
   }
 )
@@ -415,6 +415,20 @@ addApiEndpoint(
     WHERE "questionId" = '${pgp.as.value(req.body.id)}'
     `
     const results = await conn.any(sql)
+    return results
+  }
+)
+
+addApiEndpoint(
+  "getLabNum",
+  { permission: "admin" },
+  async ({ currentUser, req, res, next }) => {
+    const sql = `
+    SELECT "labNumber"
+    FROM labs
+    WHERE "id" = '${pgp.as.value(req.body.id)}'
+    `
+    const results = await conn.one(sql)
     return results
   }
 )

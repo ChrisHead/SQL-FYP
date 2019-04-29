@@ -1,6 +1,7 @@
 import * as React from "react"
 import { api } from "src/api"
 import { AppContext } from "src/AppContext"
+import { onReactionError } from "mobx"
 
 interface IQuestion {
   id: string
@@ -69,7 +70,8 @@ export function useStats(labId: string) {
 
   const [answers, setAnswers] = React.useState<IAnswer[][]>([])
   const [completed, setCompleted] = React.useState<ICompleted[][]>([])
-  const [completedTemp, setCompletedTemp] = React.useState<ICompleted[]>([])
+
+  const [timer, setTimer] = React.useState(0)
 
   React.useEffect(() => {
     if (app.authToken) {
@@ -86,38 +88,46 @@ export function useStats(labId: string) {
   }, [])
 
   React.useEffect(() => {
-    questions.forEach(question => {
+    const promises = questions.map(question => {
       if (app.authToken) {
-        api.getQuestionAnswers(question.id, app.authToken).then(response => {
-          updateAnswers(response)
-        })
+        return api.getQuestionAnswers(question.id, app.authToken)
       }
+    })
+    Promise.all(promises).then(results => {
+      setAnswers(results)
     })
   }, [questions])
 
   React.useEffect(() => {
-    questions.forEach(question => {
+    const promises = questions.map(question => {
       if (app.authToken) {
-        api
-          .getQuestionCompletions(question.id, app.authToken)
-          .then(response => {
-            setCompletedTemp(response)
-          })
+        return api.getQuestionCompletions(question.id, app.authToken)
       }
     })
-  }, [questions])
-
-  function updateAnswers(response: []) {
-    const ans = answers
-    ans.push(response)
-    setAnswers(ans)
-  }
+    Promise.all(promises).then(results => {
+      const val = results.filter(entry => entry.length > 0)
+      setCompleted(results)
+      console.log(results)
+    })
+  }, [questions, answers])
 
   React.useEffect(() => {
-    const cumm = completed.filter(entry => entry.length > 0)
-    cumm.push(completedTemp)
-    setCompleted(cumm)
-  }, [completedTemp])
+    setTimeout(() => {
+      setTimer(timer + 1)
+    }, 1000)
+
+    if (app.authToken) {
+      api
+        .getQuestionsForLab(labId, app.authToken)
+        .then(response => setQuestions(response))
+      api
+        .getParticipantsForLab(labId, app.authToken)
+        .then(response => setParticipants(response))
+      api
+        .getParticipantsAnswers(labId, app.authToken)
+        .then(response => setParticipantsAnswers(response))
+    }
+  }, [timer])
 
   //////////////////////////////
   //////////Functions////////////
@@ -270,12 +280,25 @@ export function useStats(labId: string) {
     return leaderStats
   }
 
+  const [labStats, setLabStats] = React.useState<any>([])
+  const [leaderStats, setLeaderStats] = React.useState<any>([])
+
+  React.useEffect(() => {
+    setLabStats(createLabStats(questions, answers, completed))
+  }, [questions, answers, completed])
+
+  React.useEffect(() => {
+    setLeaderStats(leaderBoardStats(participantsAnswers))
+  }, [participantsAnswers])
+
   return {
     questions,
     participants,
     participantsAnswers,
     answers,
     completed,
+    labStats,
+    leaderStats,
     createLabStats,
     leaderBoardStats,
   }
