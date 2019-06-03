@@ -1,7 +1,6 @@
 import * as React from "react"
 import { api } from "src/api"
 import { AppContext } from "src/AppContext"
-import { onReactionError } from "mobx"
 
 interface IQuestion {
   id: string
@@ -107,14 +106,13 @@ export function useStats(labId: string) {
     Promise.all(promises).then(results => {
       const val = results.filter(entry => entry.length > 0)
       setCompleted(results)
-      console.log(results)
     })
   }, [questions, answers])
 
   React.useEffect(() => {
     setTimeout(() => {
       setTimer(timer + 1)
-    }, 1000)
+    }, 5000)
 
     if (app.authToken) {
       api

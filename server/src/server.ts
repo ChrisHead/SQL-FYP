@@ -91,7 +91,7 @@ addApiEndpoint(
     ) questions
     FROM "labs"
   `
-    const results = await conn.any<IUser>(sql)
+    const results = await conn.any(sql)
     return results
   }
 )
@@ -102,7 +102,7 @@ addApiEndpoint("questions", { permission: "admin" }, async () => {
   FROM questions
   ORDER BY "questionNum"
   `
-  const results = await conn.any<IUser>(sql)
+  const results = await conn.any(sql)
   return results
 })
 
@@ -123,7 +123,7 @@ addApiEndpoint(
     now())
     RETURNING "id"
     `
-    const feedback = await conn.any<IUser>(sql)
+    const feedback = await conn.any(sql)
     return feedback
   }
 )
@@ -139,7 +139,7 @@ addApiEndpoint(
       currentUser.id
     }', now()) RETURNING "id"
     `
-    const bugReport = await conn.any<IUser>(sql)
+    const bugReport = await conn.any(sql)
     return bugReport
   }
 )
@@ -186,7 +186,7 @@ addApiEndpoint(
     WHERE "userId" = '${pgp.as.value(currentUser.id)}'
     AND "questionId" = '${pgp.as.value(questionId)}'
     `
-    const updateCompleted = await conn.one<IUser>(sql)
+    const updateCompleted = await conn.one(sql)
     return updateCompleted
   }
 )
@@ -211,7 +211,7 @@ addApiEndpoint(
       "questionNum" = '${pgp.as.value(questionNum)}'
       WHERE "id" = '${pgp.as.value(questionId)}'
     `
-    const updateQuestion = await conn.any<IUser>(sql)
+    const updateQuestion = await conn.any(sql)
     return updateQuestion
   }
 )
@@ -235,7 +235,7 @@ addApiEndpoint(
       '${pgp.as.value(startingText)}',
       '${pgp.as.value(questionNum)}')
     `
-    const addQuestion = await conn.any<IUser>(sql)
+    const addQuestion = await conn.any(sql)
     return addQuestion
   }
 )
@@ -263,7 +263,7 @@ addApiEndpoint(
       crypt('${pgp.as.value(password)}', gen_salt('bf')),
       '${pgp.as.value(admin)}')
     `
-    const addQuestion = await conn.any<IUser>(sql)
+    const addQuestion = await conn.any(sql)
     return addQuestion
   }
 )
@@ -282,7 +282,7 @@ addApiEndpoint(
       "password" = crypt('${pgp.as.value(password)}', gen_salt('bf'))
       WHERE "id" = '${pgp.as.value(userId)}'
     `
-    const updateUser = await conn.any<IUser>(sql)
+    const updateUser = await conn.any(sql)
     return updateUser
   }
 )
@@ -299,7 +299,7 @@ addApiEndpoint(
       ('${pgp.as.value(labNumber)}',
       now())
     `
-    const addLab = await conn.any<IUser>(sql)
+    const addLab = await conn.any(sql)
     return addLab
   }
 )
@@ -325,7 +325,7 @@ addApiEndpoint(
     ) t2
     ON 	(t1."questionId" = t2."questionId")
     `
-    const userAnswersQuestions = await conn.any<IUser>(sql)
+    const userAnswersQuestions = await conn.any(sql)
     return userAnswersQuestions
   }
 )
@@ -364,7 +364,7 @@ addApiEndpoint(
     AND labs.id = '${pgp.as.value(req.body.id)}'
     )
     `
-    const results = await conn.any<IUser>(sql)
+    const results = await conn.any(sql)
     return results
   }
 )
@@ -471,7 +471,7 @@ app.use(
 
 const port = process.env.PORT || 3001
 app.listen(port, () => {
-  console.log(`the server is listening at http://localhost:${port}`)
+  console.log(`The server is listening at http://localhost:${port}`)
 })
 
 // const errors =  {

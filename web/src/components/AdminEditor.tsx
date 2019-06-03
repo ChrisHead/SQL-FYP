@@ -2,17 +2,8 @@ import * as React from "react"
 import { AdminPanel } from "./AdminPanel"
 import SplitPane from "react-split-pane"
 import { AdminControls } from "./AdminControls"
-// import { DbStore } from "src/stores/DbStore"
-import { observer, inject } from "mobx-react"
-import { observable } from "mobx"
-import { AppStore } from "../stores/AppStore"
-import { withRouter } from "react-router"
 import { AppContext } from "src/AppContext"
 
-// interface IProps {
-//   // db?: DbStore
-//   // app?: AppStore
-// }
 export function AdminEditor() {
   const resultsSection = React.createRef<HTMLDivElement>()
 
@@ -31,8 +22,6 @@ export function AdminEditor() {
     }
     contentWidth = resultsSection.current.getBoundingClientRect().width
   }
-
-  // const { app } = this.props
 
   return (
     <div

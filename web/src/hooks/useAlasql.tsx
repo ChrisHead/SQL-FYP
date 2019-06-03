@@ -339,6 +339,7 @@ export function useAlasql() {
   function clearAlaResults() {
     setResults([])
     setSqlError("")
+    setSqlVal("")
   }
 
   return {

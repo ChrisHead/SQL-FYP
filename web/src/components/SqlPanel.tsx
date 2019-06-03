@@ -51,8 +51,8 @@ export function SqlPanel({
         <button
           style={{ width: 100, marginLeft: 8 }}
           onClick={() => {
-            onExecute()
             updateActivity("SQL Run: " + sqlValue)
+            onExecute()
           }}
         >
           Run

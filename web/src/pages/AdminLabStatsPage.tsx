@@ -28,22 +28,11 @@ export function AdminLabStatsPage({
   const {
     questions,
     participants,
-    participantsAnswers,
     answers,
     completed,
-    createLabStats,
-    leaderBoardStats,
     labStats,
     leaderStats,
   } = useStats(currentId)
-
-  // const [stats, setStats] = React.useState(useStats(currentId))
-
-  // const [questions, setQuestions] = React.useState(stats.questions)
-  // const [participants, setParticipants] = React.useState(stats.participants)
-  // const [participantsAnswers, setParticipantsAnswers] = React.useState(stats.participantsAnswers)
-  // const [answers, setAnswers] = React.useState(stats.answers)
-  // const [completed, setCompleted] = React.useState(stats.completed)
 
   if (!currentId) {
     return <p>404 Lab Not Found</p>
@@ -108,6 +97,7 @@ export function AdminLabStatsPage({
   function pieChartStats() {
     const pieChartStats = labStats.map((question, i) => {
       const questionName = "Question " + question.questionNum
+
       const relDifficulty =
         (question.answers / (question.completed + 0.5)) *
         (question.avgMistakes + 1)
@@ -118,30 +108,6 @@ export function AdminLabStatsPage({
       }
     })
     return pieChartStats
-  }
-
-  function totalLeaderAnswers() {
-    let count = 0
-    leaderStats.forEach(user => {
-      count = count + user.answers
-    })
-    return count
-  }
-
-  function totalLeaderCompleted() {
-    let count = 0
-    leaderStats.forEach(user => {
-      count = count + user.completed
-    })
-    return count
-  }
-
-  function totalLeaderMistakes() {
-    let count = 0
-    leaderStats.forEach(user => {
-      count = count + user.mistakes
-    })
-    return count
   }
 
   function leaderCoefficients() {
@@ -161,9 +127,11 @@ export function AdminLabStatsPage({
         aveMistakes: user.avgMistakes,
       }
     })
-    return vals.sort((a, b) => {
-      return a.concern - b.concern
-    })
+    return vals
+      .sort((a, b) => {
+        return a.concern - b.concern
+      })
+      .reverse()
   }
 
   function filteredLeaderBoard(vals: any[]) {
@@ -199,7 +167,7 @@ export function AdminLabStatsPage({
   }
 
   function leaderColour(user: any) {
-    if (user.concern < 40) {
+    if (user.concern < 50) {
       return "#4CAF50"
     } else if (user.concern < 100) {
       return "#FFC107"

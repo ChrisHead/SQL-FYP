@@ -57,17 +57,14 @@ export function useStudentEditor() {
   }, [])
 
   function handleSetCurrentQuestion(labId: string, questionId: string) {
-    if (currentQuestionId && currentQuestionId !== questionId) {
-      clear()
-      setSqlValue("")
-      setAnswerError("")
-    }
     setCurrentLabId(labId)
     setCurrentQuestionId(questionId)
   }
 
   React.useEffect(() => {
     clear()
+    setSqlValue("")
+    setAnswerError("")
   }, [currentQuestionId])
 
   async function handleExecuteQuery() {
@@ -76,6 +73,7 @@ export function useStudentEditor() {
     }
     clearResults()
     executeSql(sqlValue)
+    validation()
   }
 
   React.useEffect(() => {
