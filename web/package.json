@@ -12,7 +12,7 @@
     "@types/react-sidebar": "^3.0.0",
     "@types/react-split-pane": "^0.1.67",
     "alasql": "https://github.com/ChrisHead/alasql",
-    "codemirror": "^5.41.0",
+    "codemirror": "^5.58.2",
     "immer": "^2.0.0",
     "mobx": "^4",
     "mobx-react": "^5.2.8",
